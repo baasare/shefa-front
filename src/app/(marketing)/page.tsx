@@ -8,6 +8,7 @@
 import Link from 'next/link';
 import { routes } from '@/lib/config/routes';
 import { useState } from 'react';
+import { AnimatedTerminal } from '@/components/marketing/AnimatedTerminal';
 
 export default function LandingPage() {
   return (
@@ -215,41 +216,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-white/10">
-              {/* Terminal Header */}
-              <div className="bg-slate-100 dark:bg-slate-700 px-6 py-3 border-b border-slate-200 dark:border-slate-600">
-                <div className="flex items-center gap-2">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <span className="ml-4 text-sm font-mono text-slate-600 dark:text-slate-400">
-                    shefa-ai-terminal
-                  </span>
-                </div>
-              </div>
-
-              {/* Terminal Content */}
-              <div className="bg-slate-900 dark:bg-slate-950 p-6 font-mono text-sm">
-                <div className="space-y-2 text-green-400">
-                  <p><span className="text-blue-400">$</span> shefa analyze --market crypto --pair BTC/USD</p>
-                  <p className="text-slate-400">[2024-03-15 14:32:11] Initializing analysis...</p>
-                  <p className="text-slate-400">[2024-03-15 14:32:12] Fetching market data...</p>
-                  <p className="text-yellow-400">[2024-03-15 14:32:13] Processing 1,234,567 data points...</p>
-                  <p className="text-green-400">[2024-03-15 14:32:15] ✓ Analysis complete</p>
-                  <p className="text-white mt-4">
-                    <span className="text-cyan-400">Signal:</span> BUY<br/>
-                    <span className="text-cyan-400">Confidence:</span> 87.3%<br/>
-                    <span className="text-cyan-400">Entry Price:</span> $42,150<br/>
-                    <span className="text-cyan-400">Target Price:</span> $45,800<br/>
-                    <span className="text-cyan-400">Stop Loss:</span> $40,200
-                  </p>
-                  <p className="mt-4 text-slate-400">[2024-03-15 14:32:16] Monitoring position...</p>
-                  <p className="text-green-400 animate-pulse">▊</p>
-                </div>
-              </div>
-            </div>
+            <AnimatedTerminal />
           </div>
         </section>
 
