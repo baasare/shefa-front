@@ -4,7 +4,7 @@ export default function HomePage() {
       <div className="z-10 max-w-5xl w-full items-center justify-between text-sm">
         <div className="flex flex-col items-center gap-8">
           <h1 className="text-6xl font-bold text-center bg-gradient-to-r from-primary-500 to-primary-700 bg-clip-text text-transparent">
-            ShefaAI
+            ShefaFx
           </h1>
           <p className="text-xl text-center text-gray-600 dark:text-gray-400 max-w-2xl">
             AI-Powered Trading Platform - Intelligent trading strategies driven

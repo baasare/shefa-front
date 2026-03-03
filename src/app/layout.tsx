@@ -6,7 +6,7 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'ShefaAI - AI-Powered Trading Platform',
+  title: 'ShefaFx - AI-Powered Trading Platform',
   description: 'Intelligent trading platform powered by AI agents',
 };
 

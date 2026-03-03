@@ -1,4 +1,4 @@
-# ShefaAI Frontend
+# ShefaFx Frontend
 
 AI-Powered Trading Platform Frontend built with Next.js, TypeScript, and Tailwind CSS.
 
@@ -102,5 +102,5 @@ src/
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:8000` |
-| `NEXT_PUBLIC_APP_NAME` | Application name | `ShefaAI` |
+| `NEXT_PUBLIC_APP_NAME` | Application name | `ShefaFx` |
 | `NEXT_PUBLIC_APP_URL` | Frontend URL | `http://localhost:3000` |
