@@ -1,0 +1,40 @@
+/**
+ * ShefaFx Light Theme Token Overrides
+ * Applied via `.light` class on <html> element (next-themes)
+ */
+
+.light {
+    --background: 245 247 251;
+    /* #f5f7fb cool gray page bg */
+    --foreground: 15 22 41;
+    /* #0f1629 dark text */
+    --card: 255 255 255;
+    /* pure white card */
+    --card-foreground: 15 22 41;
+    --popover: 255 255 255;
+    --popover-foreground: 15 22 41;
+    --primary: 30 111 255;
+    /* keep electric blue */
+    --primary-foreground: 255 255 255;
+    --secondary: 241 244 250;
+    /* light gray surface */
+    --secondary-foreground: 15 22 41;
+    --muted: 241 244 250;
+    --muted-foreground: 100 116 139;
+    /* slate-500 */
+    --accent: 241 244 250;
+    --accent-foreground: 15 22 41;
+    --destructive: 220 38 38;
+    /* red-600 */
+    --destructive-foreground: 255 255 255;
+    --border: 226 232 240;
+    /* slate-200 */
+    --input: 226 232 240;
+    --ring: 30 111 255;
+
+    /* Light mode shadows (softer, neutral) */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-glow: 0 0 20px rgba(30, 111, 255, 0.12);
+}

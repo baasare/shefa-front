@@ -1,0 +1,41 @@
+/**
+ * ShefaFx Dark Theme Token Overrides
+ * Applied via `.dark` class on <html> element (next-themes)
+ * This is the DEFAULT theme — values mirror :root defaults for clarity.
+ */
+
+.dark {
+    --background: 15 22 41;
+    /* #0f1629 deep navy */
+    --foreground: 240 244 255;
+    /* #f0f4ff near white */
+    --card: 26 37 64;
+    /* #1a2540 surface */
+    --card-foreground: 240 244 255;
+    --popover: 26 37 64;
+    --popover-foreground: 240 244 255;
+    --primary: 30 111 255;
+    /* electric blue */
+    --primary-foreground: 240 244 255;
+    --secondary: 30 45 74;
+    /* #1e2d4a subtle surface */
+    --secondary-foreground: 240 244 255;
+    --muted: 26 37 64;
+    --muted-foreground: 138 155 191;
+    /* #8a9bbf muted slate */
+    --accent: 30 45 74;
+    --accent-foreground: 240 244 255;
+    --destructive: 232 69 69;
+    /* #e84545 coral red */
+    --destructive-foreground: 240 244 255;
+    --border: 30 45 74;
+    /* #1e2d4a */
+    --input: 30 45 74;
+    --ring: 30 111 255;
+
+    /* Dark mode glow shadows */
+    --shadow-sm: 0 2px 8px rgba(30, 111, 255, 0.08);
+    --shadow: 0 4px 24px rgba(30, 111, 255, 0.12);
+    --shadow-lg: 0 8px 40px rgba(30, 111, 255, 0.18);
+    --shadow-glow: 0 0 20px rgba(30, 111, 255, 0.25);
+}

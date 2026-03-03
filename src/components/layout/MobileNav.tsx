@@ -1,45 +1,61 @@
 /**
- * Mobile Navigation Component
- * Bottom navigation for mobile devices
+ * Mobile Navigation Bar
+ * Bottom tab bar for mobile dashboard navigation.
+ * Uses navigation config (mobileBottomNav) and Lucide icons.
  */
 
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import * as LucideIcons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { mobileBottomNav } from '@/lib/config/navigation';
 import { cn } from '@/lib/utils/cn';
+
+function getIcon(name: string | undefined): LucideIcon {
+  if (!name) return LucideIcons.Circle;
+  return (LucideIcons as Record<string, LucideIcon>)[name] ?? LucideIcons.Circle;
+}
 
 export function MobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background md:hidden">
-      <div className="flex items-center justify-around">
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-[rgb(var(--border))] bg-[rgb(var(--background))]/95 backdrop-blur pb-safe"
+      aria-label="Mobile Navigation"
+    >
+      <div className="flex items-center justify-around px-2 py-2">
         {mobileBottomNav.map((item) => {
-          const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
+          const Icon = getIcon(item.icon);
+          const isActive =
+            pathname === item.href || pathname?.startsWith(item.href + '/');
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'relative flex flex-col items-center justify-center gap-1 px-3 py-2 text-xs',
-                isActive ? 'text-primary' : 'text-muted-foreground'
+                'relative flex flex-col items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                isActive
+                  ? 'text-[rgb(var(--primary))]'
+                  : 'text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))]'
               )}
+              aria-label={item.label}
             >
-              {/* Icon placeholder */}
-              <div
+              <Icon
                 className={cn(
-                  'h-6 w-6 rounded',
-                  isActive ? 'bg-primary/20' : 'bg-muted-foreground/20'
+                  'h-5 w-5',
+                  isActive
+                    ? 'text-[rgb(var(--primary))]'
+                    : 'text-[rgb(var(--muted-foreground))]'
                 )}
+                strokeWidth={isActive ? 2 : 1.5}
               />
-              <span className="font-medium">{item.label}</span>
+              <span>{item.label}</span>
               {item.badge && (
-                <span className="absolute right-2 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
-                  {item.badge === 'HITL' ? '!' : item.badge}
-                </span>
+                <span className="absolute -top-0.5 right-1 h-1.5 w-1.5 rounded-full bg-[rgb(var(--primary))]" />
               )}
             </Link>
           );

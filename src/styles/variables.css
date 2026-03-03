@@ -1,0 +1,74 @@
+/**
+ * ShefaFx Design Token System
+ * CSS Custom Properties — semantic tokens for light and dark themes
+ * Default: dark theme. Override with .light class for light mode.
+ *
+ * shadcn/ui compatible — tokens match the shadcn naming conventions.
+ */
+
+:root {
+  /* ─── Color Palette Raw ────────────────────────────────────── */
+  --color-bg-primary: 15 22 41;           /* #0f1629 deep navy */
+  --color-surface: 26 37 64;             /* #1a2540 card surface */
+  --color-border: 30 45 74;             /* #1e2d4a subtle border */
+  --color-accent-blue: 30 111 255;      /* #1e6fff electric blue */
+  --color-accent-green: 16 183 127;     /* #10b77f emerald green */
+  --color-accent-red: 232 69 69;        /* #e84545 coral red */
+  --color-text-primary: 240 244 255;    /* #f0f4ff near white */
+  --color-text-secondary: 138 155 191;  /* #8a9bbf muted slate */
+
+  /* ─── shadcn/ui Compatible Semantic Tokens (Dark Default) ──── */
+  --background: 15 22 41;               /* page bg */
+  --foreground: 240 244 255;            /* text */
+  --card: 26 37 64;                     /* card bg */
+  --card-foreground: 240 244 255;
+  --popover: 26 37 64;
+  --popover-foreground: 240 244 255;
+  --primary: 30 111 255;                /* electric blue */
+  --primary-foreground: 240 244 255;
+  --secondary: 30 45 74;               /* subtle bg variant */
+  --secondary-foreground: 240 244 255;
+  --muted: 26 37 64;
+  --muted-foreground: 138 155 191;
+  --accent: 30 45 74;
+  --accent-foreground: 240 244 255;
+  --destructive: 232 69 69;
+  --destructive-foreground: 240 244 255;
+  --border: 30 45 74;
+  --input: 30 45 74;
+  --ring: 30 111 255;
+
+  /* ─── Success / Warning ──────────────────────────────────────── */
+  --success: 16 183 127;
+  --success-foreground: 240 244 255;
+  --warning: 251 191 36;               /* amber */
+  --warning-foreground: 15 22 41;
+
+  /* ─── Geometry ──────────────────────────────────────────────── */
+  --radius: 0.75rem;                    /* 12px — card radius */
+  --radius-sm: 0.5rem;                  /* 8px — button/input radius */
+  --radius-full: 9999px;               /* pill shapes */
+
+  /* ─── Typography ──────────────────────────────────────────────── */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* ─── Shadows ─────────────────────────────────────────────────── */
+  --shadow-sm: 0 2px 8px rgba(30, 111, 255, 0.08);
+  --shadow: 0 4px 24px rgba(30, 111, 255, 0.12);
+  --shadow-lg: 0 8px 40px rgba(30, 111, 255, 0.18);
+  --shadow-glow: 0 0 20px rgba(30, 111, 255, 0.25);
+
+  /* ─── Transitions ─────────────────────────────────────────────── */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ─── Z-Index Scale ───────────────────────────────────────────── */
+  --z-base: 0;
+  --z-dropdown: 50;
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}
