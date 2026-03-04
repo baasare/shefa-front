@@ -105,8 +105,56 @@ export async function verifyEmail(key: string): Promise<void> {
     await authHttp.post('/auth/registration/verify-email/', { key });
 }
 
-/** GET /api/auth/user/ */
-export async function getCurrentUser(): Promise<AuthResponse['user']> {
-    const { data } = await authHttp.get<AuthResponse['user']>('/auth/user/');
+/** GET /api/users/auth/profile/ */
+export async function getCurrentUser(): Promise<any> {
+    const { data } = await authHttp.get('/users/auth/profile/');
     return data;
+}
+
+/** PATCH /api/users/auth/profile/update/ */
+export async function updateProfile(profileData: any): Promise<any> {
+    const { data } = await authHttp.patch('/users/auth/profile/update/', profileData);
+    return data;
+}
+
+/** POST /api/auth/password/change/ */
+export async function changePassword(data: {
+    old_password: string;
+    new_password1: string;
+    new_password2: string;
+}): Promise<void> {
+    await authHttp.post('/auth/password/change/', data);
+}
+
+/** DELETE /api/users/auth/delete-account/ */
+export async function deleteAccount(): Promise<void> {
+    await authHttp.delete('/users/auth/delete-account/');
+    tokenStorage.clearTokens();
+}
+
+/** GET /api/users/auth/active-sessions/ */
+export async function getActiveSessions(): Promise<any> {
+    const { data} = await authHttp.get('/users/auth/active-sessions/');
+    return data;
+}
+
+/** POST /api/auth/token/refresh/ */
+export async function refreshToken(): Promise<string> {
+    const refresh = tokenStorage.getRefresh();
+    if (!refresh) throw new Error('No refresh token');
+    const { data } = await authHttp.post('/auth/token/refresh/', { refresh });
+    tokenStorage.setTokens(data.access, refresh);
+    return data.access;
+}
+
+/** POST /api/auth/token/verify/ */
+export async function verifyToken(): Promise<boolean> {
+    try {
+        const token = tokenStorage.getAccess();
+        if (!token) return false;
+        await authHttp.post('/auth/token/verify/', { token });
+        return true;
+    } catch {
+        return false;
+    }
 }
