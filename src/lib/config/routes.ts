@@ -67,6 +67,11 @@ export const routes = {
 
     agents: {
       index: '/agents',
+      create: '/agents/create',
+      detail: (id: string) => `/agents/${id}`,
+      edit: (id: string) => `/agents/${id}/edit`,
+      statistics: (id: string) => `/agents/${id}/statistics`,
+      consensus: '/agents/consensus',
       analysis: '/agents/analysis',
       decisions: '/agents/decisions',
       logs: '/agents/logs',
