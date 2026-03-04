@@ -6,54 +6,84 @@ import Link from 'next/link';
 
 const sections = [
     {
+        id: 'introduction',
+        title: '1. INTRODUCTION',
+        content: `ShefaFx, Inc. ("we," "us," "our," or "Company") respects your privacy and is committed to protecting your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our trading platform, website, mobile applications, and services (collectively, the "Platform"). BY USING THE PLATFORM, YOU CONSENT TO THE COLLECTION, USE, AND DISCLOSURE OF YOUR INFORMATION AS DESCRIBED IN THIS PRIVACY POLICY. If you do not agree with this Privacy Policy, please do not use the Platform.`,
+    },
+    {
         id: 'collect',
-        title: '1. Information We Collect',
-        content: `We collect information you provide directly to us when you register for an account, use the Service, or communicate with us. This includes: name, email address, password (hashed), payment information (processed by Stripe, not stored by us), and any information you add to your profile. We also automatically collect usage data, log data, and device information when you use the Service.`,
+        title: '2. INFORMATION WE COLLECT',
+        content: `We collect: Account Information (name, email, phone, username/password, date of birth, address, government-issued ID if required); Financial Information (broker account credentials/API keys, trading strategies and preferences, portfolio holdings and positions, transaction history, payment information); Profile Information (profile photo, trading experience level, investment preferences, risk tolerance); Communications (support requests, feedback, messages sent through the Platform); Usage Data (pages viewed, features used, time spent, click patterns, search queries, device type, browser type); Technical Data (IP address, device identifiers, browser fingerprints, cookies, log data); Trading Activity (orders placed/executed, strategy performance, market data accessed, API calls); and Information from Third Parties (broker data, market data, identity verification services).`,
     },
     {
         id: 'use',
-        title: '2. How We Use Your Information',
-        content: `We use the information we collect to: provide, maintain, and improve the Service; process transactions and send related information; send technical notices and support messages; respond to your comments and questions; send marketing communications (with your consent); monitor and analyze usage patterns; detect and prevent fraudulent transactions and other illegal activities; and comply with legal obligations.`,
+        title: '3. HOW WE USE YOUR INFORMATION',
+        content: `We use your information for: Providing Services (creating/managing accounts, connecting brokerage accounts, executing trades, providing market data and analysis, generating strategy signals, calculating portfolio performance, processing payments); Improving Services (analyzing Platform usage, developing new features, fixing bugs, conducting research, testing and optimization); Communications (sending transactional emails, providing customer support, sending Platform updates, marketing communications with your consent, responding to inquiries); and Security and Compliance (detecting/preventing fraud, monitoring suspicious activity, complying with legal obligations, enforcing Terms of Service, protecting our rights and property, conducting audits). For EU/EEA users, our legal bases include contract performance, legitimate interests, legal compliance, and consent.`,
     },
     {
         id: 'sharing',
-        title: '3. Data Sharing',
-        content: `We do not sell, trade, or rent your personal information to third parties. We may share your information with trusted third-party service providers who assist us in operating the Service (e.g., Stripe for payments, AWS for hosting, Intercom for support), subject to confidentiality agreements. We may also disclose your information if required by law or if we reasonably believe disclosure is necessary to protect our rights, protect your safety, or comply with a legal process.`,
-    },
-    {
-        id: 'cookies',
-        title: '4. Cookies and Tracking',
-        content: `We use cookies and similar tracking technologies to track activity on the Service and hold certain information. Cookies are files with a small amount of data that are sent to your browser from a website and stored on your device. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. If you do not accept cookies, some parts of the Service may not function properly. We use both session cookies (which expire when you close your browser) and persistent cookies (which remain on your device until deleted).`,
-    },
-    {
-        id: 'retention',
-        title: '5. Data Retention',
-        content: `We retain your personal information for as long as your account is active or as needed to provide you with the Service. You may request deletion of your personal data at any time. We will retain and use your information as necessary to comply with our legal obligations, resolve disputes, and enforce our agreements. Trading logs and transaction records may be retained for up to 7 years for regulatory compliance purposes.`,
-    },
-    {
-        id: 'rights',
-        title: '6. Your Rights',
-        content: `Depending on your location, you may have certain rights regarding your personal information, including the right to access, correct, or delete your data. EU/UK residents have rights under GDPR including data portability and the right to object to processing. California residents have rights under the CCPA. To exercise these rights, please contact us at privacy@shefafx.com. We will respond within 30 days.`,
+        title: '4. HOW WE SHARE YOUR INFORMATION',
+        content: `We do not sell, rent, or trade your personal information. We may share information with: Service Providers (brokers for trade execution, payment processors, cloud hosting providers like AWS/Google Cloud, analytics providers like Google Analytics/Mixpanel, email services, customer support platforms, identity verification services); Business Transfers (in case of merger, acquisition, sale of assets, or bankruptcy); Legal Requirements (court orders, subpoenas, government investigations, regulatory requests from SEC/FINRA, law enforcement, legal proceedings); Protection of Rights (to protect our legal rights and property, enforce Terms of Service, prevent fraud or illegal activity, protect safety of users or public); and with Your Consent for other purposes.`,
     },
     {
         id: 'security',
-        title: '7. Data Security',
-        content: `We implement industry-standard security measures to protect your personal information against unauthorized access, disclosure, alteration, or destruction. These include TLS/SSL encryption for data in transit, AES-256 encryption for data at rest, regular security audits, and SOC 2 Type II compliance. However, no security system is impenetrable, and we cannot guarantee the absolute security of your data.`,
+        title: '5. DATA SECURITY',
+        content: `We implement industry-standard security measures including: Technical Safeguards (encryption in transit via TLS/SSL and at rest via AES-256, encrypted API credentials using Fernet symmetric encryption, role-based access controls, strong password requirements with optional 2FA, firewalls/intrusion detection/DDoS protection, secure development practices with code reviews and vulnerability scanning); and Organizational Safeguards (employee training on data security, background checks for personnel with access to sensitive data, incident response procedures, regular security audits, data backup and disaster recovery plans). However, no system is 100% secure. We cannot guarantee absolute security. You are responsible for maintaining password confidentiality, securing your devices, using secure networks, logging out of your account, and notifying us immediately of any security breach.`,
+    },
+    {
+        id: 'retention',
+        title: '6. DATA RETENTION',
+        content: `We retain your information for as long as necessary to provide Platform services, comply with legal obligations, resolve disputes, and enforce agreements. Retention Periods: Account data (while account is active plus 7 years after closure for legal compliance); Trading records (7 years - regulatory requirement); Audit logs (7 years for compliance and security); Financial records (7 years for tax and regulatory requirements); Marketing data (until you opt out); Support requests (3 years). After the retention period, we securely delete or anonymize your information.`,
+    },
+    {
+        id: 'rights',
+        title: '7. YOUR PRIVACY RIGHTS',
+        content: `All Users have the right to: access (request a copy of your personal information), correction (update or correct inaccurate information), deletion (request deletion of your information subject to legal requirements), portability (receive your data in a structured format), object (to certain uses of your information), and opt-out (unsubscribe from marketing communications). California Residents (CCPA) have additional rights including: right to know what personal information is collected, right to know if personal information is sold or disclosed (we do not sell information), right to opt out of sale, right to deletion, and right to non-discrimination. EU/EEA Residents (GDPR) have rights including: access, rectification, erasure ("right to be forgotten"), restriction of processing, data portability, objection to processing, withdrawal of consent, and the right to lodge a complaint with a supervisory authority. To exercise these rights, contact us at privacy@shefaai.com.`,
+    },
+    {
+        id: 'cookies',
+        title: '8. COOKIES AND TRACKING TECHNOLOGIES',
+        content: `We use cookies and similar technologies to: authenticate users, remember preferences, analyze Platform usage, improve user experience, and provide personalized content. Types of Cookies: Essential cookies (required for Platform functionality), Analytics cookies (track usage and performance via Google Analytics), Functional cookies (remember preferences), and Marketing cookies (show relevant ads if applicable). You can control cookies through your browser settings. However, disabling essential cookies may limit Platform functionality. Do Not Track: We do not currently respond to Do Not Track signals.`,
+    },
+    {
+        id: 'third-party',
+        title: '9. THIRD-PARTY LINKS',
+        content: `The Platform may contain links to third-party websites and services (brokers, market data providers, etc.). We are not responsible for their privacy practices. Please review their privacy policies.`,
     },
     {
         id: 'children',
-        title: '8. Children\'s Privacy',
-        content: `The Service is not directed to children under the age of 18. We do not knowingly collect personal information from children under 18. If you are a parent or guardian and you become aware that your child has provided us with personal information, please contact us immediately at privacy@shefafx.com, and we will take steps to remove that information.`,
+        title: '10. CHILDREN\'S PRIVACY',
+        content: `The Platform is not intended for individuals under 18 years of age. We do not knowingly collect information from children. If you believe we have collected information from a child, please contact us immediately.`,
+    },
+    {
+        id: 'international',
+        title: '11. INTERNATIONAL DATA TRANSFERS',
+        content: `The Platform is operated in the United States. If you access the Platform from outside the U.S., your information may be transferred to, stored, and processed in the U.S. For EU/EEA users: We comply with GDPR requirements for international transfers, including Standard Contractual Clauses (SCCs) where applicable.`,
     },
     {
         id: 'changes',
-        title: '9. Changes to This Policy',
-        content: `We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date. Where the changes are material, we will also send you an email notification. We encourage you to review this Privacy Policy periodically to stay informed about how we are protecting your information.`,
+        title: '12. CHANGES TO THIS PRIVACY POLICY',
+        content: `We may update this Privacy Policy from time to time. We will notify you of material changes by posting the updated policy on the Platform, sending you an email notification, and displaying a prominent notice on the Platform. Your continued use of the Platform after changes constitutes acceptance of the updated policy.`,
     },
     {
         id: 'contact',
-        title: '10. Contact Us',
-        content: `If you have any questions about this Privacy Policy or our data practices, please contact our Privacy Officer at privacy@shefafx.com. For EU/UK residents, you also have the right to lodge a complaint with your local data protection supervisory authority.`,
+        title: '13. CONTACT US',
+        content: `For questions, concerns, or requests regarding this Privacy Policy, contact us at: Email: privacy@shefaai.com | Mailing Address: ShefaFx, Inc., [Your Business Address] | Data Protection Officer (if applicable): dpo@shefaai.com`,
+    },
+    {
+        id: 'disclosures',
+        title: '14. SPECIFIC DISCLOSURES',
+        content: `Data We Collect: Identifiers (name, email, IP address) for account creation and communication; Financial Data (broker credentials, transactions) for trade execution and portfolio management; Usage Data (pages viewed, clicks) for Platform improvement and analytics; Device Data (device type, browser) for technical support and security. Data Sharing: We share data with brokers (for trade execution), service providers (for Platform operations), and legal authorities (when required by law). We do NOT: sell your data, share data with advertisers (without consent), or use data for unrelated purposes. Data Retention: Account data (duration of account + 7 years); Trading records (7 years - regulatory requirement); Audit logs (7 years); Marketing data (until opt-out).`,
+    },
+    {
+        id: 'state-specific',
+        title: '15. STATE-SPECIFIC DISCLOSURES',
+        content: `Nevada Residents may opt out of the sale of personal information. We do not sell personal information, but you may submit a request to privacy@shefaai.com. Virginia Residents (VCDPA) have rights similar to CCPA. Contact privacy@shefaai.com to exercise your rights.`,
+    },
+    {
+        id: 'acknowledgment',
+        title: '16. ACKNOWLEDGMENT',
+        content: `BY USING THE PLATFORM, YOU ACKNOWLEDGE THAT: (1) You have read and understood this Privacy Policy; (2) You consent to the collection, use, and disclosure of your information as described; (3) You understand the security risks of online platforms; (4) You are responsible for securing your account and devices; (5) You will notify us immediately of any privacy concerns. IF YOU DO NOT AGREE WITH THIS PRIVACY POLICY, PLEASE DO NOT USE THE PLATFORM.`,
     },
 ];
 

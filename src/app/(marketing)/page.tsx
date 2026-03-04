@@ -14,7 +14,7 @@ export default function LandingPage() {
   return (
     <div className="font-display min-h-screen flex flex-col overflow-x-hidden">
       {/* Mesh Background */}
-      <div className="fixed inset-0 z-0 pointer-events-none bg-white dark:bg-shefa-bg">
+      <div className="fixed inset-0 -z-10 pointer-events-none bg-white dark:bg-shefa-bg">
         <div className="absolute inset-0 bg-gradient-to-br from-[#eff6ff] via-[#f5f3ff] to-white dark:from-slate-900 dark:via-slate-900 dark:to-shefa-bg opacity-80" />
       </div>
 

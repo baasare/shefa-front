@@ -8,48 +8,98 @@ import { routes } from '@/lib/config/routes';
 const sections = [
     {
         id: 'acceptance',
-        title: '1. Acceptance of Terms',
-        content: `By accessing or using the ShefaFx platform ("Service"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, please do not use the Service. These Terms apply to all visitors, users, and others who access or use the Service. We reserve the right to update these Terms at any time, and we will notify you of material changes via email or a prominent notice on our platform.`,
+        title: '1. ACCEPTANCE OF TERMS',
+        content: `These Terms of Service ("Terms") constitute a legally binding agreement between you ("User," "you," or "your") and ShefaFx ("Company," "we," "us," or "our") governing your access to and use of the ShefaFx trading platform, website, mobile applications, APIs, and related services (collectively, the "Platform"). By creating an account, accessing, or using the Platform, you acknowledge that you have read, understood, and agree to be bound by these Terms; represent that you are at least 18 years of age or the age of majority in your jurisdiction; represent that you have the legal capacity to enter into this binding agreement; and agree to comply with all applicable laws and regulations.`,
     },
     {
         id: 'description',
-        title: '2. Service Description',
-        content: `ShefaFx provides an AI-powered algorithmic trading platform that enables users to configure, deploy, and monitor automated trading strategies across connected exchange accounts. The Service includes the web application, APIs, strategy builder, agent monitoring, and all related tools and services provided by ShefaFx. We reserve the right to modify, suspend, or discontinue any part of the Service at any time with reasonable notice.`,
-    },
-    {
-        id: 'obligations',
-        title: '3. User Obligations',
-        content: `You agree to: (a) provide accurate, current, and complete information during registration; (b) maintain the security of your account credentials; (c) notify us immediately of any unauthorized access to your account; (d) comply with all applicable laws and regulations; (e) use the Service only for lawful purposes. You are solely responsible for all activities that occur under your account and for ensuring your use of the Service complies with the laws of your jurisdiction.`,
-    },
-    {
-        id: 'prohibited',
-        title: '4. Prohibited Activities',
-        content: `You agree not to: (a) engage in market manipulation or any form of securities fraud; (b) attempt to reverse-engineer, decompile, or extract the source code of our software; (c) use the Service to transmit malware or harmful code; (d) scrape, crawl, or harvest data from the Service without our written consent; (e) use the Service in any jurisdiction where algorithmic trading is prohibited. Violations may result in immediate termination of your account.`,
+        title: '2. DESCRIPTION OF SERVICES',
+        content: `ShefaFx provides a software platform that enables users to connect to third-party brokerage accounts, create and test trading strategies, execute trades through connected broker accounts, monitor portfolio performance, and access market data and technical analysis tools. WE ARE A TECHNOLOGY PLATFORM ONLY. WE ARE NOT: a registered broker-dealer, a registered investment advisor, a financial institution, or a provider of financial, investment, tax, or legal advice.`,
     },
     {
         id: 'risk',
-        title: '5. Risk Disclosures',
-        content: `Trading financial instruments involves substantial risk of loss. ShefaFx does not guarantee profits or protect against losses. Past performance of any trading strategy is not indicative of future results. You should only trade with capital you can afford to lose. You acknowledge that you have read and understand our full Risk Disclosures document before using the Service.`,
+        title: '3. DISCLAIMERS AND RISK ACKNOWLEDGMENTS',
+        content: `YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT: TRADING INVOLVES SUBSTANTIAL RISK OF LOSS. Trading stocks, securities, and other financial instruments carries a high level of risk and may not be suitable for all investors. You may lose some or all of your invested capital. NO GUARANTEE OF PROFITS. Past performance is not indicative of future results. No representation is being made that any account will or is likely to achieve profits or losses similar to those shown on the Platform. MARKET VOLATILITY. Financial markets are volatile and unpredictable. AUTOMATED TRADING RISKS. If you use automated trading strategies, strategies may execute trades without your real-time oversight; software bugs or errors may cause unintended trades; network or system failures may prevent strategy execution or order cancellation. THIRD-PARTY BROKER RISKS. All trades are executed through your connected third-party brokerage account. We have no control over order execution quality, trade settlement, broker fees and commissions, broker system availability, or broker account security.`,
+    },
+    {
+        id: 'no-liability',
+        title: '3.2 No Liability for Trading Losses',
+        content: `TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR: any trading losses or missed profits, losses resulting from strategy performance, losses due to market conditions, losses from delayed or failed order execution, losses from broker errors or failures, losses from system downtime or technical issues, losses from unauthorized account access, or any indirect, incidental, special, consequential, or punitive damages. YOU ACCEPT FULL RESPONSIBILITY FOR ALL TRADING DECISIONS AND OUTCOMES.`,
+    },
+    {
+        id: 'no-advice',
+        title: '3.3 No Financial Advice',
+        content: `WE DO NOT PROVIDE INVESTMENT ADVICE. Nothing on the Platform constitutes investment advice or recommendations, an offer to buy or sell securities, a solicitation of any kind, or tax, legal, or financial advice. Any information, data, tools, or strategies provided are for educational and informational purposes only. You should consult with qualified financial, tax, and legal professionals before making investment decisions.`,
+    },
+    {
+        id: 'no-warranty',
+        title: '3.4 No Warranty on Software or Data',
+        content: `THE PLATFORM IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. We do not warrant that market data, prices, quotes, or other information is accurate, complete, or current. We do not guarantee uninterrupted or error-free operation. While we implement security measures, we cannot guarantee absolute security. We do not warrant compatibility with all devices or brokers. We make no representations about strategy effectiveness.`,
+    },
+    {
+        id: 'responsibilities',
+        title: '4. USER RESPONSIBILITIES',
+        content: `You are solely responsible for maintaining the confidentiality of your account credentials, all activities that occur under your account, unauthorized access to your account, and notifying us immediately of any security breach. We are not liable for losses resulting from unauthorized account access, regardless of whether you were negligent in safeguarding your credentials. You agree to provide accurate, current, and complete information and to update such information as necessary. You agree to comply with all applicable federal, state, local, and international laws, securities laws and regulations, pay all applicable taxes, and obtain any required licenses or registrations.`,
+    },
+    {
+        id: 'prohibited',
+        title: '4.4 Prohibited Activities',
+        content: `You agree NOT to: use the Platform for illegal purposes; attempt to manipulate markets or engage in fraudulent trading; violate securities laws or regulations; reverse engineer, decompile, or disassemble the Platform; use automated systems to scrape data without permission; interfere with or disrupt the Platform; impersonate any person or entity; share your account with others; or use the Platform if you are a resident of a prohibited jurisdiction.`,
+    },
+    {
+        id: 'broker',
+        title: '5. BROKER CONNECTIONS',
+        content: `When you connect a brokerage account, you authorize us to access your account via broker APIs; you remain solely responsible for all trades executed; your relationship with the broker is governed by the broker's terms; and we act only as a technology intermediary. You are responsible for the security of your broker API credentials, revoking access if you no longer wish to use our Platform, and understanding your broker's API terms and limitations. We are not liable for broker system outages or errors, order execution failures, broker fee changes, broker account restrictions or closures, or broker data accuracy.`,
+    },
+    {
+        id: 'fees',
+        title: '6. FEES AND PAYMENTS',
+        content: `You agree to pay all fees associated with your chosen subscription plan. Fees are charged in advance on a recurring basis, non-refundable except as required by law, and subject to change with 30 days' notice. You are solely responsible for all fees, commissions, and charges imposed by your broker. You are responsible for all applicable taxes related to your use of the Platform and trading activities.`,
+    },
+    {
+        id: 'ip',
+        title: '7. INTELLECTUAL PROPERTY',
+        content: `The Platform, including all software, content, trademarks, and intellectual property, is owned by us or our licensors. You do not acquire any ownership rights. We grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Platform for your personal, non-commercial use, subject to these Terms. You retain ownership of any strategies, notes, or content you create. By using the Platform, you grant us a license to use, store, and process your content solely to provide the services.`,
     },
     {
         id: 'liability',
-        title: '6. Limitation of Liability',
-        content: `To the maximum extent permitted by applicable law, ShefaFx and its affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to trading losses, loss of profits, loss of data, or loss of goodwill. In no event shall our total liability to you for all claims exceed the amount you paid to us in the twelve months preceding the claim.`,
+        title: '8. LIMITATION OF LIABILITY',
+        content: `TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY: indirect, incidental, special, consequential, or punitive damages; loss of profits, revenue, data, or business opportunities; trading losses of any kind; damages resulting from reliance on information on the Platform; damages from unauthorized access or data breaches; or damages from system failures or downtime. THIS APPLIES REGARDLESS OF THE LEGAL THEORY (CONTRACT, TORT, NEGLIGENCE, STRICT LIABILITY, OR OTHERWISE) AND EVEN IF WE HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. OUR TOTAL LIABILITY TO YOU FOR ALL CLAIMS ARISING OUT OF OR RELATED TO THESE TERMS OR THE PLATFORM SHALL NOT EXCEED THE GREATER OF $100 USD OR THE AMOUNT YOU PAID US IN SUBSCRIPTION FEES IN THE 12 MONTHS PRECEDING THE CLAIM.`,
     },
     {
-        id: 'privacy',
-        title: '7. Privacy',
-        content: `Your privacy is important to us. Our Privacy Policy, incorporated into these Terms by reference, describes how we collect, use, and share information about you when you use the Service. By using the Service, you consent to the collection and use of information in accordance with our Privacy Policy.`,
+        id: 'indemnification',
+        title: '9. INDEMNIFICATION',
+        content: `You agree to indemnify, defend, and hold harmless ShefaFx, its officers, directors, employees, agents, licensors, and suppliers from and against all claims, losses, expenses, damages, and costs, including reasonable attorneys' fees, arising out of or related to your use of the Platform, your trading activities, your violation of these Terms, your violation of any law or regulation, your violation of any third-party rights, or unauthorized access to your account resulting from your negligence.`,
     },
     {
         id: 'termination',
-        title: '8. Termination',
-        content: `We may terminate or suspend your account and access to the Service immediately, without prior notice or liability, for any reason, including if you breach these Terms. Upon termination, your right to use the Service will immediately cease. All provisions which by their nature should survive termination shall survive, including intellectual property provisions, disclaimers, indemnity, and limitations of liability.`,
+        title: '10. TERMINATION',
+        content: `You may terminate your account at any time by contacting our support team or following the account closure process in your settings. Termination does not entitle you to a refund of fees already paid. We may suspend or terminate your access immediately, without notice, if you violate these Terms, we suspect fraudulent or illegal activity, required by law or court order, we discontinue the Platform, or you fail to pay fees. Upon termination, your license to use the Platform ends immediately, we may delete your account and data, and sections of these Terms that by their nature should survive will survive.`,
     },
     {
-        id: 'governing',
-        title: '9. Governing Law',
-        content: `These Terms shall be governed by and construed in accordance with the laws of the State of Delaware, United States, without regard to its conflict of law provisions. Any disputes arising under these Terms shall be subject to the exclusive jurisdiction of the courts located in Delaware. If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force and effect.`,
+        id: 'disputes',
+        title: '11. DISPUTE RESOLUTION',
+        content: `These Terms shall be governed by the laws of [YOUR JURISDICTION], without regard to conflict of law provisions. ANY DISPUTE ARISING OUT OF OR RELATED TO THESE TERMS OR THE PLATFORM SHALL BE RESOLVED BY BINDING ARBITRATION, except that either party may seek injunctive or other equitable relief in court. Arbitration shall be conducted by a single arbitrator under the rules of [ARBITRATION ORGANIZATION]. The arbitrator's decision shall be final and binding. Each party shall bear its own costs and attorneys' fees. YOU AGREE THAT DISPUTES MUST BE BROUGHT ON AN INDIVIDUAL BASIS ONLY, AND NOT AS A PLAINTIFF OR CLASS MEMBER IN ANY PURPORTED CLASS, COLLECTIVE, REPRESENTATIVE, MULTIPLE PLAINTIFF, OR SIMILAR PROCEEDING. You waive any right to a jury trial. Any claim must be filed within one (1) year after the claim arises, or it is permanently barred.`,
+    },
+    {
+        id: 'modifications',
+        title: '12. MODIFICATIONS TO TERMS',
+        content: `We may modify these Terms at any time by posting the updated Terms on the Platform and notifying you via email or Platform notification. Continued use of the Platform after changes constitutes acceptance of the modified Terms. If you do not agree, you must stop using the Platform.`,
+    },
+    {
+        id: 'general',
+        title: '13. GENERAL PROVISIONS',
+        content: `These Terms, along with our Privacy Policy, constitute the entire agreement between you and us. If any provision is found unenforceable, the remaining provisions shall remain in full force and effect. Our failure to enforce any right or provision shall not constitute a waiver. You may not assign these Terms. We may assign these Terms without your consent. We shall not be liable for failure to perform due to causes beyond our reasonable control. The Platform is intended for use by residents of the United States and Canada only. If you are located elsewhere, you may not use the Platform. Nothing in these Terms creates a partnership, joint venture, agency, or employment relationship.`,
+    },
+    {
+        id: 'contact',
+        title: '14. CONTACT INFORMATION',
+        content: `For questions about these Terms, contact us at: Email: legal@shefaai.com | Address: [Your Business Address]`,
+    },
+    {
+        id: 'acknowledgment',
+        title: '15. ACKNOWLEDGMENT AND ACCEPTANCE',
+        content: `BY USING THE PLATFORM, YOU ACKNOWLEDGE THAT: (1) You have read and understood these Terms in their entirety; (2) You agree to be legally bound by these Terms; (3) You understand the substantial risks of trading; (4) You accept full responsibility for your trading decisions and losses; (5) You will not hold us liable for any trading losses; (6) You are using the Platform at your own risk; (7) You have consulted with financial professionals as needed; (8) You understand we provide no investment advice or guarantees. IF YOU DO NOT AGREE WITH ANY PART OF THESE TERMS, YOU MUST NOT USE THE PLATFORM.`,
     },
 ];
 
