@@ -4,19 +4,50 @@
  * Uses BrandLogo + ThemeToggle in header.
  * Uses OnboardingStepper below header.
  * Completely separate from dashboard sidebar and auth card shell.
+ * Protected by authentication - redirects to login if not authenticated.
  */
 
 'use client';
 
+import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { OnboardingStepper } from '@/components/features/onboarding/OnboardingStepper';
+import { useAuthStore } from '@/lib/store/authStore';
+import { routes } from '@/lib/config/routes';
 
 export default function OnboardingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { isAuthenticated, isLoading } = useAuthStore();
+
+  useEffect(() => {
+    // Redirect to login if not authenticated after loading completes
+    if (!isLoading && !isAuthenticated) {
+      const loginUrl = `${routes.auth.login}?redirect=${encodeURIComponent(pathname)}`;
+      router.push(loginUrl);
+    }
+  }, [isAuthenticated, isLoading, router, pathname]);
+
+  // Show loading spinner while checking auth
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[rgb(var(--background))]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[rgb(var(--primary))] border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Don't render onboarding if not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="flex min-h-screen flex-col bg-[rgb(var(--background))]">
       {/* Wizard Header */}

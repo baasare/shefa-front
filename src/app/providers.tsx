@@ -2,7 +2,28 @@
 
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuthStore } from '@/lib/store/authStore';
+
+function AuthInitializer({ children }: { children: React.ReactNode }) {
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    checkAuth().finally(() => setIsInitialized(true));
+  }, [checkAuth]);
+
+  // Don't render children until auth check is complete
+  if (!isInitialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[rgb(var(--background))]">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[rgb(var(--primary))] border-t-transparent" />
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -24,7 +45,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
       storageKey="shefa-theme"
     >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthInitializer>{children}</AuthInitializer>
+      </QueryClientProvider>
     </NextThemesProvider>
   );
 }

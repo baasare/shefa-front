@@ -1,17 +1,10 @@
 /**
  * Auth API Client
  * Isolated module for all authentication API calls.
- * Stores tokens in localStorage after successful login.
+ * Uses the centralized API client for consistency.
  */
 
-import axios from 'axios';
-
-import { API_BASE } from './config';
-
-const authHttp = axios.create({
-    baseURL: API_BASE,
-    headers: { 'Content-Type': 'application/json' },
-});
+import apiClient from './client';
 
 // ─── Token Management ─────────────────────────────────────────────────────────
 
@@ -27,14 +20,6 @@ export const tokenStorage = {
         localStorage.removeItem('refresh_token');
     },
 };
-
-// ─── Request Interceptor — attach access token ────────────────────────────────
-
-authHttp.interceptors.request.use((config) => {
-    const token = tokenStorage.getAccess();
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-});
 
 // ─── Auth API Calls ───────────────────────────────────────────────────────────
 
@@ -64,14 +49,14 @@ export interface AuthResponse {
 
 /** POST /api/auth/login/ */
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const { data } = await authHttp.post<AuthResponse>('auth/login/', credentials);
+    const { data } = await apiClient.post<AuthResponse>('auth/login/', credentials);
     tokenStorage.setTokens(data.access, data.refresh);
     return data;
 }
 
 /** POST /api/auth/registration/ */
 export async function register(userData: RegisterData): Promise<AuthResponse> {
-    const { data } = await authHttp.post<AuthResponse>('auth/registration/', userData);
+    const { data } = await apiClient.post<AuthResponse>('auth/registration/', userData);
     tokenStorage.setTokens(data.access, data.refresh);
     return data;
 }
@@ -79,7 +64,7 @@ export async function register(userData: RegisterData): Promise<AuthResponse> {
 /** POST /api/auth/logout/ */
 export async function logout(): Promise<void> {
     try {
-        await authHttp.post('auth/logout/', { refresh: tokenStorage.getRefresh() });
+        await apiClient.post('auth/logout/', { refresh: tokenStorage.getRefresh() });
     } finally {
         tokenStorage.clearTokens();
     }
@@ -87,7 +72,7 @@ export async function logout(): Promise<void> {
 
 /** POST /api/auth/password/reset/ */
 export async function requestPasswordReset(email: string): Promise<void> {
-    await authHttp.post('auth/password/reset/', { email });
+    await apiClient.post('auth/password/reset/', { email });
 }
 
 /** POST /api/auth/password/reset/confirm/ */
@@ -97,28 +82,28 @@ export async function resetPassword(data: {
     password: string;
     password_confirm: string;
 }): Promise<void> {
-    await authHttp.post('auth/password/reset/confirm/', data);
+    await apiClient.post('auth/password/reset/confirm/', data);
 }
 
 /** POST /api/auth/registration/verify-email/ */
 export async function verifyEmail(key: string): Promise<void> {
-    await authHttp.post('auth/registration/verify-email/', { key });
+    await apiClient.post('auth/registration/verify-email/', { key });
 }
 
 /** POST /api/auth/registration/resend-email/ */
 export async function resendEmail(email: string): Promise<void> {
-    await authHttp.post('auth/registration/resend-email/', { email });
+    await apiClient.post('auth/registration/resend-email/', { email });
 }
 
 /** GET /api/auth/profile/ */
 export async function getCurrentUser(): Promise<any> {
-    const { data } = await authHttp.get('auth/profile/');
+    const { data } = await apiClient.get('auth/profile/');
     return data;
 }
 
 /** PATCH /api/auth/profile/update/ */
 export async function updateProfile(profileData: any): Promise<any> {
-    const { data } = await authHttp.patch('auth/profile/update/', profileData);
+    const { data } = await apiClient.patch('auth/profile/update/', profileData);
     return data;
 }
 
@@ -128,18 +113,18 @@ export async function changePassword(data: {
     new_password1: string;
     new_password2: string;
 }): Promise<void> {
-    await authHttp.post('auth/password/change/', data);
+    await apiClient.post('auth/password/change/', data);
 }
 
 /** DELETE /api/auth/delete-account/ */
 export async function deleteAccount(): Promise<void> {
-    await authHttp.delete('auth/delete-account/');
+    await apiClient.delete('auth/delete-account/');
     tokenStorage.clearTokens();
 }
 
 /** GET /api/auth/active-sessions/ */
 export async function getActiveSessions(): Promise<any> {
-    const { data } = await authHttp.get('auth/active-sessions/');
+    const { data } = await apiClient.get('auth/active-sessions/');
     return data;
 }
 
@@ -147,7 +132,7 @@ export async function getActiveSessions(): Promise<any> {
 export async function refreshToken(): Promise<string> {
     const refresh = tokenStorage.getRefresh();
     if (!refresh) throw new Error('No refresh token');
-    const { data } = await authHttp.post('auth/token/refresh/', { refresh });
+    const { data } = await apiClient.post('auth/token/refresh/', { refresh });
     tokenStorage.setTokens(data.access, refresh);
     return data.access;
 }
@@ -157,7 +142,7 @@ export async function verifyToken(): Promise<boolean> {
     try {
         const token = tokenStorage.getAccess();
         if (!token) return false;
-        await authHttp.post('auth/token/verify/', { token });
+        await apiClient.post('auth/token/verify/', { token });
         return true;
     } catch {
         return false;

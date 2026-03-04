@@ -20,7 +20,7 @@ import {
     AuthInput,
     AuthButton,
 } from './AuthCard';
-import { login } from '@/lib/api/authClient';
+import { useAuthStore } from '@/lib/store/authStore';
 import { routes } from '@/lib/config/routes';
 
 const loginSchema = z.object({
@@ -33,6 +33,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
     const router = useRouter();
+    const login = useAuthStore((state) => state.login);
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -52,8 +53,18 @@ export function LoginForm() {
     const onSubmit = async (data: LoginFormData) => {
         setServerError(null);
         try {
-            await login({ email: data.email, password: data.password });
-            router.push(routes.dashboard.home);
+            // Use auth store login which updates state
+            await login(data.email, data.password);
+
+            // Check for redirect query parameter
+            const searchParams = new URLSearchParams(window.location.search);
+            const redirect = searchParams.get('redirect');
+
+            if (redirect && redirect.startsWith('/')) {
+                router.push(redirect);
+            } else {
+                router.push(routes.dashboard.home);
+            }
         } catch (err: any) {
             setServerError(
                 err?.response?.data?.non_field_errors?.[0] ??
@@ -112,14 +123,14 @@ export function LoginForm() {
 
                 {/* Remember me + Forgot password */}
                 <div className="flex items-center justify-between">
-                    <label className="flex cursor-pointer items-center gap-2">
-                        <input
-                            {...register('rememberMe')}
-                            type="checkbox"
-                            className="h-4 w-4 rounded border-[rgb(var(--border))] accent-[rgb(var(--primary))]"
-                        />
-                        <span className="text-sm text-[rgb(var(--muted-foreground))]">Remember me</span>
-                    </label>
+                    {/*<label className="flex cursor-pointer items-center gap-2">*/}
+                    {/*    <input*/}
+                    {/*        {...register('rememberMe')}*/}
+                    {/*        type="checkbox"*/}
+                    {/*        className="h-4 w-4 rounded border-[rgb(var(--border))] accent-[rgb(var(--primary))]"*/}
+                    {/*    />*/}
+                    {/*    <span className="text-sm text-[rgb(var(--muted-foreground))]">Remember me</span>*/}
+                    {/*</label>*/}
                     <Link
                         href={routes.auth.forgotPassword}
                         className="text-sm font-medium text-[rgb(var(--primary))] hover:underline underline-offset-2 transition-colors"

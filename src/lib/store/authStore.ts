@@ -15,8 +15,8 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (data: {
     email: string;
-    password: string;
-    password_confirm: string;
+    password1: string;
+    password2: string;
     first_name?: string;
     last_name?: string;
   }) => Promise<void>;

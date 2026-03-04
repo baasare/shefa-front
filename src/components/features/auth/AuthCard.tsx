@@ -4,7 +4,11 @@
  * Consistent: width, padding, shadow, border, radius, background.
  */
 
+'use client';
+
 import { cn } from '@/lib/utils/cn';
+import { redirectToGoogleAuth } from '@/lib/api/googleAuth';
+import { forwardRef } from 'react';
 
 interface AuthCardProps {
     title: string;
@@ -62,9 +66,19 @@ export function AuthCard({
 
 /** Google OAuth Button — shared across LoginForm and RegisterForm */
 export function GoogleOAuthButton({ label = 'Continue with Google' }: { label?: string }) {
+    const handleGoogleLogin = () => {
+        try {
+            redirectToGoogleAuth();
+        } catch (error) {
+            console.error('Google OAuth error:', error);
+            alert('Google Sign-In is not configured. Please contact support.');
+        }
+    };
+
     return (
         <button
             type="button"
+            onClick={handleGoogleLogin}
             className="flex w-full items-center justify-center gap-3 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-4 h-12 text-sm font-medium text-[rgb(var(--foreground))] hover:bg-[rgb(var(--muted))] focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] transition-all duration-[var(--transition-fast)]"
         >
             {/* Google G icon */}
@@ -117,8 +131,6 @@ export function FormField({ label, error, children, required }: FormFieldProps) 
 }
 
 /** Standard text Input styled with design tokens */
-import { forwardRef } from 'react';
-
 export const AuthInput = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
     ({ className, ...props }, ref) => {
         return (

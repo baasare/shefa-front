@@ -20,7 +20,7 @@ import {
     AuthInput,
     AuthButton,
 } from './AuthCard';
-import { register as registerUser } from '@/lib/api/authClient';
+import { useAuthStore } from '@/lib/store/authStore';
 import { routes } from '@/lib/config/routes';
 
 const registerSchema = z
@@ -44,6 +44,7 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export function RegisterForm() {
     const router = useRouter();
+    const registerUser = useAuthStore((state) => state.register);
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
@@ -58,6 +59,7 @@ export function RegisterForm() {
     const onSubmit = async (data: RegisterFormData) => {
         setServerError(null);
         try {
+            // Use auth store register which updates state
             await registerUser({
                 email: data.email,
                 password1: data.password,
@@ -71,7 +73,8 @@ export function RegisterForm() {
             const errData = err?.response?.data;
             const firstError =
                 errData?.email?.[0] ??
-                errData?.password?.[0] ??
+                errData?.password1?.[0] ??
+                errData?.password2?.[0] ??
                 errData?.non_field_errors?.[0] ??
                 'Registration failed. Please try again.';
             setServerError(firstError);
