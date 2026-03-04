@@ -1,79 +1,27 @@
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Dashboard — ShefaFx',
-  description: 'Your AI trading dashboard.',
-};
+import { useEffect, useState } from 'react';
+import { portfolios, strategies as strategiesApi, orders as ordersApi } from '@/lib/api';
+import type { Portfolio } from '@/lib/api/portfolios';
+import type { Strategy } from '@/lib/api/strategies';
+import type { Order } from '@/lib/api/orders';
 
-const stats = [
-  {
-    label: 'Portfolio Value',
-    value: '$47,230.50',
-    change: '+12.4%',
-    changeLabel: 'vs last month',
-    positive: true,
-  },
-  {
-    label: "Today's P&L",
-    value: '+$840.25',
-    change: '+1.81%',
-    changeLabel: 'today',
-    positive: true,
-  },
-  {
-    label: 'Active Strategies',
-    value: '3',
-    change: '1 paused',
-    changeLabel: '',
-    positive: null,
-  },
-  {
-    label: 'Pending Approvals',
-    value: '2',
-    change: 'Review required',
-    changeLabel: '',
-    positive: false,
-    badge: true,
-  },
-];
+interface DashboardStats {
+  portfolioValue: string;
+  portfolioChange: string;
+  todayPnl: string;
+  todayPnlPercent: string;
+  activeStrategies: number;
+  pausedStrategies: number;
+  pendingApprovals: number;
+}
 
-const strategies = [
-  {
-    name: 'Momentum Trend',
-    status: 'Running',
-    pnl: '+$1,234',
-    winRate: '68%',
-    positive: true,
-  },
-  {
-    name: 'Mean Reversion',
-    status: 'Running',
-    pnl: '+$562',
-    winRate: '72%',
-    positive: true,
-  },
-  {
-    name: 'ML Sentiment',
-    status: 'Paused',
-    pnl: '-$128',
-    winRate: '61%',
-    positive: false,
-  },
-];
-
-const recentOrders = [
-  { symbol: 'AAPL', side: 'Buy', qty: 10, price: '$182.50', status: 'Filled' },
-  { symbol: 'BTC', side: 'Buy', qty: 0.25, price: '$61,200', status: 'Filled' },
-  { symbol: 'TSLA', side: 'Sell', qty: 5, price: '$248.30', status: 'Pending' },
-  { symbol: 'ETH', side: 'Buy', qty: 2, price: '$3,450', status: 'Cancelled' },
-];
-
-const agentActivity = [
-  { agent: 'Analysis Agent', action: 'Completed AAPL sentiment analysis', time: '2m ago', status: 'done' },
-  { agent: 'Trade Agent', action: 'Executed AAPL Buy order — 10 shares', time: '5m ago', status: 'done' },
-  { agent: 'Risk Agent', action: 'Portfolio drawdown within limits', time: '12m ago', status: 'done' },
-  { agent: 'Approval Agent', action: 'TSLA Sell waiting for your approval', time: '18m ago', status: 'pending' },
-];
+interface AgentActivity {
+  agent: string;
+  action: string;
+  time: string;
+  status: 'done' | 'pending';
+}
 
 const statusColors: Record<string, string> = {
   Filled: 'text-[rgb(var(--success))] bg-[rgb(var(--success))]/10',
@@ -87,6 +35,121 @@ const agentStatusColors: Record<string, string> = {
 };
 
 export default function DashboardPage() {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [strategiesList, setStrategiesList] = useState<Strategy[]>([]);
+  const [recentOrdersList, setRecentOrdersList] = useState<Order[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch all data in parallel
+        const [portfoliosList, strategiesData, ordersData, pendingApprovals] = await Promise.all([
+          portfolios.getPortfolios(),
+          strategiesApi.getStrategies(),
+          ordersApi.getOrders({ limit: 5 } as any),
+          ordersApi.getPendingApprovals(),
+        ]);
+
+        // Calculate stats from portfolio data
+        const activePortfolio = portfoliosList.find(p => p.is_active) || portfoliosList[0];
+
+        if (activePortfolio) {
+          const portfolioValue = parseFloat(activePortfolio.current_equity || '0');
+          const initialCapital = parseFloat(activePortfolio.initial_capital || '0');
+          const totalPnl = parseFloat(activePortfolio.total_pl || '0');
+          const totalPnlPercent = parseFloat(activePortfolio.total_pl_percentage || '0');
+
+          // For "today's P&L" we'd need snapshots - for now use total
+          const todayPnl = totalPnl;
+          const todayPnlPercent = totalPnlPercent;
+
+          setStats({
+            portfolioValue: `$${portfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            portfolioChange: `${totalPnlPercent >= 0 ? '+' : ''}${totalPnlPercent.toFixed(2)}%`,
+            todayPnl: `${todayPnl >= 0 ? '+' : ''}$${Math.abs(todayPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+            todayPnlPercent: `${todayPnlPercent >= 0 ? '+' : ''}${todayPnlPercent.toFixed(2)}%`,
+            activeStrategies: strategiesData.filter(s => s.status === 'active').length,
+            pausedStrategies: strategiesData.filter(s => s.status === 'paused').length,
+            pendingApprovals: pendingApprovals.length,
+          });
+        }
+
+        setStrategiesList(strategiesData.slice(0, 3)); // Top 3 strategies
+        setRecentOrdersList(ordersData.slice(0, 4)); // Recent 4 orders
+      } catch (err: any) {
+        console.error('Failed to fetch dashboard data:', err);
+        setError(err.message || 'Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[rgb(var(--primary))] mx-auto mb-4"></div>
+          <p className="text-sm text-[rgb(var(--muted-foreground))]">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-xl border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 p-6">
+        <h3 className="text-lg font-semibold text-[rgb(var(--destructive))] mb-2">Error Loading Dashboard</h3>
+        <p className="text-sm text-[rgb(var(--destructive))]/80">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-4 px-4 py-2 bg-[rgb(var(--destructive))] text-white rounded-lg text-sm font-medium hover:opacity-90"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  const statsCards = [
+    {
+      label: 'Portfolio Value',
+      value: stats?.portfolioValue || '$0.00',
+      change: stats?.portfolioChange || '0%',
+      changeLabel: 'all time',
+      positive: parseFloat(stats?.portfolioChange || '0') >= 0,
+    },
+    {
+      label: "Today's P&L",
+      value: stats?.todayPnl || '$0.00',
+      change: stats?.todayPnlPercent || '0%',
+      changeLabel: 'today',
+      positive: parseFloat(stats?.todayPnl || '0') >= 0,
+    },
+    {
+      label: 'Active Strategies',
+      value: String(stats?.activeStrategies || 0),
+      change: stats?.pausedStrategies ? `${stats.pausedStrategies} paused` : 'All active',
+      changeLabel: '',
+      positive: null,
+    },
+    {
+      label: 'Pending Approvals',
+      value: String(stats?.pendingApprovals || 0),
+      change: stats?.pendingApprovals ? 'Review required' : 'None pending',
+      changeLabel: '',
+      positive: !stats?.pendingApprovals,
+      badge: true,
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -104,7 +167,7 @@ export default function DashboardPage() {
 
       {/* Stat cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
+        {statsCards.map((stat) => (
           <div
             key={stat.label}
             className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5"
@@ -236,32 +299,47 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[rgb(var(--border))]">
-              {strategies.map((s) => (
-                <tr key={s.name} className="hover:bg-[rgb(var(--muted))]/30 transition-colors">
-                  <td className="px-5 py-3.5 font-medium text-[rgb(var(--foreground))]">{s.name}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-1 ${s.status === 'Running'
-                        ? 'bg-[rgb(var(--success))]/10 text-[rgb(var(--success))]'
-                        : 'bg-[rgb(var(--muted))] text-[rgb(var(--muted-foreground))]'
+              {strategiesList.length > 0 ? (
+                strategiesList.map((s) => (
+                  <tr key={s.id} className="hover:bg-[rgb(var(--muted))]/30 transition-colors">
+                    <td className="px-5 py-3.5 font-medium text-[rgb(var(--foreground))]">{s.name}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-1 ${
+                        s.status === 'active'
+                          ? 'bg-[rgb(var(--success))]/10 text-[rgb(var(--success))]'
+                          : s.status === 'paused'
+                          ? 'bg-[rgb(var(--warning))]/10 text-[rgb(var(--warning))]'
+                          : 'bg-[rgb(var(--muted))] text-[rgb(var(--muted-foreground))]'
                       }`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${s.status === 'Running' ? 'bg-[rgb(var(--success))] animate-pulse' : 'bg-[rgb(var(--muted-foreground))]'}`} />
-                      {s.status}
-                    </span>
-                  </td>
-                  <td className={`px-5 py-3.5 font-mono font-semibold ${s.positive ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'}`}>
-                    {s.pnl}
-                  </td>
-                  <td className="px-5 py-3.5 text-[rgb(var(--foreground))]">{s.winRate}</td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex gap-2">
-                      <button className="text-xs text-[rgb(var(--primary))] hover:underline">Edit</button>
-                      <button className="text-xs text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))]">
-                        {s.status === 'Running' ? 'Pause' : 'Resume'}
-                      </button>
-                    </div>
+                        <span className={`h-1.5 w-1.5 rounded-full ${
+                          s.status === 'active' ? 'bg-[rgb(var(--success))] animate-pulse' : 'bg-[rgb(var(--muted-foreground))]'
+                        }`} />
+                        {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 font-mono text-[rgb(var(--muted-foreground))]">
+                      N/A
+                    </td>
+                    <td className="px-5 py-3.5 text-[rgb(var(--foreground))]">N/A</td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex gap-2">
+                        <a href={`/strategies/${s.id}/edit`} className="text-xs text-[rgb(var(--primary))] hover:underline">
+                          Edit
+                        </a>
+                        <button className="text-xs text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))]">
+                          {s.status === 'active' ? 'Pause' : 'Resume'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-[rgb(var(--muted-foreground))]">
+                    No active strategies. <a href="/strategies/create" className="text-[rgb(var(--primary))] hover:underline">Create one</a>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -287,23 +365,37 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[rgb(var(--border))]">
-              {recentOrders.map((order) => (
-                <tr key={`${order.symbol}-${order.side}`} className="hover:bg-[rgb(var(--muted))]/30 transition-colors">
-                  <td className="px-5 py-3.5 font-mono font-semibold text-[rgb(var(--foreground))]">{order.symbol}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`font-medium ${order.side === 'Buy' ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'}`}>
-                      {order.side}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5 text-[rgb(var(--foreground))]">{order.qty}</td>
-                  <td className="px-5 py-3.5 font-mono text-[rgb(var(--foreground))]">{order.price}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${statusColors[order.status] ?? ''}`}>
-                      {order.status}
-                    </span>
+              {recentOrdersList.length > 0 ? (
+                recentOrdersList.map((order) => (
+                  <tr key={order.id} className="hover:bg-[rgb(var(--muted))]/30 transition-colors">
+                    <td className="px-5 py-3.5 font-mono font-semibold text-[rgb(var(--foreground))]">{order.symbol}</td>
+                    <td className="px-5 py-3.5">
+                      <span className={`font-medium ${order.side === 'buy' ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'}`}>
+                        {order.side.charAt(0).toUpperCase() + order.side.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3.5 text-[rgb(var(--foreground))]">{order.quantity}</td>
+                    <td className="px-5 py-3.5 font-mono text-[rgb(var(--foreground))]">
+                      {order.price ? `$${parseFloat(order.price).toFixed(2)}` : 'Market'}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${
+                        order.status === 'filled' ? statusColors['Filled'] :
+                        order.status === 'pending_approval' || order.status === 'submitted' ? statusColors['Pending'] :
+                        statusColors['Cancelled']
+                      }`}>
+                        {order.status.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-5 py-8 text-center text-sm text-[rgb(var(--muted-foreground))]">
+                    No recent orders
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
