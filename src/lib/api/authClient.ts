@@ -81,10 +81,14 @@ export async function requestPasswordReset(email: string): Promise<void> {
 export async function resetPassword(data: {
     uid: string;
     token: string;
-    password: string;
-    password_confirm: string;
+    new_password1: string;
+    new_password2: string;
 }): Promise<void> {
-    await apiClient.post('auth/password/reset/confirm/', data);
+        await axios.post(`${API_BASE}auth/password/reset/confirm/`, data, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 }
 
 /** POST /api/auth/registration/verify-email/ */

@@ -60,13 +60,13 @@ export function ForgotPasswordForm() {
                         Didn't receive it? Check your spam folder.
                     </p>
                 </div>
-                <Link
-                    href={routes.auth.login}
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[rgb(var(--primary))] hover:underline underline-offset-2"
-                >
-                    <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />
-                    Back to Log In
-                </Link>
+                {/*<Link*/}
+                {/*    href={routes.auth.login}*/}
+                {/*    className="inline-flex items-center gap-1.5 text-sm font-medium text-[rgb(var(--primary))] hover:underline underline-offset-2"*/}
+                {/*>*/}
+                {/*    <ArrowLeft className="h-3.5 w-3.5" strokeWidth={2} />*/}
+                {/*    Back to Log In*/}
+                {/*</Link>*/}
             </div>
         );
     }
@@ -99,16 +99,6 @@ export function ForgotPasswordForm() {
                     Send Reset Link
                 </AuthButton>
             </form>
-
-            <div className="text-center pt-2">
-                <Link
-                    href={routes.auth.login}
-                    className="inline-flex items-center gap-1.5 text-sm text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))] transition-colors"
-                >
-                    <ArrowLeft className="h-3.5 w-3.5" strokeWidth={1.5} />
-                    Back to Log In
-                </Link>
-            </div>
         </div>
     );
 }

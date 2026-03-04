@@ -33,15 +33,21 @@ const resetSchema = z
 
 type ResetFormData = z.infer<typeof resetSchema>;
 
-export function ResetPasswordForm() {
+interface ResetPasswordFormProps {
+    uid?: string;
+    token?: string;
+}
+
+export function ResetPasswordForm({ uid: uidProp, token: tokenProp }: ResetPasswordFormProps = {}) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [success, setSuccess] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
 
-    const uid = searchParams.get('uid') ?? '';
-    const token = searchParams.get('token') ?? '';
+    // Support both URL params and search params for flexibility
+    const uid = uidProp ?? searchParams.get('uid') ?? '';
+    const token = tokenProp ?? searchParams.get('token') ?? '';
 
     const {
         register,
@@ -59,11 +65,22 @@ export function ResetPasswordForm() {
             await resetPassword({ uid, token, ...data });
             setSuccess(true);
         } catch (err: any) {
-            setServerError(
-                err?.response?.data?.token?.[0] ??
-                err?.response?.data?.new_password2?.[0] ??
-                'Reset failed. The link may have expired.'
-            );
+            // Handle different error responses from the backend
+            const errorData = err?.response?.data;
+            if (errorData) {
+                // Check for specific field errors
+                const errorMessage =
+                    errorData.token?.[0] ||
+                    errorData.uid?.[0] ||
+                    errorData.new_password1?.[0] ||
+                    errorData.new_password2?.[0] ||
+                    errorData.non_field_errors?.[0] ||
+                    errorData.detail ||
+                    'Password reset failed. The link may have expired.';
+                setServerError(errorMessage);
+            } else {
+                setServerError('Unable to reset password. Please try again or request a new reset link.');
+            }
         }
     };
 
@@ -96,8 +113,15 @@ export function ResetPasswordForm() {
             </p>
 
             {serverError && (
-                <div className="rounded-lg border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 px-4 py-3 text-sm text-[rgb(var(--destructive))]">
-                    {serverError}
+                <div className="rounded-lg border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 px-4 py-3 text-sm">
+                    <p className="text-[rgb(var(--destructive))] font-medium">{serverError}</p>
+                    {(serverError.toLowerCase().includes('expired') || serverError.toLowerCase().includes('invalid')) && (
+                        <p className="mt-2 text-[rgb(var(--destructive))]/80">
+                            <Link href={routes.auth.forgotPassword} className="underline hover:no-underline font-medium">
+                                Request a new password reset link
+                            </Link>
+                        </p>
+                    )}
                 </div>
             )}
 
