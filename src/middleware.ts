@@ -28,6 +28,7 @@ const authPaths = [
   '/forgot-password',
   '/reset-password',
   '/verify-email',
+  '/confirm-email',
   '/callback',
 ];
 

@@ -5,6 +5,8 @@
  */
 
 import apiClient from './client';
+import axios from 'axios';
+import { API_BASE } from './config';
 
 // ─── Token Management ─────────────────────────────────────────────────────────
 
@@ -87,12 +89,20 @@ export async function resetPassword(data: {
 
 /** POST /api/auth/registration/verify-email/ */
 export async function verifyEmail(key: string): Promise<void> {
-    await apiClient.post('auth/registration/verify-email/', { key });
+    await axios.post(`${API_BASE}auth/registration/verify-email/`, { key }, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 }
 
 /** POST /api/auth/registration/resend-email/ */
 export async function resendEmail(email: string): Promise<void> {
-    await apiClient.post('auth/registration/resend-email/', { email });
+    await axios.post(`${API_BASE}auth/registration/resend-email/`, { email }, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 }
 
 /** GET /api/auth/profile/ */

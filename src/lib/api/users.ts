@@ -74,7 +74,7 @@ export interface UpdateProfileData {
  * Get current user profile
  */
 export async function getUserProfile(): Promise<User> {
-  const response = await client.get<User>('/auth/profile/');
+  const response = await client.get<User>('/api/v1/users/auth/profile/');
   return response.data;
 }
 
@@ -82,7 +82,7 @@ export async function getUserProfile(): Promise<User> {
  * Update user profile
  */
 export async function updateUserProfile(data: UpdateUserData): Promise<User> {
-  const response = await client.patch<User>('/auth/profile/update/', data);
+  const response = await client.patch<User>('/api/v1/users/auth/profile/update/', data);
   return response.data;
 }
 
@@ -90,7 +90,7 @@ export async function updateUserProfile(data: UpdateUserData): Promise<User> {
  * Delete user account
  */
 export async function deleteAccount(): Promise<{ message: string }> {
-  const response = await client.delete<{ message: string }>('/auth/delete-account/');
+  const response = await client.delete<{ message: string }>('/api/v1/users/auth/delete-account/');
   return response.data;
 }
 
@@ -110,6 +110,18 @@ export async function getActiveSessions(): Promise<{
     ip_address: string;
   }>;
 }> {
-  const response = await client.get('/auth/active-sessions/');
+  const response = await client.get('/api/v1/users/auth/active-sessions/');
+  return response.data;
+}
+
+/**
+ * Change password
+ */
+export async function changePassword(data: {
+  old_password: string;
+  new_password1: string;
+  new_password2: string;
+}): Promise<{ detail: string }> {
+  const response = await client.post<{ detail: string }>('/api/v1/users/auth/password/change/', data);
   return response.data;
 }
