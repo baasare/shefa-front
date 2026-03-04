@@ -34,6 +34,13 @@ const agentStatusColors: Record<string, string> = {
   pending: 'bg-[rgb(var(--warning))] animate-pulse',
 };
 
+const agentActivity: AgentActivity[] = [
+  { agent: 'Market Scanner', action: 'Identified 3 momentum opportunities in tech sector', time: '2 min ago', status: 'done' },
+  { agent: 'Risk Manager', action: 'Analyzing portfolio exposure across positions', time: '5 min ago', status: 'pending' },
+  { agent: 'Signal Generator', action: 'Generated buy signal for AAPL at $150.25', time: '12 min ago', status: 'done' },
+  { agent: 'Order Manager', action: 'Executed 2 trades, awaiting 1 approval', time: '18 min ago', status: 'done' },
+];
+
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats | null>(null);

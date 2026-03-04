@@ -7,16 +7,24 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { marketingNav } from '@/lib/config/navigation';
 import { routes } from '@/lib/config/routes';
 import { cn } from '@/lib/utils/cn';
+import { tokenStorage } from '@/lib/api/authClient';
 
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = tokenStorage.getAccess();
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
     <header className="sticky top-0 z-[var(--z-sticky,100)] w-full border-b border-[rgb(var(--border))] bg-[rgb(var(--background))]/95 backdrop-blur supports-[backdrop-filter]:bg-[rgb(var(--background))]/80">
@@ -41,19 +49,30 @@ export function Header() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
 
-          <Link
-            href={routes.auth.login}
-            className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))] rounded-lg transition-all duration-[var(--transition-fast)]"
-          >
-            Log In
-          </Link>
+          {isAuthenticated ? (
+            <Link
+              href={routes.dashboard.home}
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[rgb(var(--primary))] px-4 py-2 text-sm font-semibold text-[rgb(var(--primary-foreground))] shadow-[var(--shadow-sm)] hover:opacity-90 hover:shadow-[var(--shadow)] transition-all duration-[var(--transition-fast)]"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                href={routes.auth.login}
+                className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))] rounded-lg transition-all duration-[var(--transition-fast)]"
+              >
+                Log In
+              </Link>
 
-          <Link
-            href={routes.auth.register}
-            className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[rgb(var(--primary))] px-4 py-2 text-sm font-semibold text-[rgb(var(--primary-foreground))] shadow-[var(--shadow-sm)] hover:opacity-90 hover:shadow-[var(--shadow)] transition-all duration-[var(--transition-fast)]"
-          >
-            Get Started
-          </Link>
+              <Link
+                href={routes.auth.register}
+                className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[rgb(var(--primary))] px-4 py-2 text-sm font-semibold text-[rgb(var(--primary-foreground))] shadow-[var(--shadow-sm)] hover:opacity-90 hover:shadow-[var(--shadow)] transition-all duration-[var(--transition-fast)]"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
@@ -85,18 +104,29 @@ export function Header() {
               </Link>
             ))}
             <div className="border-t border-[rgb(var(--border))] mt-2 pt-3 flex flex-col gap-2">
-              <Link
-                href={routes.auth.login}
-                className="px-3 py-2.5 text-sm font-medium text-center text-[rgb(var(--muted-foreground))] rounded-lg border border-[rgb(var(--border))] hover:bg-[rgb(var(--muted))] transition-colors"
-              >
-                Log In
-              </Link>
-              <Link
-                href={routes.auth.register}
-                className="px-3 py-2.5 text-sm font-semibold text-center rounded-lg bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:opacity-90 transition-opacity"
-              >
-                Get Started
-              </Link>
+              {isAuthenticated ? (
+                <Link
+                  href={routes.dashboard.home}
+                  className="px-3 py-2.5 text-sm font-semibold text-center rounded-lg bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:opacity-90 transition-opacity"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link
+                    href={routes.auth.login}
+                    className="px-3 py-2.5 text-sm font-medium text-center text-[rgb(var(--muted-foreground))] rounded-lg border border-[rgb(var(--border))] hover:bg-[rgb(var(--muted))] transition-colors"
+                  >
+                    Log In
+                  </Link>
+                  <Link
+                    href={routes.auth.register}
+                    className="px-3 py-2.5 text-sm font-semibold text-center rounded-lg bg-[rgb(var(--primary))] text-[rgb(var(--primary-foreground))] hover:opacity-90 transition-opacity"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
             </div>
           </nav>
         </div>

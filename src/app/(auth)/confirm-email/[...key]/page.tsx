@@ -73,12 +73,12 @@ export default function ConfirmEmailPage() {
                                 <CheckCircle2 className="h-8 w-8 text-green-500" />
                             </div>
 
-                            <Link href={routes.auth.login} className="w-full">
-                                <AuthButton className="w-full">
-                                    Continue to Login
-                                    <ArrowRight className="h-4 w-4 ml-2" />
-                                </AuthButton>
-                            </Link>
+                            {/*<Link href={routes.auth.login} className="w-full">*/}
+                            {/*    <AuthButton className="w-full">*/}
+                            {/*        Continue to Login*/}
+                            {/*        <ArrowRight className="h-4 w-4 ml-2" />*/}
+                            {/*    </AuthButton>*/}
+                            {/*</Link>*/}
                         </div>
                     )}
 

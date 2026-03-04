@@ -1,11 +1,12 @@
 'use client';
 
 import {useState, useEffect} from 'react';
-import {Shield, Key, Smartphone, AlertTriangle, Check, X, AlertCircle, Trash2} from 'lucide-react';
+import {Shield, Key, Smartphone, AlertTriangle, Check, AlertCircle, Trash2} from 'lucide-react';
 import {changePassword, getActiveSessions, deleteAccount} from '@/lib/api/users';
 import {useRouter} from 'next/navigation';
 import {settingsNav} from "@/lib/config/navigation";
 import Link from "next/link";
+import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import {cn} from "@/lib/utils/cn";
@@ -167,7 +168,7 @@ export default function SecuritySettingsPage() {
                 </nav>
             </aside>
 
-            <div className="flex-1 space-y-6">
+            <div className="space-y-6 max-w-2xl">
                 <div>
                     <h1 className="text-2xl font-bold text-[rgb(var(--foreground))]">Security</h1>
                     <p className="text-sm text-[rgb(var(--muted-foreground))] mt-1">Manage your password and two-factor

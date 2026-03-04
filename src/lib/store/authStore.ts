@@ -6,6 +6,7 @@ interface User {
   email: string;
   first_name: string;
   last_name: string;
+  onboarding_completed?: boolean;
 }
 
 interface AuthState {
@@ -22,6 +23,7 @@ interface AuthState {
   }) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+  completeOnboarding: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -69,6 +71,17 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ user: null, isAuthenticated: false, isLoading: false });
+    }
+  },
+
+  completeOnboarding: async () => {
+    set({ isLoading: true });
+    try {
+      const updatedUser = await authClient.completeOnboarding();
+      set({ user: updatedUser, isLoading: false });
+    } catch (error) {
+      set({ isLoading: false });
+      throw error;
     }
   },
 }));

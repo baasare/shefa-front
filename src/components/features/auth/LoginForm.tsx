@@ -56,11 +56,18 @@ export function LoginForm() {
             // Use auth store login which updates state
             await login(data.email, data.password);
 
+            // Get user from auth store to check onboarding status
+            const userState = useAuthStore.getState();
+            const user = userState.user;
+
             // Check for redirect query parameter
             const searchParams = new URLSearchParams(window.location.search);
             const redirect = searchParams.get('redirect');
 
-            if (redirect && redirect.startsWith('/')) {
+            // If user hasn't completed onboarding, redirect to welcome
+            if (user && !user.onboarding_completed) {
+                router.push(routes.onboarding.welcome);
+            } else if (redirect && redirect.startsWith('/')) {
                 router.push(redirect);
             } else {
                 router.push(routes.dashboard.home);

@@ -117,6 +117,12 @@ export async function updateProfile(profileData: any): Promise<any> {
     return data;
 }
 
+/** PATCH /api/auth/profile/update/ - Mark onboarding as completed */
+export async function completeOnboarding(): Promise<any> {
+    const { data } = await apiClient.patch('auth/profile/update/', { onboarding_completed: true });
+    return data;
+}
+
 /** POST /api/auth/password/change/ */
 export async function changePassword(data: {
     old_password: string;

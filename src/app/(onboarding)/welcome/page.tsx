@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Brain, ShieldCheck, Zap } from 'lucide-react';
 import { routes } from '@/lib/config/routes';
+import { useAuthStore } from '@/lib/store/authStore';
 
 const features = [
   {
@@ -37,9 +38,22 @@ const features = [
 
 export default function WelcomePage() {
   const router = useRouter();
+  const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
+  const [isSkipping, setIsSkipping] = useState(false);
 
   const handleGetStarted = () => {
     router.push(routes.onboarding.riskProfile);
+  };
+
+  const handleSkipSetup = async () => {
+    setIsSkipping(true);
+    try {
+      await completeOnboarding();
+      router.push(routes.dashboard.home);
+    } catch (error) {
+      console.error('Failed to complete onboarding:', error);
+      setIsSkipping(false);
+    }
   };
 
   return (
@@ -100,12 +114,13 @@ export default function WelcomePage() {
           Get Started
           <ArrowRight className="h-4 w-4" strokeWidth={2} />
         </button>
-        <Link
-          href={routes.dashboard.home}
-          className="text-sm text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))] transition-colors"
+        <button
+          onClick={handleSkipSetup}
+          disabled={isSkipping}
+          className="text-sm text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Skip setup, go to dashboard
-        </Link>
+          {isSkipping ? 'Skipping...' : 'Skip setup, go to dashboard'}
+        </button>
       </div>
 
       {/* Time estimate */}

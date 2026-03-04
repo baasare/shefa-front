@@ -69,7 +69,8 @@ export interface PortfolioSnapshot {
 /** GET /api/portfolios/ */
 export async function getPortfolios(): Promise<Portfolio[]> {
     const { data } = await portfolioHttp.get('portfolios/');
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/portfolios/{id}/ */
@@ -125,7 +126,8 @@ export async function deactivatePortfolio(id: string): Promise<Portfolio> {
 export async function getPositions(portfolioId?: string): Promise<Position[]> {
     const params = portfolioId ? { portfolio: portfolioId } : {};
     const { data } = await portfolioHttp.get('portfolios/positions/', { params });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/portfolios/positions/{id}/ */
@@ -169,5 +171,6 @@ export async function getPositionsBySymbol(symbol: string): Promise<Position[]> 
 export async function getPortfolioSnapshots(portfolioId?: string): Promise<PortfolioSnapshot[]> {
     const params = portfolioId ? { portfolio: portfolioId } : {};
     const { data } = await portfolioHttp.get('portfolios/snapshots/', { params });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }

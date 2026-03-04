@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { CheckCircle2, ExternalLink } from 'lucide-react';
 import { routes } from '@/lib/config/routes';
+import { useAuthStore } from '@/lib/store/authStore';
 
 const completedSteps = [
     { label: 'Risk profile configured', delay: 0 },
@@ -13,13 +14,27 @@ const completedSteps = [
 ];
 
 export default function CompletePage() {
+    const router = useRouter();
+    const completeOnboarding = useAuthStore((state) => state.completeOnboarding);
     const [visibleCount, setVisibleCount] = useState(0);
+    const [isCompleting, setIsCompleting] = useState(false);
 
     useEffect(() => {
         completedSteps.forEach((_, i) => {
             setTimeout(() => setVisibleCount(i + 1), completedSteps[i].delay + 300);
         });
     }, []);
+
+    const handleGoToDashboard = async () => {
+        setIsCompleting(true);
+        try {
+            await completeOnboarding();
+            router.push(routes.dashboard.home);
+        } catch (error) {
+            console.error('Failed to complete onboarding:', error);
+            setIsCompleting(false);
+        }
+    };
 
     return (
         <div className="flex flex-col items-center text-center space-y-8 py-4">
@@ -67,13 +82,14 @@ export default function CompletePage() {
 
             {/* CTA */}
             <div className="w-full max-w-xs space-y-3">
-                <Link
-                    href={routes.dashboard.home}
-                    className="flex w-full items-center justify-center gap-2 rounded-full bg-[rgb(var(--primary))] px-8 py-3.5 text-sm font-semibold text-white shadow-[var(--shadow-glow)] transition-all hover:opacity-90 hover:scale-[1.02]"
+                <button
+                    onClick={handleGoToDashboard}
+                    disabled={isCompleting}
+                    className="flex w-full items-center justify-center gap-2 rounded-full bg-[rgb(var(--primary))] px-8 py-3.5 text-sm font-semibold text-white shadow-[var(--shadow-glow)] transition-all hover:opacity-90 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Go to Dashboard
+                    {isCompleting ? 'Loading...' : 'Go to Dashboard'}
                     <ExternalLink className="h-4 w-4" strokeWidth={2} />
-                </Link>
+                </button>
                 <p className="text-xs text-[rgb(var(--muted-foreground))]">
                     You can always update your settings from the dashboard
                 </p>

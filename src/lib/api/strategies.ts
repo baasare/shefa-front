@@ -91,7 +91,8 @@ export interface Watchlist {
 
 export async function getStrategies(): Promise<Strategy[]> {
     const { data } = await strategyHttp.get('strategies/');
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 export async function getStrategy(id: string): Promise<Strategy> {
@@ -139,7 +140,8 @@ export async function runBacktest(id: string, params: {
 
 export async function getActiveStrategies(): Promise<Strategy[]> {
     const { data } = await strategyHttp.get('strategies/active/');
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 // ─── Backtest Management ──────────────────────────────────────────────────────
@@ -147,7 +149,8 @@ export async function getActiveStrategies(): Promise<Strategy[]> {
 export async function getBacktests(strategyId?: string): Promise<Backtest[]> {
     const params = strategyId ? { strategy: strategyId } : {};
     const { data } = await strategyHttp.get('strategies/backtests/', { params });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 export async function getBacktest(id: string): Promise<Backtest> {
@@ -169,7 +172,8 @@ export async function getStrategyTemplates(filters?: {
     featured?: boolean;
 }): Promise<StrategyTemplate[]> {
     const { data } = await strategyHttp.get('strategies/templates/', { params: filters });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 export async function getStrategyTemplate(id: string): Promise<StrategyTemplate> {
@@ -188,14 +192,16 @@ export async function createStrategyFromTemplate(id: string, templateData: {
 
 export async function getFeaturedTemplates(): Promise<StrategyTemplate[]> {
     const { data } = await strategyHttp.get('strategies/templates/featured/');
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 // ─── Watchlist Management ─────────────────────────────────────────────────────
 
 export async function getWatchlists(): Promise<Watchlist[]> {
     const { data } = await strategyHttp.get('strategies/watchlists/');
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 export async function getWatchlist(id: string): Promise<Watchlist> {

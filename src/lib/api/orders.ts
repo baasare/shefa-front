@@ -73,9 +73,11 @@ export async function getOrders(filters?: {
     strategy?: string;
     status?: string;
     symbol?: string;
+    limit?: number;
 }): Promise<Order[]> {
     const { data } = await ordersHttp.get('orders/', { params: filters });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/orders/{id}/ */
@@ -116,7 +118,8 @@ export async function cancelOrder(id: string): Promise<Order> {
 /** GET /api/orders/pending_approval/ */
 export async function getPendingApprovals(): Promise<Order[]> {
     const { data } = await ordersHttp.get('orders/pending_approval/');
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/orders/by_symbol/?symbol=AAPL */
@@ -124,7 +127,8 @@ export async function getOrdersBySymbol(symbol: string): Promise<Order[]> {
     const { data } = await ordersHttp.get('orders/by_symbol/', {
         params: { symbol }
     });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/orders/{id}/audit_trail/ */
@@ -141,7 +145,8 @@ export async function getTrades(filters?: {
     symbol?: string;
 }): Promise<Trade[]> {
     const { data } = await ordersHttp.get('orders/trades/', { params: filters });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/orders/trades/{id}/ */
@@ -155,7 +160,8 @@ export async function getTradesBySymbol(symbol: string): Promise<Trade[]> {
     const { data } = await ordersHttp.get('orders/trades/by_symbol/', {
         params: { symbol }
     });
-    return data;
+    // Handle paginated response from DRF
+    return Array.isArray(data) ? data : data.results || [];
 }
 
 /** GET /api/orders/trades/performance/ */

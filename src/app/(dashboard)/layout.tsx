@@ -24,15 +24,21 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, user } = useAuthStore();
 
   useEffect(() => {
     // Redirect to login if not authenticated after loading completes
     if (!isLoading && !isAuthenticated) {
       const loginUrl = `${routes.auth.login}?redirect=${encodeURIComponent(pathname)}`;
       router.push(loginUrl);
+      return;
     }
-  }, [isAuthenticated, isLoading, router, pathname]);
+
+    // Redirect to onboarding if user hasn't completed it
+    if (!isLoading && isAuthenticated && user && !user.onboarding_completed) {
+      router.push(routes.onboarding.welcome);
+    }
+  }, [isAuthenticated, isLoading, user, router, pathname]);
 
   // Show loading spinner while checking auth
   if (isLoading) {
