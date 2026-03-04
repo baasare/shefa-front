@@ -271,17 +271,17 @@ export default function SecuritySettingsPage() {
                         </div>
                         <span
                             className="rounded-full bg-[rgb(var(--warning))]/10 border border-[rgb(var(--warning))]/20 px-2.5 py-1 text-xs font-medium text-[rgb(var(--warning))]">
-                        Not Enabled
+                        Coming soon{/*Not Enabled*/}
                     </span>
                     </div>
                     <p className="text-sm text-[rgb(var(--muted-foreground))] mb-4">
                         Add an extra layer of security to your account. We recommend using an authenticator app like
                         Google Authenticator or Authy.
                     </p>
-                    <button
-                        className="rounded-full bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-all">
-                        Enable 2FA
-                    </button>
+                    {/*<button*/}
+                    {/*    className="rounded-full bg-[rgb(var(--primary))] px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-all">*/}
+                    {/*    Enable 2FA*/}
+                    {/*</button>*/}
                 </div>
 
                 {/* Sessions */}

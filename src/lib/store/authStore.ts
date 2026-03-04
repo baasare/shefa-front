@@ -35,7 +35,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isLoading: true });
     try {
       const response = await authClient.login({ email, password });
-      set({ user: response.user, isAuthenticated: true, isLoading: false });
+      // Fetch fresh user profile to get onboarding_completed status
+      const user = await authClient.getCurrentUser();
+      set({ user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       throw error;
