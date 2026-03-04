@@ -45,8 +45,8 @@ export interface LoginCredentials {
 
 export interface RegisterData {
     email: string;
-    password: string;
-    password_confirm: string;
+    password1: string;
+    password2: string;
     first_name?: string;
     last_name?: string;
 }
@@ -103,6 +103,11 @@ export async function resetPassword(data: {
 /** POST /api/auth/registration/verify-email/ */
 export async function verifyEmail(key: string): Promise<void> {
     await authHttp.post('auth/registration/verify-email/', { key });
+}
+
+/** POST /api/auth/registration/resend-email/ */
+export async function resendEmail(email: string): Promise<void> {
+    await authHttp.post('auth/registration/resend-email/', { email });
 }
 
 /** GET /api/auth/profile/ */

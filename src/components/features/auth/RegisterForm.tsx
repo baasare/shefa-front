@@ -60,13 +60,13 @@ export function RegisterForm() {
         try {
             await registerUser({
                 email: data.email,
-                password: data.password,
-                password_confirm: data.password_confirm,
+                password1: data.password,
+                password2: data.password_confirm,
                 first_name: data.first_name,
                 last_name: data.last_name,
             });
-            // After registration, go to onboarding (separate from registration)
-            router.push(routes.onboarding.welcome);
+            // After registration, go to verify email page
+            router.push(`${routes.auth.verifyEmail}?email=${encodeURIComponent(data.email)}`);
         } catch (err: any) {
             const errData = err?.response?.data;
             const firstError =

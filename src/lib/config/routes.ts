@@ -29,6 +29,7 @@ export const routes = {
     forgotPassword: '/forgot-password',
     resetPassword: '/reset-password',
     verifyEmail: '/verify-email',
+    verifyEmailConfirm: (key: string) => `/verify-email/${key}`,
     callback: '/callback',
   },
 
