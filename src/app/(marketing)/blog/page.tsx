@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Blog Index Marketing Page
  * Editorial hub with featured post, category filters, and post grid

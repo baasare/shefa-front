@@ -1,3 +1,5 @@
+'use client';
+
 /**
  * Blog Post Detail Page
  * Editorial post template with sidebar, author card, and related posts

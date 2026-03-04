@@ -26,7 +26,7 @@ export default function LandingPage() {
               {/* Badge */}
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-primary/10 border border-blue-100 dark:border-primary/20 text-primary text-xs font-semibold uppercase tracking-wide mb-2">
                 <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                v2.0 Now Available
+                Beta — Paper Trading Only
               </div>
 
               {/* Hero Title */}
