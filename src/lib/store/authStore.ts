@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { authApi } from '../api';
+import * as authClient from '../api/authClient';
 
 interface User {
   id: number;
@@ -16,6 +16,7 @@ interface AuthState {
   register: (data: {
     email: string;
     password: string;
+    password_confirm: string;
     first_name?: string;
     last_name?: string;
   }) => Promise<void>;
@@ -31,7 +32,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email, password) => {
     set({ isLoading: true });
     try {
-      const response = await authApi.login({ email, password });
+      const response = await authClient.login({ email, password });
       set({ user: response.user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
@@ -42,7 +43,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (data) => {
     set({ isLoading: true });
     try {
-      const response = await authApi.register(data);
+      const response = await authClient.register(data);
       set({ user: response.user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
@@ -53,7 +54,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: async () => {
     set({ isLoading: true });
     try {
-      await authApi.logout();
+      await authClient.logout();
       set({ user: null, isAuthenticated: false, isLoading: false });
     } catch (error) {
       set({ isLoading: false });
@@ -64,7 +65,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   checkAuth: async () => {
     set({ isLoading: true });
     try {
-      const user = await authApi.getCurrentUser();
+      const user = await authClient.getCurrentUser();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (error) {
       set({ user: null, isAuthenticated: false, isLoading: false });

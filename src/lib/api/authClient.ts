@@ -6,7 +6,7 @@
 
 import axios from 'axios';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const authHttp = axios.create({
     baseURL: API_BASE,
@@ -16,15 +16,15 @@ const authHttp = axios.create({
 // ─── Token Management ─────────────────────────────────────────────────────────
 
 export const tokenStorage = {
-    getAccess: () => (typeof window !== 'undefined' ? localStorage.getItem('shefa_access') : null),
-    getRefresh: () => (typeof window !== 'undefined' ? localStorage.getItem('shefa_refresh') : null),
+    getAccess: () => (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null),
+    getRefresh: () => (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null),
     setTokens: (access: string, refresh: string) => {
-        localStorage.setItem('shefa_access', access);
-        localStorage.setItem('shefa_refresh', refresh);
+        localStorage.setItem('access_token', access);
+        localStorage.setItem('refresh_token', refresh);
     },
     clearTokens: () => {
-        localStorage.removeItem('shefa_access');
-        localStorage.removeItem('shefa_refresh');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
     },
 };
 
@@ -45,8 +45,8 @@ export interface LoginCredentials {
 
 export interface RegisterData {
     email: string;
-    password1: string;
-    password2: string;
+    password: string;
+    password_confirm: string;
     first_name?: string;
     last_name?: string;
 }
@@ -64,14 +64,14 @@ export interface AuthResponse {
 
 /** POST /api/auth/login/ */
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const { data } = await authHttp.post<AuthResponse>('/auth/login/', credentials);
+    const { data } = await authHttp.post<AuthResponse>('auth/login/', credentials);
     tokenStorage.setTokens(data.access, data.refresh);
     return data;
 }
 
 /** POST /api/auth/registration/ */
 export async function register(userData: RegisterData): Promise<AuthResponse> {
-    const { data } = await authHttp.post<AuthResponse>('/auth/registration/', userData);
+    const { data } = await authHttp.post<AuthResponse>('auth/registration/', userData);
     tokenStorage.setTokens(data.access, data.refresh);
     return data;
 }
@@ -79,7 +79,7 @@ export async function register(userData: RegisterData): Promise<AuthResponse> {
 /** POST /api/auth/logout/ */
 export async function logout(): Promise<void> {
     try {
-        await authHttp.post('/auth/logout/', { refresh: tokenStorage.getRefresh() });
+        await authHttp.post('auth/logout/', { refresh: tokenStorage.getRefresh() });
     } finally {
         tokenStorage.clearTokens();
     }
@@ -87,33 +87,33 @@ export async function logout(): Promise<void> {
 
 /** POST /api/auth/password/reset/ */
 export async function requestPasswordReset(email: string): Promise<void> {
-    await authHttp.post('/auth/password/reset/', { email });
+    await authHttp.post('auth/password/reset/', { email });
 }
 
 /** POST /api/auth/password/reset/confirm/ */
 export async function resetPassword(data: {
     uid: string;
     token: string;
-    new_password1: string;
-    new_password2: string;
+    password: string;
+    password_confirm: string;
 }): Promise<void> {
-    await authHttp.post('/auth/password/reset/confirm/', data);
+    await authHttp.post('auth/password/reset/confirm/', data);
 }
 
 /** POST /api/auth/registration/verify-email/ */
 export async function verifyEmail(key: string): Promise<void> {
-    await authHttp.post('/auth/registration/verify-email/', { key });
+    await authHttp.post('auth/registration/verify-email/', { key });
 }
 
-/** GET /api/users/auth/profile/ */
+/** GET /api/auth/profile/ */
 export async function getCurrentUser(): Promise<any> {
-    const { data } = await authHttp.get('/users/auth/profile/');
+    const { data } = await authHttp.get('auth/profile/');
     return data;
 }
 
-/** PATCH /api/users/auth/profile/update/ */
+/** PATCH /api/auth/profile/update/ */
 export async function updateProfile(profileData: any): Promise<any> {
-    const { data } = await authHttp.patch('/users/auth/profile/update/', profileData);
+    const { data } = await authHttp.patch('auth/profile/update/', profileData);
     return data;
 }
 
@@ -123,18 +123,18 @@ export async function changePassword(data: {
     new_password1: string;
     new_password2: string;
 }): Promise<void> {
-    await authHttp.post('/auth/password/change/', data);
+    await authHttp.post('auth/password/change/', data);
 }
 
-/** DELETE /api/users/auth/delete-account/ */
+/** DELETE /api/auth/delete-account/ */
 export async function deleteAccount(): Promise<void> {
-    await authHttp.delete('/users/auth/delete-account/');
+    await authHttp.delete('auth/delete-account/');
     tokenStorage.clearTokens();
 }
 
-/** GET /api/users/auth/active-sessions/ */
+/** GET /api/auth/active-sessions/ */
 export async function getActiveSessions(): Promise<any> {
-    const { data} = await authHttp.get('/users/auth/active-sessions/');
+    const { data } = await authHttp.get('auth/active-sessions/');
     return data;
 }
 
@@ -142,7 +142,7 @@ export async function getActiveSessions(): Promise<any> {
 export async function refreshToken(): Promise<string> {
     const refresh = tokenStorage.getRefresh();
     if (!refresh) throw new Error('No refresh token');
-    const { data } = await authHttp.post('/auth/token/refresh/', { refresh });
+    const { data } = await authHttp.post('auth/token/refresh/', { refresh });
     tokenStorage.setTokens(data.access, refresh);
     return data.access;
 }
@@ -152,7 +152,7 @@ export async function verifyToken(): Promise<boolean> {
     try {
         const token = tokenStorage.getAccess();
         if (!token) return false;
-        await authHttp.post('/auth/token/verify/', { token });
+        await authHttp.post('auth/token/verify/', { token });
         return true;
     } catch {
         return false;

@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { tokenStorage } from './authClient';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const ordersHttp = axios.create({
     baseURL: API_BASE,
@@ -67,69 +67,69 @@ export interface ApprovalDecision {
 
 // ─── Order Management ─────────────────────────────────────────────────────────
 
-/** GET /api/orders/orders/ */
+/** GET /api/orders/ */
 export async function getOrders(filters?: {
     portfolio?: string;
     strategy?: string;
     status?: string;
     symbol?: string;
 }): Promise<Order[]> {
-    const { data } = await ordersHttp.get('/orders/orders/', { params: filters });
+    const { data } = await ordersHttp.get('orders/', { params: filters });
     return data;
 }
 
-/** GET /api/orders/orders/{id}/ */
+/** GET /api/orders/{id}/ */
 export async function getOrder(id: string): Promise<Order> {
-    const { data } = await ordersHttp.get(`/orders/orders/${id}/`);
+    const { data } = await ordersHttp.get(`orders/${id}/`);
     return data;
 }
 
-/** POST /api/orders/orders/ */
+/** POST /api/orders/ */
 export async function createOrder(order: Partial<Order>): Promise<Order> {
-    const { data } = await ordersHttp.post('/orders/orders/', order);
+    const { data } = await ordersHttp.post('orders/', order);
     return data;
 }
 
-/** PATCH /api/orders/orders/{id}/ */
+/** PATCH /api/orders/{id}/ */
 export async function updateOrder(id: string, order: Partial<Order>): Promise<Order> {
-    const { data } = await ordersHttp.patch(`/orders/orders/${id}/`, order);
+    const { data } = await ordersHttp.patch(`orders/${id}/`, order);
     return data;
 }
 
-/** DELETE /api/orders/orders/{id}/ */
+/** DELETE /api/orders/{id}/ */
 export async function deleteOrder(id: string): Promise<void> {
-    await ordersHttp.delete(`/orders/orders/${id}/`);
+    await ordersHttp.delete(`orders/${id}/`);
 }
 
-/** POST /api/orders/orders/{id}/approve_order/ */
+/** POST /api/orders/{id}/approve_order/ */
 export async function approveOrder(id: string, decision: ApprovalDecision): Promise<Order> {
-    const { data } = await ordersHttp.post(`/orders/orders/${id}/approve_order/`, decision);
+    const { data } = await ordersHttp.post(`orders/${id}/approve_order/`, decision);
     return data;
 }
 
-/** POST /api/orders/orders/{id}/cancel/ */
+/** POST /api/orders/{id}/cancel/ */
 export async function cancelOrder(id: string): Promise<Order> {
-    const { data } = await ordersHttp.post(`/orders/orders/${id}/cancel/`);
+    const { data } = await ordersHttp.post(`orders/${id}/cancel/`);
     return data;
 }
 
-/** GET /api/orders/orders/pending_approval/ */
+/** GET /api/orders/pending_approval/ */
 export async function getPendingApprovals(): Promise<Order[]> {
-    const { data } = await ordersHttp.get('/orders/orders/pending_approval/');
+    const { data } = await ordersHttp.get('orders/pending_approval/');
     return data;
 }
 
-/** GET /api/orders/orders/by_symbol/?symbol=AAPL */
+/** GET /api/orders/by_symbol/?symbol=AAPL */
 export async function getOrdersBySymbol(symbol: string): Promise<Order[]> {
-    const { data } = await ordersHttp.get('/orders/orders/by_symbol/', {
+    const { data } = await ordersHttp.get('orders/by_symbol/', {
         params: { symbol }
     });
     return data;
 }
 
-/** GET /api/orders/orders/{id}/audit_trail/ */
+/** GET /api/orders/{id}/audit_trail/ */
 export async function getAuditTrail(id: string): Promise<any> {
-    const { data } = await ordersHttp.get(`/orders/orders/${id}/audit_trail/`);
+    const { data } = await ordersHttp.get(`orders/${id}/audit_trail/`);
     return data;
 }
 
@@ -140,19 +140,19 @@ export async function getTrades(filters?: {
     order?: string;
     symbol?: string;
 }): Promise<Trade[]> {
-    const { data } = await ordersHttp.get('/orders/trades/', { params: filters });
+    const { data } = await ordersHttp.get('orders/trades/', { params: filters });
     return data;
 }
 
 /** GET /api/orders/trades/{id}/ */
 export async function getTrade(id: string): Promise<Trade> {
-    const { data } = await ordersHttp.get(`/orders/trades/${id}/`);
+    const { data } = await ordersHttp.get(`orders/trades/${id}/`);
     return data;
 }
 
 /** GET /api/orders/trades/by_symbol/?symbol=AAPL */
 export async function getTradesBySymbol(symbol: string): Promise<Trade[]> {
-    const { data } = await ordersHttp.get('/orders/trades/by_symbol/', {
+    const { data } = await ordersHttp.get('orders/trades/by_symbol/', {
         params: { symbol }
     });
     return data;
@@ -160,6 +160,6 @@ export async function getTradesBySymbol(symbol: string): Promise<Trade[]> {
 
 /** GET /api/orders/trades/performance/ */
 export async function getTradingPerformance(): Promise<any> {
-    const { data } = await ordersHttp.get('/orders/trades/performance/');
+    const { data } = await ordersHttp.get('orders/trades/performance/');
     return data;
 }

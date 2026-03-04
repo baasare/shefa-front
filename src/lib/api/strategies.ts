@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { tokenStorage } from './authClient';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const strategyHttp = axios.create({
     baseURL: API_BASE,
@@ -90,41 +90,41 @@ export interface Watchlist {
 // ─── Strategy Management ──────────────────────────────────────────────────────
 
 export async function getStrategies(): Promise<Strategy[]> {
-    const { data } = await strategyHttp.get('/strategies/strategies/');
+    const { data } = await strategyHttp.get('strategies/');
     return data;
 }
 
 export async function getStrategy(id: string): Promise<Strategy> {
-    const { data } = await strategyHttp.get(`/strategies/strategies/${id}/`);
+    const { data } = await strategyHttp.get(`strategies/${id}/`);
     return data;
 }
 
 export async function createStrategy(strategy: Partial<Strategy>): Promise<Strategy> {
-    const { data } = await strategyHttp.post('/strategies/strategies/', strategy);
+    const { data } = await strategyHttp.post('strategies/', strategy);
     return data;
 }
 
 export async function updateStrategy(id: string, strategy: Partial<Strategy>): Promise<Strategy> {
-    const { data } = await strategyHttp.patch(`/strategies/strategies/${id}/`, strategy);
+    const { data } = await strategyHttp.patch(`strategies/${id}/`, strategy);
     return data;
 }
 
 export async function deleteStrategy(id: string): Promise<void> {
-    await strategyHttp.delete(`/strategies/strategies/${id}/`);
+    await strategyHttp.delete(`strategies/${id}/`);
 }
 
 export async function activateStrategy(id: string): Promise<Strategy> {
-    const { data } = await strategyHttp.post(`/strategies/strategies/${id}/activate/`);
+    const { data } = await strategyHttp.post(`strategies/${id}/activate/`);
     return data;
 }
 
 export async function pauseStrategy(id: string): Promise<Strategy> {
-    const { data } = await strategyHttp.post(`/strategies/strategies/${id}/pause/`);
+    const { data } = await strategyHttp.post(`strategies/${id}/pause/`);
     return data;
 }
 
 export async function deactivateStrategy(id: string): Promise<Strategy> {
-    const { data } = await strategyHttp.post(`/strategies/strategies/${id}/deactivate/`);
+    const { data } = await strategyHttp.post(`strategies/${id}/deactivate/`);
     return data;
 }
 
@@ -133,12 +133,12 @@ export async function runBacktest(id: string, params: {
     end_date: string;
     initial_capital?: number;
 }): Promise<Backtest> {
-    const { data } = await strategyHttp.post(`/strategies/strategies/${id}/run_backtest/`, params);
+    const { data } = await strategyHttp.post(`strategies/${id}/run_backtest/`, params);
     return data;
 }
 
 export async function getActiveStrategies(): Promise<Strategy[]> {
-    const { data } = await strategyHttp.get('/strategies/strategies/active/');
+    const { data } = await strategyHttp.get('strategies/active/');
     return data;
 }
 
@@ -146,17 +146,17 @@ export async function getActiveStrategies(): Promise<Strategy[]> {
 
 export async function getBacktests(strategyId?: string): Promise<Backtest[]> {
     const params = strategyId ? { strategy: strategyId } : {};
-    const { data } = await strategyHttp.get('/strategies/backtests/', { params });
+    const { data } = await strategyHttp.get('strategies/backtests/', { params });
     return data;
 }
 
 export async function getBacktest(id: string): Promise<Backtest> {
-    const { data } = await strategyHttp.get(`/strategies/backtests/${id}/`);
+    const { data } = await strategyHttp.get(`strategies/backtests/${id}/`);
     return data;
 }
 
 export async function getEquityCurve(id: string): Promise<any[]> {
-    const { data } = await strategyHttp.get(`/strategies/backtests/${id}/equity_curve/`);
+    const { data } = await strategyHttp.get(`strategies/backtests/${id}/equity_curve/`);
     return data;
 }
 
@@ -168,12 +168,12 @@ export async function getStrategyTemplates(filters?: {
     tags?: string;
     featured?: boolean;
 }): Promise<StrategyTemplate[]> {
-    const { data } = await strategyHttp.get('/strategies/templates/', { params: filters });
+    const { data } = await strategyHttp.get('strategies/templates/', { params: filters });
     return data;
 }
 
 export async function getStrategyTemplate(id: string): Promise<StrategyTemplate> {
-    const { data } = await strategyHttp.get(`/strategies/templates/${id}/`);
+    const { data } = await strategyHttp.get(`strategies/templates/${id}/`);
     return data;
 }
 
@@ -182,58 +182,58 @@ export async function createStrategyFromTemplate(id: string, templateData: {
     portfolio: string;
     symbols?: string[];
 }): Promise<Strategy> {
-    const { data } = await strategyHttp.post(`/strategies/templates/${id}/create_strategy/`, templateData);
+    const { data } = await strategyHttp.post(`strategies/templates/${id}/create_strategy/`, templateData);
     return data;
 }
 
 export async function getFeaturedTemplates(): Promise<StrategyTemplate[]> {
-    const { data } = await strategyHttp.get('/strategies/templates/featured/');
+    const { data } = await strategyHttp.get('strategies/templates/featured/');
     return data;
 }
 
 // ─── Watchlist Management ─────────────────────────────────────────────────────
 
 export async function getWatchlists(): Promise<Watchlist[]> {
-    const { data } = await strategyHttp.get('/strategies/watchlists/');
+    const { data } = await strategyHttp.get('strategies/watchlists/');
     return data;
 }
 
 export async function getWatchlist(id: string): Promise<Watchlist> {
-    const { data } = await strategyHttp.get(`/strategies/watchlists/${id}/`);
+    const { data } = await strategyHttp.get(`strategies/watchlists/${id}/`);
     return data;
 }
 
 export async function createWatchlist(watchlist: Partial<Watchlist>): Promise<Watchlist> {
-    const { data } = await strategyHttp.post('/strategies/watchlists/', watchlist);
+    const { data } = await strategyHttp.post('strategies/watchlists/', watchlist);
     return data;
 }
 
 export async function updateWatchlist(id: string, watchlist: Partial<Watchlist>): Promise<Watchlist> {
-    const { data } = await strategyHttp.patch(`/strategies/watchlists/${id}/`, watchlist);
+    const { data } = await strategyHttp.patch(`strategies/watchlists/${id}/`, watchlist);
     return data;
 }
 
 export async function deleteWatchlist(id: string): Promise<void> {
-    await strategyHttp.delete(`/strategies/watchlists/${id}/`);
+    await strategyHttp.delete(`strategies/watchlists/${id}/`);
 }
 
 export async function addSymbolToWatchlist(id: string, symbol: string): Promise<Watchlist> {
-    const { data } = await strategyHttp.post(`/strategies/watchlists/${id}/add_symbol/`, { symbol });
+    const { data } = await strategyHttp.post(`strategies/watchlists/${id}/add_symbol/`, { symbol });
     return data;
 }
 
 export async function removeSymbolFromWatchlist(id: string, symbol: string): Promise<Watchlist> {
-    const { data } = await strategyHttp.post(`/strategies/watchlists/${id}/remove_symbol/`, { symbol });
+    const { data } = await strategyHttp.post(`strategies/watchlists/${id}/remove_symbol/`, { symbol });
     return data;
 }
 
 export async function setDefaultWatchlist(id: string): Promise<Watchlist> {
-    const { data } = await strategyHttp.post(`/strategies/watchlists/${id}/set_default/`);
+    const { data } = await strategyHttp.post(`strategies/watchlists/${id}/set_default/`);
     return data;
 }
 
 export async function getDefaultWatchlist(): Promise<Watchlist> {
-    const { data } = await strategyHttp.get('/strategies/watchlists/default/');
+    const { data } = await strategyHttp.get('strategies/watchlists/default/');
     return data;
 }
 

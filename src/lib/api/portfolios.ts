@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { tokenStorage } from './authClient';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const portfolioHttp = axios.create({
     baseURL: API_BASE,
@@ -66,56 +66,56 @@ export interface PortfolioSnapshot {
     total_pl_percentage: string;
 }
 
-/** GET /api/portfolios/portfolios/ */
+/** GET /api/portfolios/ */
 export async function getPortfolios(): Promise<Portfolio[]> {
-    const { data } = await portfolioHttp.get('/portfolios/portfolios/');
+    const { data } = await portfolioHttp.get('portfolios/');
     return data;
 }
 
-/** GET /api/portfolios/portfolios/{id}/ */
+/** GET /api/portfolios/{id}/ */
 export async function getPortfolio(id: string): Promise<Portfolio> {
-    const { data } = await portfolioHttp.get(`/portfolios/portfolios/${id}/`);
+    const { data } = await portfolioHttp.get(`portfolios/${id}/`);
     return data;
 }
 
-/** POST /api/portfolios/portfolios/ */
+/** POST /api/portfolios/ */
 export async function createPortfolio(portfolio: Partial<Portfolio>): Promise<Portfolio> {
-    const { data } = await portfolioHttp.post('/portfolios/portfolios/', portfolio);
+    const { data } = await portfolioHttp.post('portfolios/', portfolio);
     return data;
 }
 
-/** PATCH /api/portfolios/portfolios/{id}/ */
+/** PATCH /api/portfolios/{id}/ */
 export async function updatePortfolio(id: string, portfolio: Partial<Portfolio>): Promise<Portfolio> {
-    const { data } = await portfolioHttp.patch(`/portfolios/portfolios/${id}/`, portfolio);
+    const { data } = await portfolioHttp.patch(`portfolios/${id}/`, portfolio);
     return data;
 }
 
-/** DELETE /api/portfolios/portfolios/{id}/ */
+/** DELETE /api/portfolios/{id}/ */
 export async function deletePortfolio(id: string): Promise<void> {
-    await portfolioHttp.delete(`/portfolios/portfolios/${id}/`);
+    await portfolioHttp.delete(`portfolios/${id}/`);
 }
 
-/** POST /api/portfolios/portfolios/{id}/calculate_equity/ */
+/** POST /api/portfolios/{id}/calculate_equity/ */
 export async function calculateEquity(id: string): Promise<Portfolio> {
-    const { data } = await portfolioHttp.post(`/portfolios/portfolios/${id}/calculate_equity/`);
+    const { data } = await portfolioHttp.post(`portfolios/${id}/calculate_equity/`);
     return data;
 }
 
-/** GET /api/portfolios/portfolios/{id}/performance/ */
+/** GET /api/portfolios/{id}/performance/ */
 export async function getPortfolioPerformance(id: string): Promise<PortfolioSnapshot[]> {
-    const { data } = await portfolioHttp.get(`/portfolios/portfolios/${id}/performance/`);
+    const { data } = await portfolioHttp.get(`portfolios/${id}/performance/`);
     return data;
 }
 
-/** POST /api/portfolios/portfolios/{id}/activate/ */
+/** POST /api/portfolios/{id}/activate/ */
 export async function activatePortfolio(id: string): Promise<Portfolio> {
-    const { data } = await portfolioHttp.post(`/portfolios/portfolios/${id}/activate/`);
+    const { data } = await portfolioHttp.post(`portfolios/${id}/activate/`);
     return data;
 }
 
-/** POST /api/portfolios/portfolios/{id}/deactivate/ */
+/** POST /api/portfolios/{id}/deactivate/ */
 export async function deactivatePortfolio(id: string): Promise<Portfolio> {
-    const { data } = await portfolioHttp.post(`/portfolios/portfolios/${id}/deactivate/`);
+    const { data } = await portfolioHttp.post(`portfolios/${id}/deactivate/`);
     return data;
 }
 
@@ -124,42 +124,42 @@ export async function deactivatePortfolio(id: string): Promise<Portfolio> {
 /** GET /api/portfolios/positions/ */
 export async function getPositions(portfolioId?: string): Promise<Position[]> {
     const params = portfolioId ? { portfolio: portfolioId } : {};
-    const { data } = await portfolioHttp.get('/portfolios/positions/', { params });
+    const { data } = await portfolioHttp.get('portfolios/positions/', { params });
     return data;
 }
 
 /** GET /api/portfolios/positions/{id}/ */
 export async function getPosition(id: string): Promise<Position> {
-    const { data } = await portfolioHttp.get(`/portfolios/positions/${id}/`);
+    const { data } = await portfolioHttp.get(`portfolios/positions/${id}/`);
     return data;
 }
 
 /** POST /api/portfolios/positions/ */
 export async function createPosition(position: Partial<Position>): Promise<Position> {
-    const { data } = await portfolioHttp.post('/portfolios/positions/', position);
+    const { data } = await portfolioHttp.post('portfolios/positions/', position);
     return data;
 }
 
 /** PATCH /api/portfolios/positions/{id}/ */
 export async function updatePosition(id: string, position: Partial<Position>): Promise<Position> {
-    const { data } = await portfolioHttp.patch(`/portfolios/positions/${id}/`, position);
+    const { data } = await portfolioHttp.patch(`portfolios/positions/${id}/`, position);
     return data;
 }
 
 /** DELETE /api/portfolios/positions/{id}/ */
 export async function deletePosition(id: string): Promise<void> {
-    await portfolioHttp.delete(`/portfolios/positions/${id}/`);
+    await portfolioHttp.delete(`portfolios/positions/${id}/`);
 }
 
 /** POST /api/portfolios/positions/{id}/update_price/ */
 export async function updatePositionPrice(id: string): Promise<Position> {
-    const { data } = await portfolioHttp.post(`/portfolios/positions/${id}/update_price/`);
+    const { data } = await portfolioHttp.post(`portfolios/positions/${id}/update_price/`);
     return data;
 }
 
 /** GET /api/portfolios/positions/by_symbol/?symbol=AAPL */
 export async function getPositionsBySymbol(symbol: string): Promise<Position[]> {
-    const { data } = await portfolioHttp.get('/portfolios/positions/by_symbol/', {
+    const { data } = await portfolioHttp.get('portfolios/positions/by_symbol/', {
         params: { symbol }
     });
     return data;
@@ -168,6 +168,6 @@ export async function getPositionsBySymbol(symbol: string): Promise<Position[]> 
 /** GET /api/portfolios/snapshots/ */
 export async function getPortfolioSnapshots(portfolioId?: string): Promise<PortfolioSnapshot[]> {
     const params = portfolioId ? { portfolio: portfolioId } : {};
-    const { data } = await portfolioHttp.get('/portfolios/snapshots/', { params });
+    const { data } = await portfolioHttp.get('portfolios/snapshots/', { params });
     return data;
 }

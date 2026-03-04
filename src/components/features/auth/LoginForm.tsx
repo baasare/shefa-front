@@ -24,9 +24,9 @@ import { login } from '@/lib/api/authClient';
 import { routes } from '@/lib/config/routes';
 
 const loginSchema = z.object({
-    email: z.string().email('Please enter a valid email address'),
+    email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
-    rememberMe: z.boolean().optional(),
+    rememberMe: z.boolean().optional().default(false),
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;
@@ -42,6 +42,11 @@ export function LoginForm() {
         formState: { errors, isSubmitting },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: '',
+            password: '',
+            rememberMe: false,
+        },
     });
 
     const onSubmit = async (data: LoginFormData) => {

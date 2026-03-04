@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { tokenStorage } from './authClient';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const marketHttp = axios.create({
     baseURL: API_BASE,
@@ -91,19 +91,19 @@ export interface ScreenerFilters {
 
 /** GET /api/market-data/quotes/ */
 export async function getQuotes(): Promise<Quote[]> {
-    const { data } = await marketHttp.get('/market-data/quotes/');
+    const { data } = await marketHttp.get('market-data/quotes/');
     return data;
 }
 
 /** GET /api/market-data/quotes/{id}/ */
 export async function getQuote(id: string): Promise<Quote> {
-    const { data } = await marketHttp.get(`/market-data/quotes/${id}/`);
+    const { data } = await marketHttp.get(`market-data/quotes/${id}/`);
     return data;
 }
 
 /** GET /api/market-data/quotes/by_symbol/?symbol=AAPL&limit=100 */
 export async function getQuotesBySymbol(symbol: string, limit = 100): Promise<Quote[]> {
-    const { data } = await marketHttp.get('/market-data/quotes/by_symbol/', {
+    const { data } = await marketHttp.get('market-data/quotes/by_symbol/', {
         params: { symbol, limit }
     });
     return data;
@@ -113,13 +113,13 @@ export async function getQuotesBySymbol(symbol: string, limit = 100): Promise<Qu
 
 /** GET /api/market-data/indicators/ */
 export async function getIndicators(): Promise<Indicator[]> {
-    const { data } = await marketHttp.get('/market-data/indicators/');
+    const { data } = await marketHttp.get('market-data/indicators/');
     return data;
 }
 
 /** GET /api/market-data/indicators/{id}/ */
 export async function getIndicator(id: string): Promise<Indicator> {
-    const { data } = await marketHttp.get(`/market-data/indicators/${id}/`);
+    const { data } = await marketHttp.get(`market-data/indicators/${id}/`);
     return data;
 }
 
@@ -128,7 +128,7 @@ export async function getIndicatorsBySymbol(
     symbol: string,
     type?: string
 ): Promise<Indicator[]> {
-    const { data } = await marketHttp.get('/market-data/indicators/by_symbol/', {
+    const { data } = await marketHttp.get('market-data/indicators/by_symbol/', {
         params: { symbol, type }
     });
     return data;
@@ -138,7 +138,7 @@ export async function getIndicatorsBySymbol(
 
 /** GET /api/market-data/screener/ */
 export async function screenStocks(filters?: ScreenerFilters): Promise<StockScreenerItem[]> {
-    const { data } = await marketHttp.get('/market-data/screener/', {
+    const { data } = await marketHttp.get('market-data/screener/', {
         params: filters
     });
     return data;
@@ -146,25 +146,25 @@ export async function screenStocks(filters?: ScreenerFilters): Promise<StockScre
 
 /** GET /api/market-data/screener/{id}/ */
 export async function getStockDetails(id: string): Promise<StockScreenerItem> {
-    const { data } = await marketHttp.get(`/market-data/screener/${id}/`);
+    const { data } = await marketHttp.get(`market-data/screener/${id}/`);
     return data;
 }
 
 /** GET /api/market-data/screener/sectors/ */
 export async function getSectors(): Promise<string[]> {
-    const { data } = await marketHttp.get('/market-data/screener/sectors/');
+    const { data } = await marketHttp.get('market-data/screener/sectors/');
     return data;
 }
 
 /** GET /api/market-data/screener/industries/ */
 export async function getIndustries(): Promise<string[]> {
-    const { data } = await marketHttp.get('/market-data/screener/industries/');
+    const { data } = await marketHttp.get('market-data/screener/industries/');
     return data;
 }
 
 /** GET /api/market-data/screener/top_gainers/?limit=20 */
 export async function getTopGainers(limit = 20): Promise<StockScreenerItem[]> {
-    const { data } = await marketHttp.get('/market-data/screener/top_gainers/', {
+    const { data } = await marketHttp.get('market-data/screener/top_gainers/', {
         params: { limit }
     });
     return data;
@@ -172,7 +172,7 @@ export async function getTopGainers(limit = 20): Promise<StockScreenerItem[]> {
 
 /** GET /api/market-data/screener/top_losers/?limit=20 */
 export async function getTopLosers(limit = 20): Promise<StockScreenerItem[]> {
-    const { data } = await marketHttp.get('/market-data/screener/top_losers/', {
+    const { data } = await marketHttp.get('market-data/screener/top_losers/', {
         params: { limit }
     });
     return data;
@@ -180,7 +180,7 @@ export async function getTopLosers(limit = 20): Promise<StockScreenerItem[]> {
 
 /** GET /api/market-data/screener/most_active/?limit=20 */
 export async function getMostActive(limit = 20): Promise<StockScreenerItem[]> {
-    const { data } = await marketHttp.get('/market-data/screener/most_active/', {
+    const { data } = await marketHttp.get('market-data/screener/most_active/', {
         params: { limit }
     });
     return data;

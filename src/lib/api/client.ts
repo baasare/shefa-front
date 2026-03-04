@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { API_BASE as API_URL } from './config';
 
 class ApiClient {
   private client: AxiosInstance;
@@ -84,7 +84,7 @@ class ApiClient {
     if (!refreshToken) return null;
 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/token/refresh/`, {
+      const response = await axios.post(`${API_URL}auth/token/refresh/`, {
         refresh: refreshToken,
       });
       const { access } = response.data;

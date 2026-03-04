@@ -28,16 +28,16 @@ const registerSchema = z
         first_name: z.string().min(1, 'First name is required'),
         last_name: z.string().min(1, 'Last name is required'),
         email: z.string().email('Please enter a valid email address'),
-        password1: z
+        password: z
             .string()
             .min(8, 'Password must be at least 8 characters')
             .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
             .regex(/[0-9]/, 'Must contain at least one number'),
-        password2: z.string().min(8, 'Please confirm your password'),
+        password_confirm: z.string().min(8, 'Please confirm your password'),
     })
-    .refine((d) => d.password1 === d.password2, {
+    .refine((d) => d.password === d.password_confirm, {
         message: 'Passwords do not match',
-        path: ['password2'],
+        path: ['password_confirm'],
     });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
@@ -60,8 +60,8 @@ export function RegisterForm() {
         try {
             await registerUser({
                 email: data.email,
-                password1: data.password1,
-                password2: data.password2,
+                password: data.password,
+                password_confirm: data.password_confirm,
                 first_name: data.first_name,
                 last_name: data.last_name,
             });
@@ -71,7 +71,7 @@ export function RegisterForm() {
             const errData = err?.response?.data;
             const firstError =
                 errData?.email?.[0] ??
-                errData?.password1?.[0] ??
+                errData?.password?.[0] ??
                 errData?.non_field_errors?.[0] ??
                 'Registration failed. Please try again.';
             setServerError(firstError);
@@ -121,11 +121,11 @@ export function RegisterForm() {
                     />
                 </FormField>
 
-                <FormField label="Password" error={errors.password1?.message} required>
+                <FormField label="Password" error={errors.password?.message} required>
                     <div className="relative">
                         <AuthInput
-                            {...register('password1')}
-                            id="password1"
+                            {...register('password')}
+                            id="password"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Min 8 chars, 1 uppercase, 1 number"
                             autoComplete="new-password"
@@ -146,10 +146,10 @@ export function RegisterForm() {
                     </div>
                 </FormField>
 
-                <FormField label="Confirm Password" error={errors.password2?.message} required>
+                <FormField label="Confirm Password" error={errors.password_confirm?.message} required>
                     <AuthInput
-                        {...register('password2')}
-                        id="password2"
+                        {...register('password_confirm')}
+                        id="password_confirm"
                         type="password"
                         placeholder="Repeat your password"
                         autoComplete="new-password"

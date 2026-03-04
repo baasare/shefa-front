@@ -117,26 +117,29 @@ export function FormField({ label, error, children, required }: FormFieldProps) 
 }
 
 /** Standard text Input styled with design tokens */
-export function AuthInput({
-    className,
-    ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
-    return (
-        <input
-            {...props}
-            className={cn(
-                'w-full h-12 rounded-lg px-4',
-                'bg-[rgb(var(--background))] border border-[rgb(var(--border))]',
-                'text-[rgb(var(--foreground))] text-sm',
-                'placeholder:text-[rgb(var(--muted-foreground))]',
-                'focus:outline-none focus:border-[rgb(var(--primary))] focus:ring-1 focus:ring-[rgb(var(--ring))]',
-                'transition-all duration-[var(--transition-fast)]',
-                'disabled:opacity-50 disabled:cursor-not-allowed',
-                className
-            )}
-        />
-    );
-}
+import { forwardRef } from 'react';
+
+export const AuthInput = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+    ({ className, ...props }, ref) => {
+        return (
+            <input
+                ref={ref}
+                {...props}
+                className={cn(
+                    'w-full h-12 rounded-lg px-4',
+                    'bg-[rgb(var(--background))] border border-[rgb(var(--border))]',
+                    'text-[rgb(var(--foreground))] text-sm',
+                    'placeholder:text-[rgb(var(--muted-foreground))]',
+                    'focus:outline-none focus:border-[rgb(var(--primary))] focus:ring-1 focus:ring-[rgb(var(--ring))]',
+                    'transition-all duration-[var(--transition-fast)]',
+                    'disabled:opacity-50 disabled:cursor-not-allowed',
+                    className
+                )}
+            />
+        );
+    }
+);
+AuthInput.displayName = 'AuthInput';
 
 /** Primary submit button */
 export function AuthButton({

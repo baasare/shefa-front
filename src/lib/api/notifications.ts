@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { tokenStorage } from './authClient';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const notificationsHttp = axios.create({
     baseURL: API_BASE,
@@ -38,53 +38,53 @@ export interface Notification {
 
 // ─── Notification Management ──────────────────────────────────────────────────
 
-/** GET /api/notifications/notifications/ */
+/** GET /api/notifications/ */
 export async function getNotifications(filters?: {
     is_read?: boolean;
     type?: string;
 }): Promise<Notification[]> {
-    const { data } = await notificationsHttp.get('/notifications/notifications/', {
+    const { data } = await notificationsHttp.get('notifications/', {
         params: filters
     });
     return data;
 }
 
-/** GET /api/notifications/notifications/{id}/ */
+/** GET /api/notifications/{id}/ */
 export async function getNotification(id: string): Promise<Notification> {
-    const { data } = await notificationsHttp.get(`/notifications/notifications/${id}/`);
+    const { data } = await notificationsHttp.get(`notifications/${id}/`);
     return data;
 }
 
-/** POST /api/notifications/notifications/ */
+/** POST /api/notifications/ */
 export async function createNotification(notification: Partial<Notification>): Promise<Notification> {
-    const { data } = await notificationsHttp.post('/notifications/notifications/', notification);
+    const { data } = await notificationsHttp.post('notifications/', notification);
     return data;
 }
 
-/** PATCH /api/notifications/notifications/{id}/ */
+/** PATCH /api/notifications/{id}/ */
 export async function updateNotification(id: string, notification: Partial<Notification>): Promise<Notification> {
-    const { data } = await notificationsHttp.patch(`/notifications/notifications/${id}/`, notification);
+    const { data } = await notificationsHttp.patch(`notifications/${id}/`, notification);
     return data;
 }
 
-/** DELETE /api/notifications/notifications/{id}/ */
+/** DELETE /api/notifications/{id}/ */
 export async function deleteNotification(id: string): Promise<void> {
-    await notificationsHttp.delete(`/notifications/notifications/${id}/`);
+    await notificationsHttp.delete(`notifications/${id}/`);
 }
 
-/** POST /api/notifications/notifications/{id}/mark_read/ */
+/** POST /api/notifications/{id}/mark_read/ */
 export async function markAsRead(id: string): Promise<Notification> {
-    const { data} = await notificationsHttp.post(`/notifications/notifications/${id}/mark_read/`);
+    const { data } = await notificationsHttp.post(`notifications/${id}/mark_read/`);
     return data;
 }
 
-/** POST /api/notifications/notifications/mark_all_read/ */
+/** POST /api/notifications/mark_all_read/ */
 export async function markAllAsRead(): Promise<void> {
-    await notificationsHttp.post('/notifications/notifications/mark_all_read/');
+    await notificationsHttp.post('notifications/mark_all_read/');
 }
 
-/** GET /api/notifications/notifications/unread/ */
+/** GET /api/notifications/unread/ */
 export async function getUnreadNotifications(): Promise<Notification[]> {
-    const { data } = await notificationsHttp.get('/notifications/notifications/unread/');
+    const { data } = await notificationsHttp.get('notifications/unread/');
     return data;
 }

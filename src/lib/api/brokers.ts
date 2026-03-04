@@ -6,7 +6,7 @@
 import axios from 'axios';
 import { tokenStorage } from './authClient';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+import { API_BASE } from './config';
 
 const brokersHttp = axios.create({
     baseURL: API_BASE,
@@ -39,36 +39,36 @@ export interface BrokerConnection {
 
 /** GET /api/brokers/connections/ */
 export async function getBrokerConnections(): Promise<BrokerConnection[]> {
-    const { data } = await brokersHttp.get('/brokers/connections/');
+    const { data } = await brokersHttp.get('brokers/connections/');
     return data;
 }
 
 /** GET /api/brokers/connections/{id}/ */
 export async function getBrokerConnection(id: string): Promise<BrokerConnection> {
-    const { data } = await brokersHttp.get(`/brokers/connections/${id}/`);
+    const { data } = await brokersHttp.get(`brokers/connections/${id}/`);
     return data;
 }
 
 /** POST /api/brokers/connections/ */
 export async function createBrokerConnection(connection: Partial<BrokerConnection>): Promise<BrokerConnection> {
-    const { data } = await brokersHttp.post('/brokers/connections/', connection);
+    const { data } = await brokersHttp.post('brokers/connections/', connection);
     return data;
 }
 
 /** PATCH /api/brokers/connections/{id}/ */
 export async function updateBrokerConnection(id: string, connection: Partial<BrokerConnection>): Promise<BrokerConnection> {
-    const { data } = await brokersHttp.patch(`/brokers/connections/${id}/`, connection);
+    const { data } = await brokersHttp.patch(`brokers/connections/${id}/`, connection);
     return data;
 }
 
 /** DELETE /api/brokers/connections/{id}/ */
 export async function deleteBrokerConnection(id: string): Promise<void> {
-    await brokersHttp.delete(`/brokers/connections/${id}/`);
+    await brokersHttp.delete(`brokers/connections/${id}/`);
 }
 
 /** GET /api/brokers/connections/alpaca-auth-url/ */
 export async function getAlpacaAuthUrl(): Promise<{ auth_url: string }> {
-    const { data } = await brokersHttp.get('/brokers/connections/alpaca-auth-url/');
+    const { data } = await brokersHttp.get('brokers/connections/alpaca-auth-url/');
     return data;
 }
 
@@ -78,6 +78,6 @@ export async function testBrokerConnection(id: string): Promise<{
     message: string;
     account_info?: any;
 }> {
-    const { data } = await brokersHttp.post(`/brokers/connections/${id}/test_connection/`);
+    const { data } = await brokersHttp.post(`brokers/connections/${id}/test_connection/`);
     return data;
 }
