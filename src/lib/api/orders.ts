@@ -20,6 +20,13 @@ ordersHttp.interceptors.request.use((config) => {
     return config;
 });
 
+export interface PaginatedResponse<T> {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface Order {
@@ -143,10 +150,18 @@ export async function getAuditTrail(id: string): Promise<any> {
 export async function getTrades(filters?: {
     order?: string;
     symbol?: string;
-}): Promise<Trade[]> {
+    search?: string;
+    ordering?: string;
+    page?: number;
+    page_size?: number;
+    time_period?: string;
+}): Promise<PaginatedResponse<Trade>> {
     const { data } = await ordersHttp.get('orders/trades/', { params: filters });
-    // Handle paginated response from DRF
-    return Array.isArray(data) ? data : data.results || [];
+    // Handle both paginated and non-paginated responses gracefully for backward compatibility
+    if (Array.isArray(data)) {
+        return { count: data.length, next: null, previous: null, results: data };
+    }
+    return data;
 }
 
 /** GET /api/orders/trades/{id}/ */
@@ -168,4 +183,9 @@ export async function getTradesBySymbol(symbol: string): Promise<Trade[]> {
 export async function getTradingPerformance(): Promise<any> {
     const { data } = await ordersHttp.get('orders/trades/performance/');
     return data;
+}
+
+/** DELETE /api/orders/trades/{id}/ */
+export async function deleteTrade(id: string): Promise<void> {
+    await ordersHttp.delete(`orders/trades/${id}/`);
 }
