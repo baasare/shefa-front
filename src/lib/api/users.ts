@@ -125,3 +125,13 @@ export async function changePassword(data: {
   const response = await client.post<{ detail: string }>('/auth/password/change/', data);
   return response.data;
 }
+
+/**
+ * Revoke a session
+ */
+export async function revokeSession(sessionKey: string): Promise<{ message: string }> {
+  const response = await client.post<{ message: string }>('/auth/revoke-session/', {
+    session_key: sessionKey
+  });
+  return response.data;
+}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Shield, Key, Smartphone, AlertTriangle, Check, AlertCircle, Trash2 } from 'lucide-react';
-import { changePassword, getActiveSessions, deleteAccount } from '@/lib/api/users';
+import { changePassword, getActiveSessions, deleteAccount, revokeSession } from '@/lib/api/users';
 import { useRouter } from 'next/navigation';
 import { settingsNav } from "@/lib/config/navigation";
 import Link from "next/link";
@@ -49,6 +49,7 @@ export default function SecuritySettingsPage() {
     const [deleteConfirmText, setDeleteConfirmText] = useState('');
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [deleteError, setDeleteError] = useState<string | null>(null);
+    const [revokingSession, setRevokingSession] = useState<string | null>(null);
 
     useEffect(() => {
         loadActiveSessions();
@@ -131,6 +132,19 @@ export default function SecuritySettingsPage() {
             setDeleteError(err.response?.data?.message || 'Failed to delete account');
         } finally {
             setDeleteLoading(false);
+        }
+    }
+
+    async function handleRevokeSession(sessionKey: string) {
+        try {
+            setRevokingSession(sessionKey);
+            await revokeSession(sessionKey);
+            await loadActiveSessions();
+        } catch (err) {
+            console.error('Error revoking session:', err);
+            setSessionsError('Failed to revoke session');
+        } finally {
+            setRevokingSession(null);
         }
     }
 
@@ -346,8 +360,11 @@ export default function SecuritySettingsPage() {
                                         <span className="text-xs font-medium text-[rgb(var(--success))]">Active</span>
                                     ) : (
                                         <button
-                                            className="text-xs text-[rgb(var(--destructive))] hover:opacity-80 transition-opacity">
-                                            Revoke
+                                            onClick={() => handleRevokeSession(session.session_key)}
+                                            disabled={revokingSession === session.session_key}
+                                            className="text-xs text-[rgb(var(--destructive))] hover:opacity-80 transition-opacity disabled:opacity-50"
+                                        >
+                                            {revokingSession === session.session_key ? 'Revoking...' : 'Revoke'}
                                         </button>
                                     )}
                                 </div>
