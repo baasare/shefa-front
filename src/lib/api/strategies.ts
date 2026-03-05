@@ -89,10 +89,20 @@ export interface Watchlist {
 
 // ─── Strategy Management ──────────────────────────────────────────────────────
 
-export async function getStrategies(): Promise<Strategy[]> {
-    const { data } = await strategyHttp.get('strategies/');
-    // Handle paginated response from DRF
-    return Array.isArray(data) ? data : data.results || [];
+export interface PaginatedResponse<T> {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: T[];
+}
+
+export async function getStrategies(params?: Record<string, any>): Promise<PaginatedResponse<Strategy>> {
+    const { data } = await strategyHttp.get('strategies/', { params });
+    // If not using paginated DRF, mock the structure
+    if (Array.isArray(data)) {
+        return { count: data.length, next: null, previous: null, results: data };
+    }
+    return data;
 }
 
 export async function getStrategy(id: string): Promise<Strategy> {
@@ -170,10 +180,15 @@ export async function getStrategyTemplates(filters?: {
     difficulty?: string;
     tags?: string;
     featured?: boolean;
-}): Promise<StrategyTemplate[]> {
+    search?: string;
+    ordering?: string;
+    page?: number;
+}): Promise<PaginatedResponse<StrategyTemplate>> {
     const { data } = await strategyHttp.get('strategies/templates/', { params: filters });
-    // Handle paginated response from DRF
-    return Array.isArray(data) ? data : data.results || [];
+    if (Array.isArray(data)) {
+        return { count: data.length, next: null, previous: null, results: data };
+    }
+    return data;
 }
 
 export async function getStrategyTemplate(id: string): Promise<StrategyTemplate> {

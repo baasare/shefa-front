@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Check, ChevronRight } from 'lucide-react';
+import { createStrategy } from '@/lib/api/strategies';
 
 const steps = ['Basic Info', 'Parameters', 'Risk Settings', 'Review'];
 const types = ['Trend Following', 'Statistical Arbitrage', 'Breakout', 'NLP / Sentiment', 'Machine Learning', 'Pairs Trading'];
@@ -41,9 +42,22 @@ export default function CreateStrategyPage() {
 
     async function handleSubmit() {
         setLoading(true);
-        await new Promise((res) => setTimeout(res, 1200));
-        setSuccess(true);
-        setTimeout(() => router.push('/strategies'), 1200);
+        try {
+            await createStrategy({
+                name: form.name,
+                description: form.description,
+                strategy_type: 'custom', // based on our mocked options
+                symbols: form.assets,
+                risk_per_trade: form.maxDrawdown ? form.maxDrawdown : undefined
+            } as any);
+            setSuccess(true);
+            setTimeout(() => router.push('/strategies'), 1200);
+        } catch (error) {
+            console.error('Failed to create strategy:', error);
+            alert('Failed to create strategy. Please try again.');
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -68,18 +82,18 @@ export default function CreateStrategyPage() {
                         <button
                             onClick={() => i < step && setStep(i)}
                             className={`flex items-center gap-2 text-xs font-medium transition-colors ${i === step
-                                    ? 'text-[rgb(var(--primary))]'
-                                    : i < step
-                                        ? 'text-[rgb(var(--success))] cursor-pointer'
-                                        : 'text-[rgb(var(--muted-foreground))] cursor-default'
+                                ? 'text-[rgb(var(--primary))]'
+                                : i < step
+                                    ? 'text-[rgb(var(--success))] cursor-pointer'
+                                    : 'text-[rgb(var(--muted-foreground))] cursor-default'
                                 }`}
                         >
                             <span
                                 className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold border ${i === step
-                                        ? 'border-[rgb(var(--primary))] bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]'
-                                        : i < step
-                                            ? 'border-[rgb(var(--success))] bg-[rgb(var(--success))]/10 text-[rgb(var(--success))]'
-                                            : 'border-[rgb(var(--border))] text-[rgb(var(--muted-foreground))]'
+                                    ? 'border-[rgb(var(--primary))] bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]'
+                                    : i < step
+                                        ? 'border-[rgb(var(--success))] bg-[rgb(var(--success))]/10 text-[rgb(var(--success))]'
+                                        : 'border-[rgb(var(--border))] text-[rgb(var(--muted-foreground))]'
                                     }`}
                             >
                                 {i < step ? <Check className="h-3 w-3" strokeWidth={3} /> : i + 1}
@@ -121,8 +135,8 @@ export default function CreateStrategyPage() {
                                         type="button"
                                         onClick={() => toggleAsset(a)}
                                         className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${form.assets.includes(a)
-                                                ? 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] border-[rgb(var(--primary))]/30'
-                                                : 'text-[rgb(var(--muted-foreground))] border-[rgb(var(--border))] hover:border-[rgb(var(--foreground))]/30'
+                                            ? 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] border-[rgb(var(--primary))]/30'
+                                            : 'text-[rgb(var(--muted-foreground))] border-[rgb(var(--border))] hover:border-[rgb(var(--foreground))]/30'
                                             }`}
                                     >
                                         {a}
@@ -163,8 +177,8 @@ export default function CreateStrategyPage() {
                                         type="button"
                                         onClick={() => setForm((p) => ({ ...p, riskLevel: r }))}
                                         className={`rounded-xl border p-3 text-sm font-medium text-center transition-all ${form.riskLevel === r
-                                                ? 'border-[rgb(var(--primary))] bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]'
-                                                : 'border-[rgb(var(--border))] text-[rgb(var(--foreground))] hover:border-[rgb(var(--foreground))]/30'
+                                            ? 'border-[rgb(var(--primary))] bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]'
+                                            : 'border-[rgb(var(--border))] text-[rgb(var(--foreground))] hover:border-[rgb(var(--foreground))]/30'
                                             }`}
                                     >
                                         {r}
