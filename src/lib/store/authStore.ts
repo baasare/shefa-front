@@ -7,6 +7,7 @@ interface User {
   first_name: string;
   last_name: string;
   onboarding_completed?: boolean;
+  is_social_user?: boolean;
 }
 
 interface AuthState {

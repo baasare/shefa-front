@@ -46,6 +46,7 @@ export interface AuthResponse {
         email: string;
         first_name: string;
         last_name: string;
+        is_social_user?: boolean;
     };
 }
 
@@ -84,7 +85,7 @@ export async function resetPassword(data: {
     new_password1: string;
     new_password2: string;
 }): Promise<void> {
-        await axios.post(`${API_BASE}auth/password/reset/confirm/`, data, {
+    await axios.post(`${API_BASE}auth/password/reset/confirm/`, data, {
         headers: {
             'Content-Type': 'application/json',
         },

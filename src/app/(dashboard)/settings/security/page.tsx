@@ -1,15 +1,16 @@
 'use client';
 
-import {useState, useEffect} from 'react';
-import {Shield, Key, Smartphone, AlertTriangle, Check, AlertCircle, Trash2} from 'lucide-react';
-import {changePassword, getActiveSessions, deleteAccount} from '@/lib/api/users';
-import {useRouter} from 'next/navigation';
-import {settingsNav} from "@/lib/config/navigation";
+import { useState, useEffect } from 'react';
+import { Shield, Key, Smartphone, AlertTriangle, Check, AlertCircle, Trash2 } from 'lucide-react';
+import { changePassword, getActiveSessions, deleteAccount } from '@/lib/api/users';
+import { useRouter } from 'next/navigation';
+import { settingsNav } from "@/lib/config/navigation";
 import Link from "next/link";
 import * as LucideIcons from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import {cn} from "@/lib/utils/cn";
+import { useAuthStore } from '@/lib/store/authStore';
+import { cn } from "@/lib/utils/cn";
 
 interface Session {
     session_key: string;
@@ -30,6 +31,7 @@ function getIcon(name: string | undefined): LucideIcon {
 export default function SecuritySettingsPage() {
     const pathname = usePathname();
     const router = useRouter();
+    const user = useAuthStore((state) => state.user);
     const [passwordForm, setPasswordForm] = useState({
         oldPassword: '',
         newPassword: '',
@@ -66,8 +68,8 @@ export default function SecuritySettingsPage() {
     }
 
     function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-        const {name, value} = e.target;
-        setPasswordForm((p) => ({...p, [name]: value}));
+        const { name, value } = e.target;
+        setPasswordForm((p) => ({ ...p, [name]: value }));
     }
 
     async function handlePasswordSubmit(e: React.FormEvent) {
@@ -97,10 +99,11 @@ export default function SecuritySettingsPage() {
             });
 
             setPasswordSuccess(true);
-            setPasswordForm({oldPassword: '', newPassword: '', confirmPassword: ''});
+            setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
             setTimeout(() => setPasswordSuccess(false), 3000);
         } catch (err: any) {
-            const errorMsg = err.response?.data?.old_password?.[0] ||
+            const errorMsg = err.response?.data?.non_field_errors?.[0] ||
+                err.response?.data?.old_password?.[0] ||
                 err.response?.data?.new_password2?.[0] ||
                 err.response?.data?.detail ||
                 'Failed to change password';
@@ -160,7 +163,7 @@ export default function SecuritySettingsPage() {
                                     isActive ? 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] font-medium' : 'text-[rgb(var(--muted-foreground))] hover:bg-[rgb(var(--muted))] hover:text-[rgb(var(--foreground))]'
                                 )}
                             >
-                                <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.5}/>
+                                <Icon className="h-4 w-4 flex-shrink-0" strokeWidth={1.5} />
                                 {item.label}
                             </Link>
                         );
@@ -178,14 +181,14 @@ export default function SecuritySettingsPage() {
                 {/* Password */}
                 <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <Key className="h-5 w-5 text-[rgb(var(--primary))]" strokeWidth={1.5}/>
+                        <Key className="h-5 w-5 text-[rgb(var(--primary))]" strokeWidth={1.5} />
                         <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Change Password</h2>
                     </div>
 
                     {passwordError && (
                         <div
                             className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 mb-4">
-                            <AlertCircle className="h-4 w-4 flex-shrink-0"/>
+                            <AlertCircle className="h-4 w-4 flex-shrink-0" />
                             {passwordError}
                         </div>
                     )}
@@ -193,86 +196,106 @@ export default function SecuritySettingsPage() {
                     {passwordSuccess && (
                         <div
                             className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 mb-4">
-                            <Check className="h-4 w-4 flex-shrink-0"/>
+                            <Check className="h-4 w-4 flex-shrink-0" />
                             Password changed successfully
                         </div>
                     )}
 
-                    <form onSubmit={handlePasswordSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-1.5">Current
-                                Password</label>
-                            <input
-                                type="password"
-                                name="oldPassword"
-                                value={passwordForm.oldPassword}
-                                onChange={handlePasswordChange}
-                                required
-                                className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]"
-                            />
+                    {user?.is_social_user ? (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+                            <div className="flex items-center gap-2 mb-2">
+                                <AlertCircle className="h-4 w-4" />
+                                <span className="font-semibold">Social Account Managed</span>
+                            </div>
+                            <p>
+                                Your account is connected via Google. To ensure your security, please manage your password directly in your Google Account settings.
+                            </p>
+                            <a
+                                href="https://myaccount.google.com/signinoptions/password"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block mt-3 text-[rgb(var(--primary))] hover:underline font-medium"
+                            >
+                                Go to Google Security Settings &rarr;
+                            </a>
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-1.5">New
-                                Password</label>
-                            <input
-                                type="password"
-                                name="newPassword"
-                                value={passwordForm.newPassword}
-                                onChange={handlePasswordChange}
-                                required
-                                minLength={8}
-                                className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]"
-                            />
-                            <p className="text-xs text-[rgb(var(--muted-foreground))] mt-1">Must be at least 8
-                                characters</p>
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-1.5">Confirm
-                                New Password</label>
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                value={passwordForm.confirmPassword}
-                                onChange={handlePasswordChange}
-                                required
-                                className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]"
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            disabled={passwordLoading || passwordSuccess}
-                            className="flex items-center gap-2 rounded-full bg-[rgb(var(--primary))] px-6 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-all disabled:opacity-60"
-                        >
-                            {passwordSuccess ? (
-                                <>
-                                    <Check className="h-4 w-4" strokeWidth={2}/>
-                                    Updated!
-                                </>
-                            ) : passwordLoading ? (
-                                <>
-                                    <span
-                                        className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"/>
-                                    Updating...
-                                </>
-                            ) : (
-                                'Update Password'
-                            )}
-                        </button>
-                    </form>
+                    ) : (
+                        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-1.5">Current
+                                    Password</label>
+                                <input
+                                    type="password"
+                                    name="oldPassword"
+                                    value={passwordForm.oldPassword}
+                                    onChange={handlePasswordChange}
+                                    required
+                                    className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-1.5">New
+                                    Password</label>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={passwordForm.newPassword}
+                                    onChange={handlePasswordChange}
+                                    required
+                                    minLength={8}
+                                    className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]"
+                                />
+                                <p className="text-xs text-[rgb(var(--muted-foreground))] mt-1">Must be at least 8
+                                    characters</p>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-1.5">Confirm
+                                    New Password</label>
+                                <input
+                                    type="password"
+                                    name="confirmPassword"
+                                    value={passwordForm.confirmPassword}
+                                    onChange={handlePasswordChange}
+                                    required
+                                    className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ring))]"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={passwordLoading || passwordSuccess}
+                                className="flex items-center gap-2 rounded-full bg-[rgb(var(--primary))] px-6 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-all disabled:opacity-60"
+                            >
+                                {passwordSuccess ? (
+                                    <>
+                                        <Check className="h-4 w-4" strokeWidth={2} />
+                                        Updated!
+                                    </>
+                                ) : passwordLoading ? (
+                                    <>
+                                        <span
+                                            className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                        Updating...
+                                    </>
+                                ) : (
+                                    'Update Password'
+                                )}
+                            </button>
+                        </form>
+                    )}
                 </div>
 
                 {/* 2FA */}
                 <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-2">
-                            <Smartphone className="h-5 w-5 text-[rgb(var(--primary))]" strokeWidth={1.5}/>
+                            <Smartphone className="h-5 w-5 text-[rgb(var(--primary))]" strokeWidth={1.5} />
                             <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Two-Factor
                                 Authentication</h2>
                         </div>
                         <span
                             className="rounded-full bg-[rgb(var(--warning))]/10 border border-[rgb(var(--warning))]/20 px-2.5 py-1 text-xs font-medium text-[rgb(var(--warning))]">
-                        Coming soon{/*Not Enabled*/}
-                    </span>
+                            Coming soon{/*Not Enabled*/}
+                        </span>
                     </div>
                     <p className="text-sm text-[rgb(var(--muted-foreground))] mb-4">
                         Add an extra layer of security to your account. We recommend using an authenticator app like
@@ -287,14 +310,14 @@ export default function SecuritySettingsPage() {
                 {/* Sessions */}
                 <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6">
                     <div className="flex items-center gap-2 mb-4">
-                        <Shield className="h-5 w-5 text-[rgb(var(--primary))]" strokeWidth={1.5}/>
+                        <Shield className="h-5 w-5 text-[rgb(var(--primary))]" strokeWidth={1.5} />
                         <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Active Sessions</h2>
                     </div>
 
                     {sessionsError && (
                         <div
                             className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 mb-4">
-                            <AlertCircle className="h-4 w-4 flex-shrink-0"/>
+                            <AlertCircle className="h-4 w-4 flex-shrink-0" />
                             {sessionsError}
                         </div>
                     )}
@@ -302,7 +325,7 @@ export default function SecuritySettingsPage() {
                     {sessionsLoading ? (
                         <div className="flex items-center justify-center py-8">
                             <div
-                                className="h-6 w-6 animate-spin rounded-full border-2 border-[rgb(var(--primary))] border-t-transparent"/>
+                                className="h-6 w-6 animate-spin rounded-full border-2 border-[rgb(var(--primary))] border-t-transparent" />
                         </div>
                     ) : sessions.length === 0 ? (
                         <p className="text-sm text-[rgb(var(--muted-foreground))] py-4">No active sessions found</p>
@@ -310,7 +333,7 @@ export default function SecuritySettingsPage() {
                         <div className="space-y-3">
                             {sessions.map((session, index) => (
                                 <div key={session.session_key}
-                                     className="flex items-center justify-between py-3 border-b border-[rgb(var(--border))] last:border-0">
+                                    className="flex items-center justify-between py-3 border-b border-[rgb(var(--border))] last:border-0">
                                     <div>
                                         <p className="text-sm font-medium text-[rgb(var(--foreground))]">
                                             {session.device} — {session.browser}
@@ -337,7 +360,7 @@ export default function SecuritySettingsPage() {
                 <div
                     className="rounded-xl border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/5 p-6">
                     <div className="flex items-center gap-2 mb-2">
-                        <AlertTriangle className="h-5 w-5 text-[rgb(var(--destructive))]" strokeWidth={1.5}/>
+                        <AlertTriangle className="h-5 w-5 text-[rgb(var(--destructive))]" strokeWidth={1.5} />
                         <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Danger Zone</h2>
                     </div>
                     <p className="text-sm text-[rgb(var(--muted-foreground))] mb-4">
@@ -357,7 +380,7 @@ export default function SecuritySettingsPage() {
                         <div className="bg-[rgb(var(--card))] rounded-xl max-w-md w-full p-6 space-y-4">
                             <div className="flex items-center gap-3">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
-                                    <Trash2 className="h-5 w-5 text-red-600" strokeWidth={2}/>
+                                    <Trash2 className="h-5 w-5 text-red-600" strokeWidth={2} />
                                 </div>
                                 <h3 className="text-lg font-semibold text-[rgb(var(--foreground))]">Delete Account</h3>
                             </div>
@@ -370,7 +393,7 @@ export default function SecuritySettingsPage() {
                             {deleteError && (
                                 <div
                                     className="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-                                    <AlertCircle className="h-4 w-4 flex-shrink-0"/>
+                                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
                                     {deleteError}
                                 </div>
                             )}
@@ -407,10 +430,10 @@ export default function SecuritySettingsPage() {
                                 >
                                     {deleteLoading ? (
                                         <span className="flex items-center justify-center gap-2">
-                                        <span
-                                            className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"/>
-                                        Deleting...
-                                    </span>
+                                            <span
+                                                className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                            Deleting...
+                                        </span>
                                     ) : (
                                         'Delete Account'
                                     )}

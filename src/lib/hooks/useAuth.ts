@@ -6,8 +6,10 @@ export function useAuth() {
     useAuthStore();
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    if (!isAuthenticated && !isLoading) {
+      checkAuth();
+    }
+  }, [checkAuth, isAuthenticated, isLoading]);
 
   return {
     user,
