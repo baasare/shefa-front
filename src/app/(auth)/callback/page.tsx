@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/lib/store/authStore';
+import * as authClient from '@/lib/api/authClient';
 import apiClient from '@/lib/api/client';
 import { tokenStorage } from '@/lib/api/authClient';
 import { routes } from '@/lib/config/routes';
@@ -64,14 +65,10 @@ export default function CallbackPage() {
 
       try {
         // Exchange code for tokens
-        // dj-rest-auth SocialLoginView expects authorization code
-        console.log('Exchanging code for tokens...', { code });
 
         const response = await apiClient.post('auth/google/', {
           code: code,
         });
-
-        console.log('Google auth response:', response.data);
 
         // dj-rest-auth returns different token field names
         const accessToken = response.data.access_token || response.data.access || response.data.key;
@@ -81,12 +78,15 @@ export default function CallbackPage() {
           throw new Error('No access token received from server');
         }
 
-        // Store tokens and user data
+        // Store tokens
         tokenStorage.setTokens(accessToken, refreshToken || '');
+
+        // Fetch full user profile to get all fields including onboarding_completed
+        const freshUser = await authClient.getCurrentUser();
 
         // Update auth store
         useAuthStore.setState({
-          user: response.data.user,
+          user: freshUser,
           isAuthenticated: true,
           isLoading: false,
         });
