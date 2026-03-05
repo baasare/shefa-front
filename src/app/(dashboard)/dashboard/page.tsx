@@ -62,6 +62,10 @@ export default function DashboardPage() {
           ordersApi.getPendingApprovals(),
         ]);
 
+        // Ensure strategiesData and ordersData are arrays
+        const strategiesArray = Array.isArray(strategiesData) ? strategiesData : [];
+        const ordersArray = Array.isArray(ordersData) ? ordersData : [];
+
         // Calculate stats from portfolio data
         const activePortfolio = portfoliosList.find(p => p.is_active) || portfoliosList[0];
 
@@ -80,14 +84,14 @@ export default function DashboardPage() {
             portfolioChange: `${totalPnlPercent >= 0 ? '+' : ''}${totalPnlPercent.toFixed(2)}%`,
             todayPnl: `${todayPnl >= 0 ? '+' : ''}$${Math.abs(todayPnl).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
             todayPnlPercent: `${todayPnlPercent >= 0 ? '+' : ''}${todayPnlPercent.toFixed(2)}%`,
-            activeStrategies: strategiesData.filter(s => s.status === 'active').length,
-            pausedStrategies: strategiesData.filter(s => s.status === 'paused').length,
+            activeStrategies: strategiesArray.filter(s => s.status === 'active').length,
+            pausedStrategies: strategiesArray.filter(s => s.status === 'paused').length,
             pendingApprovals: pendingApprovals.length,
           });
         }
 
-        setStrategiesList(strategiesData.slice(0, 3)); // Top 3 strategies
-        setRecentOrdersList(ordersData.slice(0, 4)); // Recent 4 orders
+        setStrategiesList(strategiesArray.slice(0, 3)); // Top 3 strategies
+        setRecentOrdersList(ordersArray.slice(0, 4)); // Recent 4 orders
       } catch (err: any) {
         console.error('Failed to fetch dashboard data:', err);
         setError(err.message || 'Failed to load dashboard data');
