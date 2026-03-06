@@ -6,9 +6,10 @@ import { useRouter } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle, Sparkles } from 'lucide-react';
 import { agentApi } from '@/lib/api/agents';
 import { routes } from '@/lib/config/routes';
+import { agentTemplates, templateCategories, type AgentTemplate } from '@/lib/data/agent-templates';
 
 const models = ['GPT-4o', 'Claude 3.5 Sonnet', 'Gemini 1.5 Pro'];
 const dataSourceOptions = ['Market Data', 'Social Sentiment', 'Global News', 'On-chain Data'];
@@ -28,11 +29,14 @@ export default function CreateAgentPage() {
     const [loading, setLoading] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+    const [showTemplates, setShowTemplates] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
     const {
         register,
         handleSubmit,
         control,
+        setValue,
         formState: { errors },
     } = useForm<CreateAgentFormValues>({
         resolver: zodResolver(createAgentSchema),
@@ -45,23 +49,46 @@ export default function CreateAgentPage() {
         },
     });
 
+    function applyTemplate(template: AgentTemplate) {
+        setValue('name', template.name);
+        setValue('description', template.description);
+        setValue('model', template.model === 'gpt-4' ? 'GPT-4o' : template.model === 'claude-3-sonnet' ? 'Claude 3.5 Sonnet' : 'GPT-4o');
+        setValue('dataSources', template.dataSources);
+        setValue('systemPrompt', template.systemPrompt);
+        setShowTemplates(false);
+    }
+
+    const filteredTemplates = selectedCategory === 'all'
+        ? agentTemplates
+        : agentTemplates.filter(t => t.category === selectedCategory);
+
     async function onSubmit(data: CreateAgentFormValues) {
         setLoading(true);
         setServerError(null);
 
         try {
-            // Typically real API call goes here:
-            // const newAgent = await agentApi.createAgent(data);
-            // Wait to simulate network latency
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Map frontend fields to backend schema
+            const agentData = {
+                name: data.name,
+                description: data.description || '',
+                agent_type: 'general', // Default since we removed the multi-select
+                model: data.model === 'GPT-4o' ? 'gpt-4' : data.model === 'Claude 3.5 Sonnet' ? 'claude-3-sonnet' : 'gpt-3.5-turbo',
+                temperature: 0.7,
+                max_tokens: 4000,
+                data_source: data.dataSources && data.dataSources.length > 0 ? 'polygon' : 'polygon',
+                system_prompt: data.systemPrompt,
+                analysis_frequency: 30,
+            };
+
+            await agentApi.createAgent(agentData);
 
             setSuccess(true);
             setTimeout(() => {
                 router.push(routes.dashboard.agents.index);
             }, 1000);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Submission error:', error);
-            setServerError('Failed to create agent. Please try again.');
+            setServerError(error.response?.data?.error || error.response?.data?.detail || 'Failed to create agent. Please try again.');
             setLoading(false);
         }
     }
@@ -87,6 +114,85 @@ export default function CreateAgentPage() {
                     {serverError}
                 </div>
             )}
+
+            {/* Template Selector */}
+            <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5">
+                <button
+                    type="button"
+                    onClick={() => setShowTemplates(!showTemplates)}
+                    className="flex items-center gap-2 text-sm font-medium text-[rgb(var(--primary))] hover:text-[rgb(var(--primary))]/80 transition-colors"
+                >
+                    <Sparkles className="h-4 w-4" />
+                    {showTemplates ? 'Hide Templates' : 'Start from a Template'}
+                </button>
+
+                {showTemplates && (
+                    <div className="mt-4 space-y-4">
+                        {/* Category Filter */}
+                        <div className="flex gap-2 flex-wrap">
+                            <button
+                                type="button"
+                                onClick={() => setSelectedCategory('all')}
+                                className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                                    selectedCategory === 'all'
+                                        ? 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] border-[rgb(var(--primary))]/30'
+                                        : 'text-[rgb(var(--muted-foreground))] border-[rgb(var(--border))] hover:border-[rgb(var(--foreground))]/30'
+                                }`}
+                            >
+                                All Templates
+                            </button>
+                            {templateCategories.map((cat) => (
+                                <button
+                                    key={cat.value}
+                                    type="button"
+                                    onClick={() => setSelectedCategory(cat.value)}
+                                    className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                                        selectedCategory === cat.value
+                                            ? 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] border-[rgb(var(--primary))]/30'
+                                            : 'text-[rgb(var(--muted-foreground))] border-[rgb(var(--border))] hover:border-[rgb(var(--foreground))]/30'
+                                    }`}
+                                >
+                                    {cat.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Template Cards */}
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            {filteredTemplates.map((template) => (
+                                <button
+                                    key={template.id}
+                                    type="button"
+                                    onClick={() => applyTemplate(template)}
+                                    className="text-left p-4 rounded-lg border border-[rgb(var(--border))] hover:border-[rgb(var(--primary))]/50 hover:bg-[rgb(var(--muted))]/20 transition-all group"
+                                >
+                                    <div className="flex items-start justify-between mb-2">
+                                        <h3 className="text-sm font-semibold text-[rgb(var(--foreground))] group-hover:text-[rgb(var(--primary))]">
+                                            {template.name}
+                                        </h3>
+                                        <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]">
+                                            {template.category}
+                                        </span>
+                                    </div>
+                                    <p className="text-xs text-[rgb(var(--muted-foreground))] line-clamp-2">
+                                        {template.description}
+                                    </p>
+                                    <div className="flex gap-1 mt-2 flex-wrap">
+                                        {template.tags.slice(0, 3).map((tag) => (
+                                            <span
+                                                key={tag}
+                                                className="text-[10px] px-1.5 py-0.5 rounded bg-[rgb(var(--muted))] text-[rgb(var(--muted-foreground))]"
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* Form Content */}
             <form onSubmit={handleSubmit(onSubmit)} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 space-y-6">

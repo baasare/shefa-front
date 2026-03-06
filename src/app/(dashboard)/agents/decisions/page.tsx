@@ -1,11 +1,18 @@
 import { Metadata } from 'next';
-import { mockDecisions } from '@/lib/data/agents';
-import { CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-react';
+import DecisionsClient from './DecisionsClient';
 
 export const metadata: Metadata = {
     title: 'Agent Decisions — ShefaFx',
     description: 'Review and approve AI agent trade decisions.',
 };
+
+export default function AgentDecisionsPage() {
+    return <DecisionsClient />;
+}
+
+/* OLD IMPLEMENTATION
+import { mockDecisions } from '@/lib/data/agents';
+import { CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-react';
 
 const statusConfig = {
     Pending: { icon: Clock, badge: 'bg-[rgb(var(--warning))]/10 text-[rgb(var(--warning))] border-[rgb(var(--warning))]/20', dot: 'bg-[rgb(var(--warning))]' },
@@ -14,7 +21,7 @@ const statusConfig = {
     Executed: { icon: CheckCircle2, badge: 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] border-[rgb(var(--primary))]/20', dot: 'bg-[rgb(var(--primary))]' },
 };
 
-export default function AgentDecisionsPage() {
+function AgentDecisionsPageOld() {
     const pending = mockDecisions.filter((d) => d.status === 'Pending');
     const past = mockDecisions.filter((d) => d.status !== 'Pending');
 
@@ -110,3 +117,4 @@ export default function AgentDecisionsPage() {
         </div>
     );
 }
+*/

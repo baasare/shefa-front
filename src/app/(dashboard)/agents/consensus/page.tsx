@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Play, ChevronDown, CheckCircle2, Loader2, Sparkles, Brain, Lock, Activity } from 'lucide-react';
+import { ArrowLeft, Play, ChevronDown, CheckCircle2, Loader2, Sparkles, Brain, Lock, Activity, AlertCircle } from 'lucide-react';
 import { agentApi } from '@/lib/api/agents';
+import { getPortfolios } from '@/lib/api/portfolios';
 import { routes } from '@/lib/config/routes';
 
 const availableAgents = [
@@ -14,52 +15,96 @@ const availableAgents = [
 
 export default function ConsensusPage() {
     const [selectedAgents, setSelectedAgents] = useState<string[]>(['analysis', 'risk']);
-    const [prompt, setPrompt] = useState('Analyze the current technical breakout in TSLA and determine if a 5% portfolio allocation is within our VaR limits.');
+    const [symbols, setSymbols] = useState('TSLA, AAPL');
+    const [portfolios, setPortfolios] = useState<any[]>([]);
+    const [selectedPortfolio, setSelectedPortfolio] = useState('');
     const [running, setRunning] = useState(false);
-    const [results, setResults] = useState<{
-        status: string;
-        finalConsensus: string;
-        agentOutputs: { agentId: string; title: string; output: string }[];
-    } | null>(null);
+    const [taskId, setTaskId] = useState<string | null>(null);
+    const [taskState, setTaskState] = useState<'idle' | 'pending' | 'running' | 'success' | 'error'>('idle');
+    const [results, setResults] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const [expandedAgent, setExpandedAgent] = useState<string | null>('analysis');
+
+    // Load portfolios on mount
+    useEffect(() => {
+        async function loadPortfolios() {
+            try {
+                const data = await getPortfolios();
+                setPortfolios(data);
+                if (data.length > 0) {
+                    setSelectedPortfolio(data[0].id);
+                }
+            } catch (err) {
+                console.error('Failed to load portfolios:', err);
+            }
+        }
+        loadPortfolios();
+    }, []);
+
+    // Poll task status
+    useEffect(() => {
+        if (!taskId) return;
+
+        const interval = setInterval(async () => {
+            try {
+                const status = await agentApi.getTaskStatus(taskId);
+
+                if (status.state === 'SUCCESS') {
+                    setTaskState('success');
+                    setResults(status.result);
+                    setRunning(false);
+                    clearInterval(interval);
+                } else if (status.state === 'FAILURE') {
+                    setTaskState('error');
+                    setError(status.error || 'Consensus analysis failed');
+                    setRunning(false);
+                    clearInterval(interval);
+                } else if (status.state === 'STARTED') {
+                    setTaskState('running');
+                } else {
+                    setTaskState('pending');
+                }
+            } catch (err: any) {
+                console.error('Failed to check task status:', err);
+            }
+        }, 2000);
+
+        return () => clearInterval(interval);
+    }, [taskId]);
 
     function toggleAgent(id: string) {
         setSelectedAgents(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
     }
 
     async function handleRunConsensus() {
-        if (selectedAgents.length < 2 || !prompt.trim()) return;
+        if (selectedAgents.length < 2 || !symbols.trim() || !selectedPortfolio) {
+            setError('Please select at least 2 agents, enter symbols, and select a portfolio');
+            return;
+        }
 
         setRunning(true);
         setResults(null);
+        setError(null);
+        setTaskState('pending');
 
-        // Simulate multi-agent processing delay
-        await new Promise(res => setTimeout(res, 2500));
+        try {
+            // Parse symbols from comma-separated string
+            const symbolArray = symbols.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
 
-        setResults({
-            status: 'BULLISH',
-            finalConsensus: 'Based on the combined analysis, TSLA is showing a strong technical breakout with high volume. The risk assessment confirms that a 5% allocation falls well within the 12% daily VaR limit. The consensus is to proceed with the execution.',
-            agentOutputs: [
-                {
-                    agentId: 'analysis',
-                    title: 'Analysis Agent',
-                    output: 'TSLA has broken above the $242 resistance level on 150% average daily volume. MACD is crossing over, and RSI is at 62, indicating strong upward momentum without being overbought. Near-term price target is $265.'
-                },
-                {
-                    agentId: 'risk',
-                    title: 'Risk Agent',
-                    output: 'A 5% allocation at current prices ($245) adds 0.8% to overall portfolio VaR. Current portfolio VaR is 4.2%, bringing total to 5.0%. This is well below our maximum threshold of 12%. Drawdown risk is acceptable. Approved.'
-                },
-                selectedAgents.includes('trade') ? {
-                    agentId: 'trade',
-                    title: 'Trade Agent',
-                    output: 'Recommended execution: TWAP over next 30 minutes to minimize slippage. Limit price cap at $246.50. Stop loss suggested at $235.00.'
-                } : null
-            ].filter(Boolean) as { agentId: string; title: string; output: string }[]
-        });
+            if (symbolArray.length === 0) {
+                setError('Please enter at least one symbol');
+                setRunning(false);
+                return;
+            }
 
-        setRunning(false);
+            const response = await agentApi.multiAgentConsensus(selectedPortfolio, symbolArray);
+            setTaskId(response.task_id);
+        } catch (err: any) {
+            setError(err.response?.data?.error || 'Failed to start consensus analysis');
+            setRunning(false);
+            setTaskState('error');
+        }
     }
 
     return (
@@ -80,6 +125,22 @@ export default function ConsensusPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 {/* Input Column */}
                 <div className="lg:col-span-5 space-y-5 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-sm">
+                    {/* Portfolio Selection */}
+                    <div>
+                        <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-2">Portfolio *</label>
+                        <select
+                            value={selectedPortfolio}
+                            onChange={(e) => setSelectedPortfolio(e.target.value)}
+                            className="w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-3 py-2.5 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary))]"
+                        >
+                            {portfolios.map((p) => (
+                                <option key={p.id} value={p.id}>
+                                    {p.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
                     <div>
                         <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-3">Target Agents (Select at least 2)</label>
                         <div className="flex flex-wrap gap-2">
@@ -104,19 +165,37 @@ export default function ConsensusPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-2">Analysis Prompt</label>
-                        <textarea
-                            value={prompt}
-                            onChange={(e) => setPrompt(e.target.value)}
-                            rows={8}
-                            className="font-mono w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-4 py-3 text-sm leading-relaxed text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary))] focus:border-[rgb(var(--primary))] resize-y"
-                            placeholder="What scenario should the agents analyze together?"
+                        <label className="block text-sm font-medium text-[rgb(var(--foreground))] mb-2">Symbols (comma-separated) *</label>
+                        <input
+                            type="text"
+                            value={symbols}
+                            onChange={(e) => setSymbols(e.target.value)}
+                            placeholder="e.g. AAPL, MSFT, TSLA"
+                            className="font-mono w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-4 py-3 text-sm text-[rgb(var(--foreground))] focus:outline-none focus:ring-2 focus:ring-[rgb(var(--primary))] focus:border-[rgb(var(--primary))] uppercase"
                         />
                     </div>
 
+                    {/* Error Display */}
+                    {error && (
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-[rgb(var(--destructive))]/10 border border-[rgb(var(--destructive))]/20">
+                            <AlertCircle className="h-4 w-4 text-[rgb(var(--destructive))]" />
+                            <span className="text-sm text-[rgb(var(--destructive))]">{error}</span>
+                        </div>
+                    )}
+
+                    {/* Task Status */}
+                    {taskId && taskState !== 'success' && taskState !== 'error' && (
+                        <div className="flex items-center gap-2 text-sm">
+                            <Loader2 className="h-4 w-4 animate-spin text-[rgb(var(--primary))]" />
+                            <span className="text-[rgb(var(--muted-foreground))]">
+                                {taskState === 'pending' ? 'Queuing analysis...' : 'Analysis in progress...'}
+                            </span>
+                        </div>
+                    )}
+
                     <button
                         onClick={handleRunConsensus}
-                        disabled={running || selectedAgents.length < 2 || !prompt.trim()}
+                        disabled={running || selectedAgents.length < 2 || !symbols.trim() || !selectedPortfolio}
                         className="w-full flex items-center justify-center gap-2 rounded-lg bg-[rgb(var(--primary))] px-4 py-3 text-sm font-medium text-white shadow hover:opacity-90 transition-all disabled:opacity-50"
                     >
                         {running ? (
@@ -148,51 +227,27 @@ export default function ConsensusPage() {
 
                     {results && (
                         <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            {/* Final Consensus Summary */}
+                            {/* Results Display */}
                             <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] overflow-hidden shadow-sm relative pt-1">
                                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[rgb(var(--primary))] to-[rgb(var(--success))]" />
                                 <div className="p-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <h2 className="text-lg font-bold text-[rgb(var(--foreground))] flex items-center gap-2">
                                             <CheckCircle2 className="h-5 w-5 text-[rgb(var(--success))]" />
-                                            Final Consensus
+                                            Consensus Analysis Results
                                         </h2>
-                                        <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgb(var(--success))]/10 px-2.5 py-1 text-xs font-bold text-[rgb(var(--success))] tracking-wider">
-                                            {results.status}
-                                        </span>
                                     </div>
-                                    <p className="text-[rgb(var(--foreground))] text-sm leading-relaxed bg-[rgb(var(--muted))]/30 p-4 rounded-lg border border-[rgb(var(--border))]">
-                                        {results.finalConsensus}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Per-Agent Outputs */}
-                            <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] overflow-hidden shadow-sm">
-                                <div className="px-5 py-4 border-b border-[rgb(var(--border))]">
-                                    <h3 className="text-sm font-semibold text-[rgb(var(--foreground))]">Individual Agent Reasoning</h3>
-                                </div>
-                                <div className="divide-y divide-[rgb(var(--border))]">
-                                    {results.agentOutputs.map((out) => (
-                                        <div key={out.agentId} className="flex flex-col">
-                                            <button
-                                                onClick={() => setExpandedAgent(expandedAgent === out.agentId ? null : out.agentId)}
-                                                className="flex items-center justify-between px-5 py-4 bg-[rgb(var(--card))] hover:bg-[rgb(var(--muted))]/30 transition-colors w-full text-left"
-                                            >
-                                                <span className="text-sm font-medium text-[rgb(var(--foreground))] flex items-center gap-2">
-                                                    {out.title}
-                                                </span>
-                                                <ChevronDown className={`h-4 w-4 text-[rgb(var(--muted-foreground))] transition-transform ${expandedAgent === out.agentId ? 'rotate-180' : ''}`} />
-                                            </button>
-                                            {expandedAgent === out.agentId && (
-                                                <div className="px-5 pb-4 pt-1 bg-[rgb(var(--muted))]/10">
-                                                    <p className="text-xs text-[rgb(var(--muted-foreground))] font-mono leading-relaxed p-3 rounded bg-[rgb(var(--background))] border border-[rgb(var(--border))]">
-                                                        {out.output}
-                                                    </p>
-                                                </div>
-                                            )}
+                                    <div className="space-y-3">
+                                        <div>
+                                            <span className="text-sm font-medium text-[rgb(var(--foreground))]">Symbols:</span>{' '}
+                                            <span className="text-sm font-mono text-[rgb(var(--muted-foreground))]">{symbols}</span>
                                         </div>
-                                    ))}
+                                        <div className="p-4 rounded-lg bg-[rgb(var(--muted))]/20">
+                                            <pre className="text-xs text-[rgb(var(--foreground))] whitespace-pre-wrap font-mono max-h-96 overflow-y-auto">
+                                                {JSON.stringify(results, null, 2)}
+                                            </pre>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Bot, Brain, Activity, CheckCircle2, Clock, Play, Settings, Plus } from 'lucide-react';
+import { Bot, Brain, Activity, CheckCircle2, Clock, Play, Settings, Plus, Loader2 } from 'lucide-react';
 import { agentApi } from '@/lib/api/agents';
 import { routes } from '@/lib/config/routes';
 
@@ -89,10 +89,52 @@ const logTypeMap: Record<string, string> = {
 };
 
 export default function AgentListClient() {
-    const [agents, setAgents] = useState(initialAgents);
+    const [agents, setAgents] = useState<any[]>([]);
     const [logs, setLogs] = useState(initialLogs);
+    const [loading, setLoading] = useState(true);
     const [runningAgent, setRunningAgent] = useState<string | null>(null);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+    // Load agents on mount
+    useEffect(() => {
+        async function loadAgents() {
+            try {
+                const data = await agentApi.getAgents();
+                setAgents(data);
+            } catch (error) {
+                console.error('Failed to load agents:', error);
+                showToast('Failed to load agents', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadAgents();
+    }, []);
+
+    // Poll logs every 10 seconds
+    useEffect(() => {
+        async function loadLogs() {
+            try {
+                const data = await agentApi.getAgentLogs({ limit: 10 });
+                // Transform API logs to match display format
+                if (data && data.results) {
+                    setLogs(data.results.map((log: any) => ({
+                        id: log.id,
+                        time: new Date(log.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
+                        agent: log.agent_run?.strategy?.name || 'System',
+                        event: log.message,
+                        type: log.level === 'error' ? 'error' : log.level === 'warning' ? 'warning' : log.level === 'info' ? 'info' : 'success'
+                    })));
+                }
+            } catch (error) {
+                console.error('Failed to load logs:', error);
+            }
+        }
+
+        loadLogs();
+        const interval = setInterval(loadLogs, 10000);
+        return () => clearInterval(interval);
+    }, []);
 
     function showToast(message: string, type: 'success' | 'error') {
         setToast({ message, type });
@@ -104,26 +146,14 @@ export default function AgentListClient() {
         setRunningAgent(id);
 
         try {
-            // Typically: await agentApi.runAgent(id);
-            await new Promise(res => setTimeout(res, 1500));
+            await agentApi.runAgent(id);
+            showToast(`Successfully triggered ${name}.`, 'success');
 
-            showToast(`Successfully executed ${name}.`, 'success');
-
-            const now = new Date();
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-
-            // Update logs optimistically
-            setLogs((prev) => [
-                { id: Date.now(), time: timeStr, agent: name, event: `Manual execution triggered successfully`, type: 'success' },
-                ...prev,
-            ]);
-
-            // Update agent last action
-            setAgents(prev => prev.map(a =>
-                a.id === id ? { ...a, lastAction: 'Manual run completed', lastActionTime: 'Just now', tasksToday: a.tasksToday + 1 } : a
-            ));
-        } catch (err) {
-            showToast(`Failed to execute ${name}.`, 'error');
+            // Reload agents to get updated stats
+            const data = await agentApi.getAgents();
+            setAgents(data);
+        } catch (err: any) {
+            showToast(err.response?.data?.error || `Failed to execute ${name}.`, 'error');
         } finally {
             setRunningAgent(null);
         }
@@ -160,10 +190,28 @@ export default function AgentListClient() {
 
             {/* Agent cards */}
             <div className="grid gap-4 sm:grid-cols-2">
-                {agents.map((agent) => {
-                    const Icon = agent.icon;
-                    const colors = statusColorMap[agent.statusColor];
+                {loading ? (
+                    <div className="col-span-2 flex items-center justify-center py-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-[rgb(var(--primary))]" />
+                    </div>
+                ) : agents.length === 0 ? (
+                    <div className="col-span-2 rounded-xl border border-dashed border-[rgb(var(--border))] bg-[rgb(var(--card))]/50 p-12 text-center">
+                        <Bot className="h-12 w-12 text-[rgb(var(--muted-foreground))] mx-auto mb-4 opacity-50" />
+                        <p className="text-sm text-[rgb(var(--muted-foreground))] mb-4">No custom agents yet</p>
+                        <Link
+                            href={routes.dashboard.agents.create}
+                            className="inline-flex items-center gap-2 rounded-lg bg-[rgb(var(--primary))] px-4 py-2 text-sm font-medium text-white shadow hover:opacity-90 transition-all"
+                        >
+                            <Plus className="h-4 w-4" strokeWidth={2} />
+                            Create Your First Agent
+                        </Link>
+                    </div>
+                ) : agents.map((agent) => {
+                    const Icon = Brain; // Default icon for custom agents
+                    const statusColor = agent.is_active ? 'success' : 'warning';
+                    const colors = statusColorMap[statusColor];
                     const isRunning = runningAgent === agent.id;
+                    const status = agent.is_active ? 'Active' : 'Inactive';
 
                     return (
                         <div key={agent.id} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-sm group">
@@ -177,29 +225,35 @@ export default function AgentListClient() {
                                             <p className="font-semibold text-[rgb(var(--foreground))] text-sm">{agent.name}</p>
                                             <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${colors.badge}`}>
                                                 <span className={`h-1.5 w-1.5 rounded-full ${colors.dot}`} />
-                                                {agent.status}
+                                                {status}
                                             </span>
                                         </div>
                                     </div>
-                                    <p className="text-xs text-[rgb(var(--muted-foreground))] leading-relaxed mt-1">{agent.description}</p>
+                                    <p className="text-xs text-[rgb(var(--muted-foreground))] leading-relaxed mt-1">{agent.description || 'Custom AI agent'}</p>
                                 </div>
                             </div>
 
                             <div className="rounded-lg bg-[rgb(var(--muted))]/50 border border-[rgb(var(--border))] p-3 mb-4">
-                                <p className="text-xs text-[rgb(var(--muted-foreground))] mb-0.5">Last Action</p>
-                                <p className="text-xs font-medium text-[rgb(var(--foreground))]">{agent.lastAction}</p>
-                                <p className="text-[10px] text-[rgb(var(--muted-foreground))]/60 mt-1">{agent.lastActionTime}</p>
+                                <p className="text-xs text-[rgb(var(--muted-foreground))] mb-0.5">Last Run</p>
+                                <p className="text-xs font-medium text-[rgb(var(--foreground))]">
+                                    {agent.last_run_at ? new Date(agent.last_run_at).toLocaleString() : 'Never run'}
+                                </p>
+                                <p className="text-[10px] text-[rgb(var(--muted-foreground))]/60 mt-1">
+                                    Model: {agent.model} | Type: {agent.agent_type}
+                                </p>
                             </div>
 
                             <div className="flex gap-4 text-xs items-center justify-between border-t border-[rgb(var(--border))] pt-4">
                                 <div className="flex gap-4">
                                     <div>
-                                        <p className="text-[rgb(var(--muted-foreground))]">Tasks Today</p>
-                                        <p className="font-semibold text-[rgb(var(--foreground))] mt-0.5">{agent.tasksToday}</p>
+                                        <p className="text-[rgb(var(--muted-foreground))]">Total Runs</p>
+                                        <p className="font-semibold text-[rgb(var(--foreground))] mt-0.5">{agent.run_count || 0}</p>
                                     </div>
                                     <div>
                                         <p className="text-[rgb(var(--muted-foreground))]">Success Rate</p>
-                                        <p className="font-semibold text-[rgb(var(--success))] mt-0.5">{agent.successRate}</p>
+                                        <p className="font-semibold text-[rgb(var(--success))] mt-0.5">
+                                            {agent.success_rate ? `${agent.success_rate}%` : '—'}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -220,8 +274,9 @@ export default function AgentListClient() {
                                     </Link>
                                     <button
                                         onClick={() => handleRunAgent(agent.id, agent.name)}
-                                        disabled={runningAgent !== null}
+                                        disabled={runningAgent !== null || !agent.is_active}
                                         className="flex items-center gap-1.5 ml-1 px-3 py-1.5 rounded-md bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))] hover:bg-[rgb(var(--primary))]/20 hover:text-[rgb(var(--primary))] font-medium transition-colors disabled:opacity-50"
+                                        title={!agent.is_active ? 'Activate agent first' : 'Run agent now'}
                                     >
                                         {isRunning ? (
                                             <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[rgb(var(--primary))] border-t-transparent" />

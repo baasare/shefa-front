@@ -6,7 +6,7 @@
 
 import apiClient from './client';
 import axios from 'axios';
-import { API_BASE } from './config';
+import {API_BASE} from './config';
 
 // ─── Token Management ─────────────────────────────────────────────────────────
 
@@ -52,14 +52,19 @@ export interface AuthResponse {
 
 /** POST /api/auth/login/ */
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const { data } = await apiClient.post<AuthResponse>('auth/login/', credentials);
+
+    const {data} = await axios.post(`${API_BASE}auth/login/`, credentials, {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
     tokenStorage.setTokens(data.access, data.refresh);
     return data;
 }
 
 /** POST /api/auth/registration/ */
 export async function register(userData: RegisterData): Promise<AuthResponse> {
-    const { data } = await apiClient.post<AuthResponse>('auth/registration/', userData);
+    const {data} = await apiClient.post<AuthResponse>('auth/registration/', userData);
     tokenStorage.setTokens(data.access, data.refresh);
     return data;
 }
@@ -67,7 +72,7 @@ export async function register(userData: RegisterData): Promise<AuthResponse> {
 /** POST /api/auth/logout/ */
 export async function logout(): Promise<void> {
     try {
-        await apiClient.post('auth/logout/', { refresh: tokenStorage.getRefresh() });
+        await apiClient.post('auth/logout/', {refresh: tokenStorage.getRefresh()});
     } finally {
         tokenStorage.clearTokens();
     }
@@ -75,7 +80,7 @@ export async function logout(): Promise<void> {
 
 /** POST /api/auth/password/reset/ */
 export async function requestPasswordReset(email: string): Promise<void> {
-    await apiClient.post('auth/password/reset/', { email });
+    await apiClient.post('auth/password/reset/', {email});
 }
 
 /** POST /api/auth/password/reset/confirm/ */
@@ -94,7 +99,7 @@ export async function resetPassword(data: {
 
 /** POST /api/auth/registration/verify-email/ */
 export async function verifyEmail(key: string): Promise<void> {
-    await axios.post(`${API_BASE}auth/registration/verify-email/`, { key }, {
+    await axios.post(`${API_BASE}auth/registration/verify-email/`, {key}, {
         headers: {
             'Content-Type': 'application/json',
         },
@@ -103,7 +108,7 @@ export async function verifyEmail(key: string): Promise<void> {
 
 /** POST /api/auth/registration/resend-email/ */
 export async function resendEmail(email: string): Promise<void> {
-    await axios.post(`${API_BASE}auth/registration/resend-email/`, { email }, {
+    await axios.post(`${API_BASE}auth/registration/resend-email/`, {email}, {
         headers: {
             'Content-Type': 'application/json',
         },
@@ -112,19 +117,19 @@ export async function resendEmail(email: string): Promise<void> {
 
 /** GET /api/auth/profile/ */
 export async function getCurrentUser(): Promise<any> {
-    const { data } = await apiClient.get('auth/profile/');
+    const {data} = await apiClient.get('auth/profile/');
     return data;
 }
 
 /** PATCH /api/auth/profile/update/ */
 export async function updateProfile(profileData: any): Promise<any> {
-    const { data } = await apiClient.patch('auth/profile/update/', profileData);
+    const {data} = await apiClient.patch('auth/profile/update/', profileData);
     return data;
 }
 
 /** PATCH /api/auth/profile/update/ - Mark onboarding as completed */
 export async function completeOnboarding(): Promise<any> {
-    const { data } = await apiClient.patch('auth/profile/update/', { onboarding_completed: true });
+    const {data} = await apiClient.patch('auth/profile/update/', {onboarding_completed: true});
     return data;
 }
 
@@ -145,7 +150,7 @@ export async function deleteAccount(): Promise<void> {
 
 /** GET /api/auth/active-sessions/ */
 export async function getActiveSessions(): Promise<any> {
-    const { data } = await apiClient.get('auth/active-sessions/');
+    const {data} = await apiClient.get('auth/active-sessions/');
     return data;
 }
 
@@ -153,7 +158,7 @@ export async function getActiveSessions(): Promise<any> {
 export async function refreshToken(): Promise<string> {
     const refresh = tokenStorage.getRefresh();
     if (!refresh) throw new Error('No refresh token');
-    const { data } = await apiClient.post('auth/token/refresh/', { refresh });
+    const {data} = await apiClient.post('auth/token/refresh/', {refresh});
     tokenStorage.setTokens(data.access, refresh);
     return data.access;
 }
@@ -163,7 +168,7 @@ export async function verifyToken(): Promise<boolean> {
     try {
         const token = tokenStorage.getAccess();
         if (!token) return false;
-        await apiClient.post('auth/token/verify/', { token });
+        await apiClient.post('auth/token/verify/', {token});
         return true;
     } catch {
         return false;

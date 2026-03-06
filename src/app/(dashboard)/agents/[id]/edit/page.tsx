@@ -50,17 +50,15 @@ export default function EditAgentPage({ params }: { params: { id: string } }) {
     useEffect(() => {
         async function loadAgent() {
             try {
-                // Mock fetch agent data since no real backend exists, but leave structure
-                // const agent = await agentApi.getAgent(params.id);
+                const agent = await agentApi.getAgent(params.id);
 
-                // Simulating fetch
-                await new Promise((resolve) => setTimeout(resolve, 600));
+                // Map backend data to form fields
                 reset({
-                    name: 'Analysis Agent',
-                    description: 'Continuously scans markets using technical and fundamental signals.',
-                    model: 'GPT-4o',
-                    dataSources: ['Market Data', 'Social Sentiment'],
-                    systemPrompt: 'You are an elite market analysis agent. Your primary role is to evaluate technical chart patterns and fundamental data streams simultaneously...',
+                    name: agent.name,
+                    description: agent.description || '',
+                    model: agent.model === 'gpt-4' ? 'GPT-4o' : agent.model === 'claude-3-sonnet' ? 'Claude 3.5 Sonnet' : 'GPT-4o',
+                    dataSources: ['Market Data'], // Simplified - backend uses data_source not array
+                    systemPrompt: agent.systemPrompt || '',
                 });
             } catch (err) {
                 setServerError('Failed to load agent details.');
@@ -76,17 +74,24 @@ export default function EditAgentPage({ params }: { params: { id: string } }) {
         setServerError(null);
 
         try {
-            // Typically real API call goes here:
-            // const updatedAgent = await agentApi.updateAgent(params.id, data);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Map form data to backend schema
+            const updateData = {
+                name: data.name,
+                description: data.description || '',
+                model: data.model === 'GPT-4o' ? 'gpt-4' : data.model === 'Claude 3.5 Sonnet' ? 'claude-3-sonnet' : 'gpt-3.5-turbo',
+                system_prompt: data.systemPrompt,
+                // Keep other fields from current agent data
+            };
+
+            await agentApi.updateAgent(params.id, updateData);
 
             setSuccess(true);
             setTimeout(() => {
-                router.push(routes.dashboard.agents.detail(params.id));
+                router.push(routes.dashboard.agents.index);
             }, 1000);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Submission error:', error);
-            setServerError('Failed to update agent. Please try again.');
+            setServerError(error.response?.data?.error || error.response?.data?.detail || 'Failed to update agent. Please try again.');
             setLoading(false);
         }
     }

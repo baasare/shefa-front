@@ -1,11 +1,16 @@
 import { Metadata } from 'next';
-import { CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-react';
+import ApprovalsClient from './ApprovalsClient';
 
 export const metadata: Metadata = {
   title: 'Approvals — ShefaFx',
   description: 'Review and approve AI-generated trading suggestions.',
 };
 
+export default function ApprovalsPage() {
+  return <ApprovalsClient />;
+}
+
+/* OLD MOCK DATA - KEEPING FOR REFERENCE
 const pendingApprovals = [
   {
     id: 'APR-001',
@@ -46,7 +51,9 @@ const riskLevelMap: Record<string, string> = {
   error: 'border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/5',
 };
 
-export default function ApprovalsPage() {
+// OLD IMPLEMENTATION - REPLACED WITH ApprovalsClient
+/*
+export default function ApprovalsPageOld() {
   return (
     <div className="space-y-6">
       <div>
@@ -156,3 +163,4 @@ export default function ApprovalsPage() {
     </div>
   );
 }
+*/

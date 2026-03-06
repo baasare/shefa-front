@@ -33,6 +33,7 @@ export interface AgentStatistics {
 }
 
 export const agentApi = {
+    // Custom Agent CRUD operations
     getAgents: async (): Promise<Agent[]> => {
         const response = await apiClient.get('agents/');
         return response.data;
@@ -57,22 +58,75 @@ export const agentApi = {
         await apiClient.delete(`agents/${id}/`);
     },
 
-    runAgent: async (id: string): Promise<{ success: boolean; message: string }> => {
+    // Custom Agent actions
+    activateAgent: async (id: string): Promise<{ success: boolean; message: string }> => {
+        const response = await apiClient.post(`agents/${id}/activate/`);
+        return response.data;
+    },
+
+    deactivateAgent: async (id: string): Promise<{ success: boolean; message: string }> => {
+        const response = await apiClient.post(`agents/${id}/deactivate/`);
+        return response.data;
+    },
+
+    runAgent: async (id: string): Promise<{ success: boolean; task_id: string; message: string }> => {
         const response = await apiClient.post(`agents/${id}/run/`);
         return response.data;
     },
 
     getAgentStatistics: async (id: string): Promise<AgentStatistics> => {
-        // Note: this endpoint might need adjustment depending on backend exact response
         const response = await apiClient.get(`agents/${id}/statistics/`);
         return response.data;
     },
 
-    runConsensus: async (agentIds: string[], prompt: string): Promise<any> => {
-        const response = await apiClient.post('agents/multi-agent-consensus/', {
-            agents: agentIds,
-            prompt,
+    // Built-in Multi-Agent Analysis System
+    analyzeStock: async (portfolioId: string, symbol: string): Promise<{
+        success: boolean;
+        task_id: string;
+        portfolio_id: string;
+        symbol: string;
+        message: string;
+    }> => {
+        const response = await apiClient.post('agent-analysis/analyze-stock/', {
+            portfolio_id: portfolioId,
+            symbol,
         });
+        return response.data;
+    },
+
+    multiAgentConsensus: async (portfolioId: string, symbols: string[]): Promise<{
+        success: boolean;
+        task_id: string;
+        portfolio_id: string;
+        symbols_count: number;
+        message: string;
+    }> => {
+        const response = await apiClient.post('agent-analysis/multi-agent-consensus/', {
+            portfolio_id: portfolioId,
+            symbols,
+        });
+        return response.data;
+    },
+
+    getTaskStatus: async (taskId: string): Promise<{
+        task_id: string;
+        state: 'PENDING' | 'STARTED' | 'SUCCESS' | 'FAILURE';
+        result?: any;
+        error?: string;
+    }> => {
+        const response = await apiClient.get(`agent-analysis/task-status/${taskId}/`);
+        return response.data;
+    },
+
+    // Agent Decisions (for HITL approval)
+    getPendingDecisions: async (): Promise<any[]> => {
+        const response = await apiClient.get('agent-decisions/');
+        return response.data;
+    },
+
+    // Agent Logs
+    getAgentLogs: async (params?: { limit?: number; offset?: number }): Promise<any> => {
+        const response = await apiClient.get('agent-logs/', { params });
         return response.data;
     },
 };

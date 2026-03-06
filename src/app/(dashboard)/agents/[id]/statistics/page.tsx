@@ -13,25 +13,11 @@ export default function AgentStatisticsPage({ params }: { params: { id: string }
     useEffect(() => {
         async function fetchStats() {
             try {
-                // Typically: await agentApi.getAgentStatistics(params.id);
-                await new Promise(res => setTimeout(res, 800));
-
-                // Mock data
-                setStats({
-                    id: params.id,
-                    totalRuns: 1284,
-                    successRate: 99.2,
-                    lastRunTime: '2m ago',
-                    recentRuns: [
-                        { id: 'RUN-8921A', status: 'Success', timestamp: '2026-03-03 16:32:00', duration: '142ms' },
-                        { id: 'RUN-8920A', status: 'Success', timestamp: '2026-03-03 16:29:15', duration: '128ms' },
-                        { id: 'RUN-8919F', status: 'Failed', timestamp: '2026-03-03 16:14:22', duration: '840ms' },
-                        { id: 'RUN-8918A', status: 'Success', timestamp: '2026-03-03 15:55:01', duration: '135ms' },
-                        { id: 'RUN-8917A', status: 'Success', timestamp: '2026-03-03 15:42:10', duration: '141ms' },
-                    ]
-                });
+                const data = await agentApi.getAgentStatistics(params.id);
+                setStats(data);
             } catch (err) {
                 console.error('Failed to load stats', err);
+                setStats(null);
             } finally {
                 setLoading(false);
             }
