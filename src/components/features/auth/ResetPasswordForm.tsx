@@ -66,15 +66,19 @@ export function ResetPasswordForm({ uid: uidProp, token: tokenProp }: ResetPassw
         } catch (err: unknown) {
             // Handle different error responses from the backend
             const errorData = (err as { response?: { data?: Record<string, string[] | string> } })?.response?.data;
+            const normalizeError = (value?: string | string[]) => {
+                if (!value) return undefined;
+                return Array.isArray(value) ? value[0] : value;
+            };
             if (errorData) {
                 // Check for specific field errors
                 const errorMessage =
-                    errorData.token?.[0] ||
-                    errorData.uid?.[0] ||
-                    errorData.new_password1?.[0] ||
-                    errorData.new_password2?.[0] ||
-                    errorData.non_field_errors?.[0] ||
-                    errorData.detail ||
+                    normalizeError(errorData.token) ||
+                    normalizeError(errorData.uid) ||
+                    normalizeError(errorData.new_password1) ||
+                    normalizeError(errorData.new_password2) ||
+                    normalizeError(errorData.non_field_errors) ||
+                    normalizeError(errorData.detail) ||
                     'Password reset failed. The link may have expired.';
                 setServerError(errorMessage);
             } else {

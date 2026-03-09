@@ -15,7 +15,11 @@ import { cn } from '@/lib/utils/cn';
 
 function getIcon(name: string | undefined): LucideIcon {
   if (!name) return LucideIcons.Circle;
-  return (LucideIcons as Record<string, LucideIcon>)[name] ?? LucideIcons.Circle;
+  const candidate = LucideIcons[name as keyof typeof LucideIcons];
+  if (typeof candidate === 'function') {
+    return candidate as LucideIcon;
+  }
+  return LucideIcons.Circle;
 }
 
 export function MobileNav() {

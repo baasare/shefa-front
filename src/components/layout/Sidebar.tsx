@@ -19,7 +19,11 @@ import { cn } from '@/lib/utils/cn';
 // Resolve a Lucide icon by string name
 function getIcon(name: string | undefined): LucideIcon {
   if (!name) return LucideIcons.Circle;
-  return (LucideIcons as Record<string, LucideIcon>)[name] ?? LucideIcons.Circle;
+  const candidate = LucideIcons[name as keyof typeof LucideIcons];
+  if (typeof candidate === 'function') {
+    return candidate as LucideIcon;
+  }
+  return LucideIcons.Circle;
 }
 
 export function Sidebar() {

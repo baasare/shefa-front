@@ -29,7 +29,8 @@ const loginSchema = z.object({
     rememberMe: z.boolean().default(false),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormInput = z.input<typeof loginSchema>;
+type LoginFormOutput = z.output<typeof loginSchema>;
 
 export function LoginForm() {
     const router = useRouter();
@@ -41,7 +42,7 @@ export function LoginForm() {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-    } = useForm<LoginFormData>({
+    } = useForm<LoginFormInput, any, LoginFormOutput>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: '',
@@ -50,7 +51,7 @@ export function LoginForm() {
         },
     });
 
-    const onSubmit = async (data: LoginFormData) => {
+    const onSubmit = async (data: LoginFormOutput) => {
         setServerError(null);
         try {
             // Use auth store login which updates state
