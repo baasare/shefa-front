@@ -5,98 +5,42 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-// Routes that don't require authentication
-const publicPaths = [
-  '/',
-  '/features',
-  '/pricing',
-  '/about',
-  '/blog',
-  '/contact',
-  '/demo',
-  '/waitlist',
-  '/legal',
-  '/status',
-  '/maintenance',
-];
-
-// Auth routes (redirect to dashboard if already authenticated)
-const authPaths = [
-  '/login',
-  '/register',
-  '/forgot-password',
-  '/reset-password',
-  '/verify-email',
-  '/confirm-email',
-  '/callback',
-];
-
-// Dashboard routes requiring authentication
-const protectedPaths = [
-  '/dashboard',
-  '/portfolio',
-  '/strategies',
-  '/agents',
-  '/orders',
-  '/approvals',
-  '/market',
-  '/education',
-  '/settings',
-  '/notifications',
-  '/help',
-  '/admin',
-];
-
-// Onboarding routes requiring authentication but not completion
-const onboardingPaths = [
-  '/welcome',
-  '/risk-profile',
-  '/connect-broker',
-  '/create-portfolio',
-  '/create-strategy',
-  '/complete',
-];
+import {
+  getAppHostname,
+  getMainHostname,
+  getSiteSection,
+  isAppHostname,
+  isLocalDevelopmentHost,
+  isMainHostname,
+} from '@/lib/config/domain-routing';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const hostname = request.headers.get('host') || '';
+  const hostname = request.nextUrl.hostname;
 
-  // Skip subdomain logic for localhost
-  const isLocalhost = hostname.startsWith('localhost') || hostname.startsWith('127.0.0.1');
-  if (isLocalhost) {
+  if (isLocalDevelopmentHost(hostname)) {
     return NextResponse.next();
   }
 
-  // Check subdomain
-  const isAppSubdomain = hostname.startsWith('app.');
-  const isMainDomain = hostname === 'shefafx.com' || hostname === 'www.shefafx.com';
+  const section = getSiteSection(pathname);
 
-  // Check if path is public
-  const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
-  const isAuthPath = authPaths.some((path) => pathname.startsWith(path));
-  const isProtectedPath = protectedPaths.some((path) => pathname.startsWith(path));
-  const isOnboardingPath = onboardingPaths.some((path) => pathname.startsWith(path));
-
-  // Main domain (shefafx.com) - only allow marketing pages
-  if (isMainDomain && !isAppSubdomain) {
-    // If accessing protected routes on main domain, redirect to app subdomain
-    if (isProtectedPath || isOnboardingPath || isAuthPath) {
+  if (isMainHostname(hostname)) {
+    if (section === 'app') {
       const appUrl = new URL(request.url);
-      appUrl.hostname = 'app.shefafx.com';
+      appUrl.hostname = getAppHostname();
       return NextResponse.redirect(appUrl);
     }
+
     return NextResponse.next();
   }
 
-  // App subdomain (app.shefafx.com) - only allow app pages
-  if (isAppSubdomain) {
-    // If accessing marketing pages on app subdomain, redirect to main domain
-    if (isPublicPath && !isProtectedPath && !isAuthPath && !isOnboardingPath) {
+  if (isAppHostname(hostname)) {
+    if (section === 'marketing' || section === 'auth') {
       const mainUrl = new URL(request.url);
-      mainUrl.hostname = 'shefafx.com';
+      mainUrl.hostname = getMainHostname();
       return NextResponse.redirect(mainUrl);
     }
+
     return NextResponse.next();
   }
 

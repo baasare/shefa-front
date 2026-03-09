@@ -26,6 +26,7 @@ import { routes } from '@/lib/config/routes';
 import { useUIStore } from '@/lib/store/uiStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import { cn } from '@/lib/utils/cn';
+import { getNavigationUrl } from '@/lib/utils/navigation';
 
 export function DashboardHeader() {
   const { sidebarOpen, toggleSidebar } = useUIStore();
@@ -49,10 +50,9 @@ export function DashboardHeader() {
   const handleLogout = async () => {
     try {
       await logout();
-      // Redirect to login on main domain
-      const hostname = window.location.hostname;
-      if (hostname.startsWith('app.')) {
-        window.location.href = `https://shefafx.com${routes.auth.login}`;
+      const loginUrl = getNavigationUrl(routes.auth.login);
+      if (loginUrl.startsWith('http')) {
+        window.location.href = loginUrl;
       } else {
         router.push(routes.auth.login);
       }

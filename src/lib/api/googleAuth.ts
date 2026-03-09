@@ -5,6 +5,7 @@
 
 import apiClient from './client';
 import { tokenStorage } from './authClient';
+import { isAppPath } from '@/lib/config/domain-routing';
 
 interface GoogleAuthResponse {
   access: string;
@@ -128,8 +129,14 @@ export function redirectToGoogleAuth(): void {
   googleAuthUrl.searchParams.set('access_type', 'online');
   googleAuthUrl.searchParams.set('prompt', 'select_account');
 
-  // Store current path for redirect after auth
-  sessionStorage.setItem('auth_redirect', window.location.pathname);
+  const currentUrl = new URL(window.location.href);
+  const redirectParam = currentUrl.searchParams.get('redirect');
+  const redirectTarget =
+    redirectParam && redirectParam.startsWith('/') && isAppPath(redirectParam)
+      ? redirectParam
+      : currentUrl.pathname;
+
+  sessionStorage.setItem('auth_redirect', redirectTarget);
 
   window.location.href = googleAuthUrl.toString();
 }

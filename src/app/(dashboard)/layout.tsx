@@ -16,6 +16,7 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { useUIStore } from '@/lib/store/uiStore';
 import { useAuthStore } from '@/lib/store/authStore';
 import { routes } from '@/lib/config/routes';
+import { getNavigationUrl } from '@/lib/utils/navigation';
 
 export default function DashboardLayout({
   children,
@@ -29,8 +30,13 @@ export default function DashboardLayout({
   useEffect(() => {
     // Redirect to login if not authenticated after loading completes
     if (!isLoading && !isAuthenticated) {
-      const loginUrl = `${routes.auth.login}?redirect=${encodeURIComponent(pathname)}`;
-      router.push(loginUrl);
+      const loginPath = `${routes.auth.login}?redirect=${encodeURIComponent(pathname)}`;
+      const loginUrl = getNavigationUrl(loginPath);
+      if (loginUrl.startsWith('http')) {
+        window.location.href = loginUrl;
+      } else {
+        router.push(loginPath);
+      }
       return;
     }
 

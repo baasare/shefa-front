@@ -22,6 +22,8 @@ import {
 } from './AuthCard';
 import { useAuthStore } from '@/lib/store/authStore';
 import { routes } from '@/lib/config/routes';
+import { isAppPath } from '@/lib/config/domain-routing';
+import { getNavigationUrl } from '@/lib/utils/navigation';
 
 const loginSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
@@ -69,19 +71,17 @@ export function LoginForm() {
             let destinationPath: string;
             if (user && !user.onboarding_completed) {
                 destinationPath = routes.onboarding.welcome;
-            } else if (redirect && redirect.startsWith('/')) {
+            } else if (redirect && redirect.startsWith('/') && isAppPath(redirect)) {
                 destinationPath = redirect;
             } else {
                 destinationPath = routes.dashboard.home;
             }
 
             // Check if we're on production and need to redirect to app subdomain
-            const hostname = window.location.hostname;
-            if (hostname === 'shefafx.com' || hostname === 'www.shefafx.com') {
-                // Redirect to app subdomain in production
-                window.location.href = `https://app.shefafx.com${destinationPath}`;
+            const navigationUrl = getNavigationUrl(destinationPath);
+            if (navigationUrl.startsWith('http')) {
+                window.location.href = navigationUrl;
             } else {
-                // Local development or already on app subdomain
                 router.push(destinationPath);
             }
         } catch (err: unknown) {
