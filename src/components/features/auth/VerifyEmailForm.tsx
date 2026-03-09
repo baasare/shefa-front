@@ -28,9 +28,9 @@ export function VerifyEmailForm() {
             try {
                 await verifyEmail(key);
                 setStatus('success');
-            } catch (err: any) {
+            } catch (err: unknown) {
                 setError(
-                    err?.response?.data?.key?.[0] ??
+                    (err as { response?: { data?: { key?: string[] } } })?.response?.data?.key?.[0] ??
                     'Verification failed. The link may be invalid or expired.'
                 );
                 setStatus('error');
@@ -103,7 +103,7 @@ export function VerifyEmailForm() {
                     We sent a verification link to your email address. Click the link to verify your account.
                 </p>
                 <p className="mt-3 text-xs text-[rgb(var(--muted-foreground))]">
-                    Didn't receive it? Check your spam folder or{' '}
+                    Didn&apos;t receive it? Check your spam folder or{' '}
                     <Link href={routes.auth.login} className="text-[rgb(var(--primary))] hover:underline">
                         contact support
                     </Link>.

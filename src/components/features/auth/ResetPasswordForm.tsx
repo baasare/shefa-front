@@ -7,7 +7,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -40,7 +40,6 @@ interface ResetPasswordFormProps {
 
 export function ResetPasswordForm({ uid: uidProp, token: tokenProp }: ResetPasswordFormProps = {}) {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [success, setSuccess] = useState(false);
     const [serverError, setServerError] = useState<string | null>(null);
@@ -64,9 +63,9 @@ export function ResetPasswordForm({ uid: uidProp, token: tokenProp }: ResetPassw
         try {
             await resetPassword({ uid, token, ...data });
             setSuccess(true);
-        } catch (err: any) {
+        } catch (err: unknown) {
             // Handle different error responses from the backend
-            const errorData = err?.response?.data;
+            const errorData = (err as { response?: { data?: Record<string, string[] | string> } })?.response?.data;
             if (errorData) {
                 // Check for specific field errors
                 const errorMessage =

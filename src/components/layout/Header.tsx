@@ -13,7 +13,6 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { marketingNav } from '@/lib/config/navigation';
 import { routes } from '@/lib/config/routes';
-import { cn } from '@/lib/utils/cn';
 import { tokenStorage } from '@/lib/api/authClient';
 import { getNavigationUrl } from '@/lib/utils/navigation';
 

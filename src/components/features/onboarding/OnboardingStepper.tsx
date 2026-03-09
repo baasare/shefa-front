@@ -27,7 +27,6 @@ export function OnboardingStepper() {
                 {onboardingSteps.map((step, idx) => {
                     const isDone = idx < activeIdx;
                     const isActive = idx === activeIdx;
-                    const isUpcoming = idx > activeIdx;
 
                     return (
                         <li key={step.href} className="flex items-center flex-1">

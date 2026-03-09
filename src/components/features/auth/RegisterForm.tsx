@@ -69,8 +69,8 @@ export function RegisterForm() {
             });
             // After registration, go to verify email page
             router.push(`${routes.auth.verifyEmail}?email=${encodeURIComponent(data.email)}`);
-        } catch (err: any) {
-            const errData = err?.response?.data;
+        } catch (err: unknown) {
+            const errData = (err as { response?: { data?: Record<string, string[]> } })?.response?.data;
             const firstError =
                 errData?.email?.[0] ??
                 errData?.password1?.[0] ??
