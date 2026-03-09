@@ -37,7 +37,10 @@ export interface Strategy {
     status: 'active' | 'paused' | 'inactive';
     autonomous_trading_enabled: boolean;
     created_at: string;
+    watchlist?: string[];
     updated_at: string;
+    win_rate?: string | number;
+    total_trades?: number;
 }
 
 export interface Backtest {
@@ -71,9 +74,12 @@ export interface StrategyTemplate {
     exit_rules: Record<string, unknown>;
     risk_parameters: Record<string, unknown>;
     expected_performance: Record<string, unknown>;
+    popular?: boolean;
     tags: string[];
     is_featured: boolean;
     usage_count: number;
+    estimatedReturn?: string;
+    riskLevel?: string;
 }
 
 export interface Watchlist {

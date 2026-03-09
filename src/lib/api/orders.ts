@@ -65,6 +65,9 @@ export interface Trade {
     total_value: string;
     executed_at: string;
     broker_trade_id: string;
+    realized_pnl?: string;
+    type?: string;
+    trade_type?: string;
 }
 
 export interface ApprovalDecision {

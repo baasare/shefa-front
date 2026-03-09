@@ -107,13 +107,13 @@ export default function PortfolioHistoryPage() {
                     { label: 'Total Trades', value: String(performance?.total_trades || 0) },
                     {
                         label: 'Win Rate',
-                        value: `${(performance?.win_rate || 0).toFixed(1)}%`,
-                        color: (performance?.win_rate || 0) >= 50 ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'
+                        value: `${Number(performance?.win_rate || 0).toFixed(1)}%`,
+                        color: Number(performance?.win_rate || 0) >= 50 ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'
                     },
                     {
                         label: 'Total P&L',
-                        value: formatCurrency(performance?.total_pnl || 0),
-                        color: (performance?.total_pnl || 0) >= 0 ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'
+                        value: formatCurrency(Number(performance?.total_pnl || 0)),
+                        color: Number(performance?.total_pnl || 0) >= 0 ? 'text-[rgb(var(--success))]' : 'text-[rgb(var(--destructive))]'
                     },
                     {
                         label: 'Profitable Trades',
@@ -192,8 +192,8 @@ export default function PortfolioHistoryPage() {
                                             </span>
                                         </td>
                                         <td className="px-5 py-3 text-[rgb(var(--foreground))]">{h.quantity}</td>
-                                        <td className="px-5 py-3 font-mono text-[rgb(var(--foreground))]">{formatCurrency(h.price)}</td>
-                                        <td className="px-5 py-3 font-mono text-[rgb(var(--foreground))]">{formatCurrency(h.total_value)}</td>
+                                        <td className="px-5 py-3 font-mono text-[rgb(var(--foreground))]">{formatCurrency(parseFloat(h.price))}</td>
+                                        <td className="px-5 py-3 font-mono text-[rgb(var(--foreground))]">{formatCurrency(parseFloat(h.total_value))}</td>
                                         <td className="px-5 py-3">
                                             <div className="flex items-center gap-1">
                                                 {h.realized_pnl ? (

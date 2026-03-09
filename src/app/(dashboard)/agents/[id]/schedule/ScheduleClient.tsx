@@ -145,7 +145,7 @@ export default function ScheduleClient({ agentId }: { agentId: string }) {
                                 name="frequency"
                                 value={freq.value}
                                 checked={config.frequency === freq.value}
-                                onChange={(e) => setConfig(prev => ({ ...prev, frequency: e.target.value as 'hourly' | 'daily' | 'weekly' | 'custom' }))}
+                                onChange={(e) => setConfig(prev => ({ ...prev, frequency: e.target.value as 'once' | 'daily' | 'weekly' | 'monthly' | 'custom' }))}
                                 className="mt-0.5 h-4 w-4 text-[rgb(var(--primary))] border-[rgb(var(--border))] focus:ring-[rgb(var(--ring))]"
                             />
                             <div className="flex-1">

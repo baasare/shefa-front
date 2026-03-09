@@ -73,12 +73,12 @@ const statusColorMap: Record<string, { dot: string; badge: string }> = {
 };
 
 const initialLogs = [
-    { id: 1, time: '16:32', agent: 'Analysis Agent', event: 'BTC sentiment score: 0.78 (Bullish)', type: 'info' },
-    { id: 2, time: '16:29', agent: 'Risk Agent', event: 'Portfolio VaR within 5% daily limit', type: 'success' },
-    { id: 3, time: '16:27', agent: 'Trade Agent', event: 'AAPL Buy order filled — 10 shares at $182.50', type: 'success' },
-    { id: 4, time: '16:14', agent: 'Approval Agent', event: 'TSLA Sell flagged for human review', type: 'warning' },
-    { id: 5, time: '16:08', agent: 'Analysis Agent', event: 'MSFT earnings beat — signal upgraded', type: 'info' },
-    { id: 6, time: '15:55', agent: 'Risk Agent', event: 'ETH drawdown exceeded 5% threshold — strategy paused', type: 'error' },
+    { id: '1', time: '16:32', agent: 'Analysis Agent', event: 'BTC sentiment score: 0.78 (Bullish)', type: 'info' },
+    { id: '2', time: '16:29', agent: 'Risk Agent', event: 'Portfolio VaR within 5% daily limit', type: 'success' },
+    { id: '3', time: '16:27', agent: 'Trade Agent', event: 'AAPL Buy order filled — 10 shares at $182.50', type: 'success' },
+    { id: '4', time: '16:14', agent: 'Approval Agent', event: 'TSLA Sell flagged for human review', type: 'warning' },
+    { id: '5', time: '16:08', agent: 'Analysis Agent', event: 'MSFT earnings beat — signal upgraded', type: 'info' },
+    { id: '6', time: '15:55', agent: 'Risk Agent', event: 'ETH drawdown exceeded 5% threshold — strategy paused', type: 'error' },
 ];
 
 const logTypeMap: Record<string, string> = {

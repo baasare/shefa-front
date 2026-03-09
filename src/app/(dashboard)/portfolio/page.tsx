@@ -66,10 +66,10 @@ export default function PortfolioPage() {
 
   // Fallback static metrics for what backend analytics doesn't directly provide yet
   const summaryCards = [
-    { label: 'Total Value', value: formatCurrency(activePortfolio?.current_equity || 0) },
-    { label: 'Available Cash', value: formatCurrency(activePortfolio?.cash_balance || 0) },
-    { label: 'Total P&L', value: `${parseFloat(activePortfolio?.total_pl || '0') >= 0 ? '+' : ''}${formatCurrency(activePortfolio?.total_pl || 0)}` },
-    { label: 'Return', value: m.total_return },
+    { label: 'Total Value', value: formatCurrency(parseFloat(String(activePortfolio?.current_equity || 0))) },
+    { label: 'Available Cash', value: formatCurrency(parseFloat(String(activePortfolio?.cash_balance || 0))) },
+    { label: 'Total P&L', value: `${parseFloat(activePortfolio?.total_pl || '0') >= 0 ? '+' : ''}${formatCurrency(parseFloat(activePortfolio?.total_pl || '0'))}` },
+    { label: 'Return', value: String(m.total_return || '0%') },
   ];
 
   return (
@@ -168,9 +168,9 @@ export default function PortfolioPage() {
                       </div>
                     </td>
                     <td className="px-5 py-3.5 text-[rgb(var(--foreground))]">{h.quantity}</td>
-                    <td className="px-5 py-3.5 font-mono text-[rgb(var(--muted-foreground))]">{formatCurrency(h.avg_entry_price)}</td>
-                    <td className="px-5 py-3.5 font-mono text-[rgb(var(--foreground))]">{formatCurrency(h.current_price || '0')}</td>
-                    <td className="px-5 py-3.5 font-mono font-semibold text-[rgb(var(--foreground))]">{formatCurrency(h.current_value)}</td>
+                    <td className="px-5 py-3.5 font-mono text-[rgb(var(--muted-foreground))]">{formatCurrency(parseFloat(h.avg_entry_price))}</td>
+                    <td className="px-5 py-3.5 font-mono text-[rgb(var(--foreground))]">{formatCurrency(parseFloat(h.current_price || '0'))}</td>
+                    <td className="px-5 py-3.5 font-mono font-semibold text-[rgb(var(--foreground))]">{formatCurrency(parseFloat(h.current_value))}</td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-1">
                         {isPositivePnl ? (

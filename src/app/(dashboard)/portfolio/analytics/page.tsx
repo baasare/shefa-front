@@ -15,6 +15,7 @@ interface AllocationItem {
     name: string;
     pct: number;
     value: number;
+    color?: string;
 }
 
 export default function PortfolioAnalyticsPage() {
@@ -91,14 +92,14 @@ export default function PortfolioAnalyticsPage() {
                     {/* Key metrics */}
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         {[
-                            { label: 'Total Return', value: m.total_return, sub: 'since inception', positive: parseFloat(m.total_return) >= 0 },
-                            { label: 'Sharpe Ratio', value: m.sharpe_ratio, sub: 'risk-adjusted return', positive: parseFloat(m.sharpe_ratio) >= 1 },
-                            { label: 'Max Drawdown', value: `${m.max_drawdown}%`, sub: 'worst peak-to-trough', positive: false },
-                            { label: 'Volatility', value: m.volatility, sub: 'annualized', positive: null },
-                            { label: 'Profit Factor', value: String(m.profit_factor || 0), sub: 'gross profit / gross loss', positive: (m.profit_factor || 0) > 1 },
-                            { label: 'Best Trade', value: m.best_trade || '0%', sub: 'max individual win', positive: true },
-                            { label: 'Worst Trade', value: m.worst_trade || '0%', sub: 'max individual loss', positive: false },
-                            { label: 'Recovery Factor', value: String(m.recovery_factor || 0), sub: 'net profit / max drawdown', positive: (m.recovery_factor || 0) > 1 },
+                            { label: 'Total Return', value: String(m.total_return || '0%'), sub: 'since inception', positive: parseFloat(String(m.total_return || '0')) >= 0 },
+                            { label: 'Sharpe Ratio', value: String(m.sharpe_ratio || '0.00'), sub: 'risk-adjusted return', positive: parseFloat(String(m.sharpe_ratio || '0')) >= 1 },
+                            { label: 'Max Drawdown', value: `${m.max_drawdown || '0'}%`, sub: 'worst peak-to-trough', positive: false },
+                            { label: 'Volatility', value: String(m.volatility || '0%'), sub: 'annualized', positive: null },
+                            { label: 'Profit Factor', value: String(m.profit_factor || 0), sub: 'gross profit / gross loss', positive: Number(m.profit_factor || 0) > 1 },
+                            { label: 'Best Trade', value: String(m.best_trade || '0%'), sub: 'max individual win', positive: true },
+                            { label: 'Worst Trade', value: String(m.worst_trade || '0%'), sub: 'max individual loss', positive: false },
+                            { label: 'Recovery Factor', value: String(m.recovery_factor || 0), sub: 'net profit / max drawdown', positive: Number(m.recovery_factor || 0) > 1 },
                         ].map((stat) => (
                             <div key={stat.label} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-5 py-4">
                                 <p className="text-xs text-[rgb(var(--muted-foreground))] uppercase tracking-wider mb-1">{stat.label}</p>
@@ -125,9 +126,9 @@ export default function PortfolioAnalyticsPage() {
                                 <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Monthly Returns</h2>
                             </div>
                             <div className="flex items-end justify-between h-48 px-2">
-                                {m.monthly_returns?.map((mr: MonthlyReturn, idx: number) => {
+                                {(m.monthly_returns as MonthlyReturn[] | undefined)?.map((mr: MonthlyReturn, idx: number) => {
                                     // Scale height based on max absolute value
-                                    const maxVal = Math.max(...(m.monthly_returns?.map((x: MonthlyReturn) => Math.abs(x.value)) || [1]));
+                                    const maxVal = Math.max(...((m.monthly_returns as MonthlyReturn[] | undefined)?.map((x: MonthlyReturn) => Math.abs(x.value)) || [1]));
                                     const heightPct = (Math.abs(mr.value) / maxVal) * 100;
 
                                     return (
@@ -153,7 +154,7 @@ export default function PortfolioAnalyticsPage() {
                                 <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Asset Allocation</h2>
                             </div>
                             <div className="space-y-4">
-                                {m.allocation && m.allocation.length > 0 ? m.allocation.map((a: AllocationItem) => (
+                                {(m.allocation as AllocationItem[] | undefined) && (m.allocation as AllocationItem[]).length > 0 ? (m.allocation as AllocationItem[]).map((a: AllocationItem) => (
                                     <div key={a.name}>
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-sm font-medium text-[rgb(var(--foreground))]">{a.name}</span>
@@ -181,9 +182,9 @@ export default function PortfolioAnalyticsPage() {
                         </div>
                         <div className="grid sm:grid-cols-3 gap-4">
                             {[
-                                { label: 'Your Portfolio', value: m.total_return, icon: TrendingUp, positive: parseFloat(m.total_return) >= 0 },
+                                { label: 'Your Portfolio', value: String(m.total_return || '0%'), icon: TrendingUp, positive: parseFloat(String(m.total_return || '0')) >= 0 },
                                 { label: 'S&P 500', value: '+9.8%', icon: TrendingUp, positive: true },
-                                { label: 'Alpha', value: `${(parseFloat(m.total_return) - 9.8).toFixed(1)}%`, icon: TrendingUp, positive: (parseFloat(m.total_return) - 9.8) >= 0 },
+                                { label: 'Alpha', value: `${(parseFloat(String(m.total_return || '0')) - 9.8).toFixed(1)}%`, icon: TrendingUp, positive: (parseFloat(String(m.total_return || '0')) - 9.8) >= 0 },
                             ].map((item) => {
                                 const Icon = item.icon;
                                 return (

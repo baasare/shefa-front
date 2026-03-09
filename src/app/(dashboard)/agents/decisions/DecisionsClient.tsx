@@ -98,7 +98,7 @@ export default function DecisionsClient() {
                         {pending.map((d) => {
                             const cfg = statusConfig.pending;
                             const StatusIcon = cfg.icon;
-                            const confidence = d.confidence ? parseFloat(d.confidence) : 0;
+                            const confidence = d.confidence ? (typeof d.confidence === 'string' ? parseFloat(d.confidence) : d.confidence) : 0;
 
                             return (
                                 <div key={d.id} className="rounded-xl border border-[rgb(var(--warning))]/30 bg-[rgb(var(--warning))]/5 p-5">

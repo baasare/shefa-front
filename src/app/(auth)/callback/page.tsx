@@ -97,21 +97,21 @@ export default function CallbackPage() {
 
         router.push(redirectPath);
       } catch (err: unknown) {
-        const error = err as { response?: { data?: Record<string, unknown> } };
+        const error = err as { response?: { data?: { detail?: string; non_field_errors?: string[]; code?: string[]; error?: string } } };
         console.error('OAuth callback error:', error);
         console.error('Error response:', error?.response?.data);
 
         // Get detailed error message
         let errorMessage = 'Authentication failed. Please try again.';
 
-        if (err?.response?.data) {
-          const errData = err.response.data;
+        if (error?.response?.data) {
+          const errData = error.response.data;
           errorMessage =
             errData.detail ||
             errData.non_field_errors?.[0] ||
             errData.code?.[0] ||
             errData.error ||
-            JSON.stringify(errData);
+            'Authentication failed. Please try again.';
         }
 
         setError(errorMessage);

@@ -5,13 +5,16 @@ import Link from 'next/link';
 import { ArrowRight, Star } from 'lucide-react';
 import { getStrategyTemplates, StrategyTemplate } from '@/lib/api/strategies';
 
-const difficultyColor = {
+const difficultyColor: Record<string, string> = {
+    beginner: 'text-[rgb(var(--success))] bg-[rgb(var(--success))]/10',
     Beginner: 'text-[rgb(var(--success))] bg-[rgb(var(--success))]/10',
+    intermediate: 'text-[rgb(var(--warning))] bg-[rgb(var(--warning))]/10',
     Intermediate: 'text-[rgb(var(--warning))] bg-[rgb(var(--warning))]/10',
+    advanced: 'text-[rgb(var(--destructive))] bg-[rgb(var(--destructive))]/10',
     Advanced: 'text-[rgb(var(--destructive))] bg-[rgb(var(--destructive))]/10',
 };
 
-const riskColor = {
+const riskColor: Record<string, string> = {
     Low: 'text-[rgb(var(--success))]',
     Medium: 'text-[rgb(var(--warning))]',
     High: 'text-[rgb(var(--destructive))]',
@@ -105,7 +108,7 @@ export default function StrategyTemplatesPage() {
                                 </div>
                                 <div>
                                     <span className="text-[rgb(var(--muted-foreground))]">Risk: </span>
-                                    <span className={`font-semibold ${riskColor[tpl.riskLevel]}`}>{tpl.riskLevel}</span>
+                                    <span className={`font-semibold ${tpl.riskLevel ? riskColor[tpl.riskLevel] : ''}`}>{tpl.riskLevel || 'N/A'}</span>
                                 </div>
                             </div>
                             <Link

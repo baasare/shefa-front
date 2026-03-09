@@ -9,6 +9,11 @@ export interface Agent {
     systemPrompt: string;
     status: string;
     statusColor: string;
+    is_active?: boolean;
+    last_run_at?: string;
+    agent_type?: string;
+    run_count?: number;
+    success_rate?: number;
 }
 
 export interface AgentCreateInput {
@@ -16,7 +21,13 @@ export interface AgentCreateInput {
     description?: string;
     model: string;
     dataSources?: string[];
-    systemPrompt: string;
+    systemPrompt?: string;
+    system_prompt?: string;
+    agent_type?: string;
+    temperature?: number;
+    max_tokens?: number;
+    data_source?: string;
+    analysis_frequency?: number;
 }
 
 export interface AgentStatistics {
@@ -38,7 +49,13 @@ export interface AgentDecision {
     decision: string;
     status: string;
     created_at: string;
-    [key: string]: unknown;
+    confidence?: string | number;
+    symbol?: string;
+    action?: string;
+    quantity?: number;
+    rationale?: string;
+    approved_at?: string;
+    rejected_at?: string;
 }
 
 export interface AgentLog {
@@ -46,8 +63,13 @@ export interface AgentLog {
     agent: string;
     message: string;
     level: string;
-    timestamp: string;
-    [key: string]: unknown;
+    timestamp?: string;
+    created_at: string;
+    agent_run?: {
+        strategy?: {
+            name: string;
+        };
+    };
 }
 
 export const agentApi = {
