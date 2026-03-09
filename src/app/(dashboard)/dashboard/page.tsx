@@ -58,7 +58,7 @@ export default function DashboardPage() {
         const [portfoliosList, strategiesData, ordersData, pendingApprovals] = await Promise.all([
           portfolios.getPortfolios(),
           strategiesApi.getStrategies(),
-          ordersApi.getOrders({ limit: 5 } as any),
+          ordersApi.getOrders({ limit: 5 }),
           ordersApi.getPendingApprovals(),
         ]);
 
@@ -92,9 +92,10 @@ export default function DashboardPage() {
 
         setStrategiesList(strategiesArray.slice(0, 3)); // Top 3 strategies
         setRecentOrdersList(ordersArray.slice(0, 4)); // Recent 4 orders
-      } catch (err: any) {
-        console.error('Failed to fetch dashboard data:', err);
-        setError(err.message || 'Failed to load dashboard data');
+      } catch (err: unknown) {
+        const error = err instanceof Error ? err : new Error('Unknown error');
+        console.error('Failed to fetch dashboard data:', error);
+        setError(error.message || 'Failed to load dashboard data');
       } finally {
         setLoading(false);
       }

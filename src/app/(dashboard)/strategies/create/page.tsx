@@ -48,8 +48,8 @@ export default function CreateStrategyPage() {
                 description: form.description,
                 strategy_type: 'custom', // based on our mocked options
                 symbols: form.assets,
-                risk_per_trade: form.maxDrawdown ? form.maxDrawdown : undefined
-            } as any);
+                risk_per_trade: form.maxDrawdown ? Number(form.maxDrawdown) : undefined
+            });
             setSuccess(true);
             setTimeout(() => router.push('/strategies'), 1200);
         } catch (error) {

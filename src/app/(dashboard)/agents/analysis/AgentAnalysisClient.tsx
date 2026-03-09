@@ -63,7 +63,7 @@ export default function AgentAnalysisClient() {
                 } else {
                     setTaskState('pending');
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Failed to check task status:', err);
             }
         }, 2000); // Poll every 2 seconds
@@ -90,8 +90,9 @@ export default function AgentAnalysisClient() {
         try {
             const response = await agentApi.analyzeStock(selectedPortfolio, symbol.toUpperCase());
             setTaskId(response.task_id);
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Failed to start analysis');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { error?: string } } };
+            setError(error.response?.data?.error || 'Failed to start analysis');
             setLoading(false);
             setTaskState('error');
         }

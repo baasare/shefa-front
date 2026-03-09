@@ -102,11 +102,12 @@ export default function SecuritySettingsPage() {
             setPasswordSuccess(true);
             setPasswordForm({ oldPassword: '', newPassword: '', confirmPassword: '' });
             setTimeout(() => setPasswordSuccess(false), 3000);
-        } catch (err: any) {
-            const errorMsg = err.response?.data?.non_field_errors?.[0] ||
-                err.response?.data?.old_password?.[0] ||
-                err.response?.data?.new_password2?.[0] ||
-                err.response?.data?.detail ||
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { non_field_errors?: string[]; old_password?: string[]; new_password2?: string[]; detail?: string } } };
+            const errorMsg = error.response?.data?.non_field_errors?.[0] ||
+                error.response?.data?.old_password?.[0] ||
+                error.response?.data?.new_password2?.[0] ||
+                error.response?.data?.detail ||
                 'Failed to change password';
             setPasswordError(errorMsg);
         } finally {
@@ -128,8 +129,9 @@ export default function SecuritySettingsPage() {
             // Clear local storage and redirect to login
             localStorage.clear();
             router.push('/login?deleted=true');
-        } catch (err: any) {
-            setDeleteError(err.response?.data?.message || 'Failed to delete account');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { message?: string } } };
+            setDeleteError(error.response?.data?.message || 'Failed to delete account');
         } finally {
             setDeleteLoading(false);
         }

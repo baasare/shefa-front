@@ -54,7 +54,8 @@ export default function ApprovalsClient() {
       await approveOrder(id, { decision: 'approve', notes: 'Approved via dashboard' });
       showToast(`${symbol} order approved successfully`, 'success');
       await loadApprovals(); // Reload to update lists
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
       showToast(error.response?.data?.error || 'Failed to approve order', 'error');
     } finally {
       setProcessingId(null);
@@ -69,7 +70,8 @@ export default function ApprovalsClient() {
       await approveOrder(id, { decision: 'reject', notes: 'Rejected via dashboard' });
       showToast(`${symbol} order rejected`, 'success');
       await loadApprovals(); // Reload to update lists
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { error?: string } } };
       showToast(error.response?.data?.error || 'Failed to reject order', 'error');
     } finally {
       setProcessingId(null);

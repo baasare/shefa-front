@@ -31,7 +31,7 @@ export default function EditStrategyPage({ params }: Props) {
         riskLevel: s.riskLevel,
         maxDrawdown: s.maxDrawdown.replace('%', ''),
         targetReturn: s.targetReturn.replace('%', ''),
-        isAutonomous: (s as any).isAutonomous || false,
+        isAutonomous: 'isAutonomous' in s ? Boolean(s.isAutonomous) : false,
     });
 
     function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {

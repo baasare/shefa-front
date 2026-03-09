@@ -83,10 +83,11 @@ export function LoginForm() {
                 // Local development or already on app subdomain
                 router.push(destinationPath);
             }
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { non_field_errors?: string[]; detail?: string } } };
             setServerError(
-                err?.response?.data?.non_field_errors?.[0] ??
-                err?.response?.data?.detail ??
+                error?.response?.data?.non_field_errors?.[0] ??
+                error?.response?.data?.detail ??
                 'Invalid email or password. Please try again.'
             );
         }

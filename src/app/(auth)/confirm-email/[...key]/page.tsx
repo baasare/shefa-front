@@ -34,11 +34,12 @@ export default function ConfirmEmailPage() {
                 setTimeout(() => {
                     router.push(routes.auth.login);
                 }, 3000);
-            } catch (err: any) {
+            } catch (err: unknown) {
+                const error = err as { response?: { data?: { detail?: string; non_field_errors?: string[] } } };
                 setStatus('error');
                 setErrorMessage(
-                    err.response?.data?.detail ||
-                    err.response?.data?.non_field_errors?.[0] ||
+                    error.response?.data?.detail ||
+                    error.response?.data?.non_field_errors?.[0] ||
                     'The verification link is invalid or has expired.'
                 );
             }

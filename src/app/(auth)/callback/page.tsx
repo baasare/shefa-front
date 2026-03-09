@@ -96,9 +96,10 @@ export default function CallbackPage() {
         sessionStorage.removeItem('auth_redirect');
 
         router.push(redirectPath);
-      } catch (err: any) {
-        console.error('OAuth callback error:', err);
-        console.error('Error response:', err?.response?.data);
+      } catch (err: unknown) {
+        const error = err as { response?: { data?: Record<string, unknown> } };
+        console.error('OAuth callback error:', error);
+        console.error('Error response:', error?.response?.data);
 
         // Get detailed error message
         let errorMessage = 'Authentication failed. Please try again.';

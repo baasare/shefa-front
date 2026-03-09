@@ -85,9 +85,10 @@ export default function ProfileSettingsPage() {
             setUser(updatedUser);
             setSuccess(true);
             setTimeout(() => setSuccess(false), 3000);
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to update profile');
-            console.error('Error updating profile:', err);
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { message?: string } } };
+            setError(error.response?.data?.message || 'Failed to update profile');
+            console.error('Error updating profile:', error);
         } finally {
             setLoading(false);
         }

@@ -152,8 +152,9 @@ export default function AgentListClient() {
             // Reload agents to get updated stats
             const data = await agentApi.getAgents();
             setAgents(data);
-        } catch (err: any) {
-            showToast(err.response?.data?.error || `Failed to execute ${name}.`, 'error');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { error?: string } } };
+            showToast(error.response?.data?.error || `Failed to execute ${name}.`, 'error');
         } finally {
             setRunningAgent(null);
         }

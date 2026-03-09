@@ -99,8 +99,9 @@ export default function WatchlistPage() {
             setNewType('stock');
             // Refresh to be safe
             fetchItems();
-        } catch (err: any) {
-            const msg = err?.response?.data?.error ?? 'Failed to add symbol.';
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { error?: string } } };
+            const msg = error?.response?.data?.error ?? 'Failed to add symbol.';
             setAddError(msg);
         } finally {
             setAdding(false);

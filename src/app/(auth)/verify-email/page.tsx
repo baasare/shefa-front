@@ -28,9 +28,10 @@ function VerifyEmailContent() {
         try {
             await resendEmail(email);
             setResendStatus('success');
-        } catch (err: any) {
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { detail?: string } } };
             setResendStatus('error');
-            setErrorMessage(err.response?.data?.detail || 'Failed to resend verification email.');
+            setErrorMessage(error.response?.data?.detail || 'Failed to resend verification email.');
         } finally {
             setIsResending(false);
         }

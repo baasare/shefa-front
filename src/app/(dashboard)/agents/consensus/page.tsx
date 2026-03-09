@@ -65,7 +65,7 @@ export default function ConsensusPage() {
                 } else {
                     setTaskState('pending');
                 }
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Failed to check task status:', err);
             }
         }, 2000);
@@ -100,8 +100,9 @@ export default function ConsensusPage() {
 
             const response = await agentApi.multiAgentConsensus(selectedPortfolio, symbolArray);
             setTaskId(response.task_id);
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Failed to start consensus analysis');
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { error?: string } } };
+            setError(error.response?.data?.error || 'Failed to start consensus analysis');
             setRunning(false);
             setTaskState('error');
         }

@@ -89,7 +89,8 @@ export default function EditAgentPage({ params }: { params: { id: string } }) {
             setTimeout(() => {
                 router.push(routes.dashboard.agents.index);
             }, 1000);
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as { response?: { data?: { error?: string; detail?: string } } };
             console.error('Submission error:', error);
             setServerError(error.response?.data?.error || error.response?.data?.detail || 'Failed to update agent. Please try again.');
             setLoading(false);
