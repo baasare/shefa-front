@@ -7,7 +7,7 @@ import { getPositions, deletePosition, Position } from '@/lib/api/portfolios';
 import { Plus, TrendingUp, TrendingDown, Search, ArrowUpDown, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-export function formatCurrency(value: number | string): string {
+function formatCurrency(value: number | string): string {
     const num = typeof value === 'string' ? parseFloat(value) : value;
     if (isNaN(num)) return '$0.00';
     return new Intl.NumberFormat('en-US', {
