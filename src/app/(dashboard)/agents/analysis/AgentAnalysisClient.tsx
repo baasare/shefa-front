@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Brain, Sparkles, LineChart, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { agentApi } from '@/lib/api/agents';
-import { getPortfolios } from '@/lib/api/portfolios';
+import { getPortfolios, Portfolio } from '@/lib/api/portfolios';
 
 const analysisTypes = [
     { id: 'technical', icon: LineChart, label: 'Technical Analysis', desc: 'EMA, RSI, MACD, Bollinger Bands and more.' },
@@ -16,7 +16,7 @@ export default function AgentAnalysisClient() {
     const [analysisType, setAnalysisType] = useState('technical');
     const [timeFrame, setTimeFrame] = useState('short');
     const [instructions, setInstructions] = useState('');
-    const [portfolios, setPortfolios] = useState<any[]>([]);
+    const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
     const [selectedPortfolio, setSelectedPortfolio] = useState('');
     const [loading, setLoading] = useState(false);
     const [taskId, setTaskId] = useState<string | null>(null);

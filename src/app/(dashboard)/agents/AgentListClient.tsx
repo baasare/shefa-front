@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Bot, Brain, Activity, CheckCircle2, Clock, Play, Settings, Plus, Loader2 } from 'lucide-react';
-import { agentApi } from '@/lib/api/agents';
+import { agentApi, Agent, AgentLog } from '@/lib/api/agents';
 import { routes } from '@/lib/config/routes';
 
 const initialAgents = [
@@ -89,7 +89,7 @@ const logTypeMap: Record<string, string> = {
 };
 
 export default function AgentListClient() {
-    const [agents, setAgents] = useState<any[]>([]);
+    const [agents, setAgents] = useState<Agent[]>([]);
     const [logs, setLogs] = useState(initialLogs);
     const [loading, setLoading] = useState(true);
     const [runningAgent, setRunningAgent] = useState<string | null>(null);
@@ -118,7 +118,7 @@ export default function AgentListClient() {
                 const data = await agentApi.getAgentLogs({ limit: 10 });
                 // Transform API logs to match display format
                 if (data && data.results) {
-                    setLogs(data.results.map((log: any) => ({
+                    setLogs(data.results.map((log: AgentLog) => ({
                         id: log.id,
                         time: new Date(log.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }),
                         agent: log.agent_run?.strategy?.name || 'System',

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Play, ChevronDown, CheckCircle2, Loader2, Sparkles, Brain, Lock, Activity, AlertCircle } from 'lucide-react';
 import { agentApi } from '@/lib/api/agents';
-import { getPortfolios } from '@/lib/api/portfolios';
+import { getPortfolios, Portfolio } from '@/lib/api/portfolios';
 import { routes } from '@/lib/config/routes';
 
 const availableAgents = [
@@ -16,7 +16,7 @@ const availableAgents = [
 export default function ConsensusPage() {
     const [selectedAgents, setSelectedAgents] = useState<string[]>(['analysis', 'risk']);
     const [symbols, setSymbols] = useState('TSLA, AAPL');
-    const [portfolios, setPortfolios] = useState<any[]>([]);
+    const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
     const [selectedPortfolio, setSelectedPortfolio] = useState('');
     const [running, setRunning] = useState(false);
     const [taskId, setTaskId] = useState<string | null>(null);

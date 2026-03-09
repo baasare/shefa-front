@@ -23,7 +23,7 @@ export default function StrategiesPage() {
   async function fetchStrategies() {
     setLoading(true);
     try {
-      const filters: any = { page };
+      const filters: Record<string, unknown> = { page };
       if (search) filters.search = search;
       if (ordering) filters.ordering = ordering;
 
@@ -118,7 +118,7 @@ export default function StrategiesPage() {
         {loading ? (
           <div className="py-8 text-center text-[rgb(var(--muted-foreground))]">Loading strategies...</div>
         ) : strategies.length > 0 ? (
-          strategies.map((strategy: any) => (
+          strategies.map((strategy: Strategy) => (
             <div key={strategy.id} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 hover:border-[rgb(var(--primary))]/30 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex-1">

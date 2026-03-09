@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Search, Activity, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { agentApi } from '@/lib/api/agents';
+import { agentApi, AgentLog } from '@/lib/api/agents';
 
 const logTypeMap: Record<string, { dot: string; badge: string; label: string }> = {
     info: { dot: 'bg-[rgb(var(--primary))]', badge: 'bg-[rgb(var(--primary))]/10 text-[rgb(var(--primary))]', label: 'Info' },
@@ -13,8 +13,8 @@ const logTypeMap: Record<string, { dot: string; badge: string; label: string }> 
 };
 
 export default function LogsClient() {
-    const [logs, setLogs] = useState<any[]>([]);
-    const [filteredLogs, setFilteredLogs] = useState<any[]>([]);
+    const [logs, setLogs] = useState<AgentLog[]>([]);
+    const [filteredLogs, setFilteredLogs] = useState<AgentLog[]>([]);
     const [loading, setLoading] = useState(true);
     const [connected, setConnected] = useState(false);
     const [filter, setFilter] = useState('All');

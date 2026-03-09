@@ -29,7 +29,7 @@ export default function StrategyTemplatesPage() {
     async function fetchTemplates() {
         setLoading(true);
         try {
-            const params: any = {};
+            const params: Record<string, string> = {};
             if (filter !== 'All') {
                 params.difficulty = filter; // Backend filter expects difficulty
             }
@@ -79,7 +79,7 @@ export default function StrategyTemplatesPage() {
                 {loading ? (
                     <div className="col-span-full py-8 text-center text-[rgb(var(--muted-foreground))]">Loading templates...</div>
                 ) : templates.length > 0 ? (
-                    templates.map((tpl: any) => (
+                    templates.map((tpl: StrategyTemplate) => (
                         <div key={tpl.id} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 flex flex-col hover:border-[rgb(var(--primary))]/40 transition-all group">
                             <div className="flex items-start justify-between mb-3">
                                 <div>

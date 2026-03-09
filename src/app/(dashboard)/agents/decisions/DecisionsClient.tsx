@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CheckCircle2, XCircle, Clock, AlertTriangle, Loader2 } from 'lucide-react';
-import { agentApi } from '@/lib/api/agents';
+import { agentApi, AgentDecision } from '@/lib/api/agents';
 
 const statusConfig = {
     pending: { icon: Clock, badge: 'bg-[rgb(var(--warning))]/10 text-[rgb(var(--warning))] border-[rgb(var(--warning))]/20', dot: 'bg-[rgb(var(--warning))]' },
@@ -12,7 +12,7 @@ const statusConfig = {
 };
 
 export default function DecisionsClient() {
-    const [decisions, setDecisions] = useState<any[]>([]);
+    const [decisions, setDecisions] = useState<AgentDecision[]>([]);
     const [loading, setLoading] = useState(true);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 

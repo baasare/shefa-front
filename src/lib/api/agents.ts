@@ -32,6 +32,24 @@ export interface AgentStatistics {
     }>;
 }
 
+export interface AgentDecision {
+    id: string;
+    agent: string;
+    decision: string;
+    status: string;
+    created_at: string;
+    [key: string]: unknown;
+}
+
+export interface AgentLog {
+    id: string;
+    agent: string;
+    message: string;
+    level: string;
+    timestamp: string;
+    [key: string]: unknown;
+}
+
 export const agentApi = {
     // Custom Agent CRUD operations
     getAgents: async (): Promise<Agent[]> => {
@@ -119,13 +137,13 @@ export const agentApi = {
     },
 
     // Agent Decisions (for HITL approval)
-    getPendingDecisions: async (): Promise<any[]> => {
+    getPendingDecisions: async (): Promise<AgentDecision[]> => {
         const response = await apiClient.get('agent-decisions/');
         return response.data;
     },
 
     // Agent Logs
-    getAgentLogs: async (params?: { limit?: number; offset?: number }): Promise<any> => {
+    getAgentLogs: async (params?: { limit?: number; offset?: number }): Promise<{ results: AgentLog[]; count: number }> => {
         const response = await apiClient.get('agent-logs/', { params });
         return response.data;
     },
