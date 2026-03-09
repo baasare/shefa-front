@@ -5,6 +5,18 @@ import { useQuery } from '@tanstack/react-query';
 import { getPortfolios, getPortfolioAnalytics } from '@/lib/api/portfolios';
 import { TrendingUp, TrendingDown, BarChart3, PieChart, Activity, Loader2 } from 'lucide-react';
 
+interface MonthlyReturn {
+    month: string;
+    value: number;
+    positive: boolean;
+}
+
+interface AllocationItem {
+    name: string;
+    pct: number;
+    value: number;
+}
+
 export default function PortfolioAnalyticsPage() {
     const [selectedPortfolioId, setSelectedPortfolioId] = useState<string>('');
 
@@ -113,9 +125,9 @@ export default function PortfolioAnalyticsPage() {
                                 <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Monthly Returns</h2>
                             </div>
                             <div className="flex items-end justify-between h-48 px-2">
-                                {m.monthly_returns?.map((mr: any, idx: number) => {
+                                {m.monthly_returns?.map((mr: MonthlyReturn, idx: number) => {
                                     // Scale height based on max absolute value
-                                    const maxVal = Math.max(...(m.monthly_returns?.map((x: any) => Math.abs(x.value)) || [1]));
+                                    const maxVal = Math.max(...(m.monthly_returns?.map((x: MonthlyReturn) => Math.abs(x.value)) || [1]));
                                     const heightPct = (Math.abs(mr.value) / maxVal) * 100;
 
                                     return (
@@ -141,7 +153,7 @@ export default function PortfolioAnalyticsPage() {
                                 <h2 className="text-base font-semibold text-[rgb(var(--foreground))]">Asset Allocation</h2>
                             </div>
                             <div className="space-y-4">
-                                {m.allocation && m.allocation.length > 0 ? m.allocation.map((a: any) => (
+                                {m.allocation && m.allocation.length > 0 ? m.allocation.map((a: AllocationItem) => (
                                     <div key={a.name}>
                                         <div className="flex items-center justify-between mb-1">
                                             <span className="text-sm font-medium text-[rgb(var(--foreground))]">{a.name}</span>

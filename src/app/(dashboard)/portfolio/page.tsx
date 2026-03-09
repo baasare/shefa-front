@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { getPortfolios, getPortfolioAnalytics, getPositions } from '@/lib/api/portfolios';
+import { getPortfolios, getPortfolioAnalytics, getPositions, Position } from '@/lib/api/portfolios';
 import { routes } from '@/lib/config/routes';
 import { formatCurrency } from '@/lib/data/positions';
 import { Plus, TrendingUp, TrendingDown, ExternalLink, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
@@ -155,7 +155,7 @@ export default function PortfolioPage() {
                     No active positions found in this portfolio.
                   </td>
                 </tr>
-              ) : positions.map((h: any) => {
+              ) : positions.map((h: Position) => {
                 const pnl = parseFloat(h.unrealized_pnl || '0');
                 const pnlPct = parseFloat(h.unrealized_pnl_pct || '0');
                 const isPositivePnl = pnl >= 0;

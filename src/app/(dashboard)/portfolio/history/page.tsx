@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getTrades, getTradingPerformance, deleteTrade } from '@/lib/api/orders';
+import { getTrades, getTradingPerformance, deleteTrade, Trade } from '@/lib/api/orders';
 import { formatCurrency } from '@/lib/data/positions'; // Reusing format function
 import { TrendingUp, TrendingDown, Search, ArrowUpDown, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -177,7 +177,7 @@ export default function PortfolioHistoryPage() {
                                         No trades found for this period.
                                     </td>
                                 </tr>
-                            ) : trades.map((h: any) => {
+                            ) : trades.map((h: Trade) => {
                                 const pnl = parseFloat(h.realized_pnl || '0');
                                 const isPositivePnl = pnl >= 0;
                                 const date = h.executed_at ? new Date(h.executed_at).toLocaleDateString() : '—';
