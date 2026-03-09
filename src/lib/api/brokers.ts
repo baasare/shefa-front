@@ -76,7 +76,7 @@ export async function getAlpacaAuthUrl(): Promise<{ auth_url: string }> {
 export async function testBrokerConnection(id: string): Promise<{
     success: boolean;
     message: string;
-    account_info?: any;
+    account_info?: Record<string, unknown>;
 }> {
     const { data } = await brokersHttp.post(`brokers/connections/${id}/test_connection/`);
     return data;

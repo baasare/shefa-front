@@ -28,7 +28,7 @@ export interface Notification {
     type: 'order_filled' | 'order_rejected' | 'strategy_alert' | 'agent_decision' | 'system';
     title: string;
     message: string;
-    data: any;
+    data: Record<string, unknown>;
     is_read: boolean;
     sent_via_email: boolean;
     sent_via_push: boolean;

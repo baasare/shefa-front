@@ -25,6 +25,24 @@ export const tokenStorage = {
 
 // ─── Auth API Calls ───────────────────────────────────────────────────────────
 
+export interface User {
+    id: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    onboarding_completed: boolean;
+    created_at: string;
+    [key: string]: unknown;
+}
+
+export interface Session {
+    id: string;
+    device: string;
+    ip_address: string;
+    last_active: string;
+    [key: string]: unknown;
+}
+
 export interface LoginCredentials {
     email: string;
     password: string;
@@ -116,19 +134,19 @@ export async function resendEmail(email: string): Promise<void> {
 }
 
 /** GET /api/auth/profile/ */
-export async function getCurrentUser(): Promise<any> {
+export async function getCurrentUser(): Promise<User> {
     const {data} = await apiClient.get('auth/profile/');
     return data;
 }
 
 /** PATCH /api/auth/profile/update/ */
-export async function updateProfile(profileData: any): Promise<any> {
+export async function updateProfile(profileData: Partial<User>): Promise<User> {
     const {data} = await apiClient.patch('auth/profile/update/', profileData);
     return data;
 }
 
 /** PATCH /api/auth/profile/update/ - Mark onboarding as completed */
-export async function completeOnboarding(): Promise<any> {
+export async function completeOnboarding(): Promise<User> {
     const {data} = await apiClient.patch('auth/profile/update/', {onboarding_completed: true});
     return data;
 }
@@ -149,7 +167,7 @@ export async function deleteAccount(): Promise<void> {
 }
 
 /** GET /api/auth/active-sessions/ */
-export async function getActiveSessions(): Promise<any> {
+export async function getActiveSessions(): Promise<Session[]> {
     const {data} = await apiClient.get('auth/active-sessions/');
     return data;
 }

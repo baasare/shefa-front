@@ -111,7 +111,7 @@ export const agentApi = {
     getTaskStatus: async (taskId: string): Promise<{
         task_id: string;
         state: 'PENDING' | 'STARTED' | 'SUCCESS' | 'FAILURE';
-        result?: any;
+        result?: Record<string, unknown>;
         error?: string;
     }> => {
         const response = await apiClient.get(`agent-analysis/task-status/${taskId}/`);

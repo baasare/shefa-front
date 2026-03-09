@@ -139,7 +139,7 @@ export async function getOrdersBySymbol(symbol: string): Promise<Order[]> {
 }
 
 /** GET /api/orders/{id}/audit_trail/ */
-export async function getAuditTrail(id: string): Promise<any> {
+export async function getAuditTrail(id: string): Promise<Record<string, unknown>[]> {
     const { data } = await ordersHttp.get(`orders/${id}/audit_trail/`);
     return data;
 }
@@ -180,7 +180,7 @@ export async function getTradesBySymbol(symbol: string): Promise<Trade[]> {
 }
 
 /** GET /api/orders/trades/performance/ */
-export async function getTradingPerformance(): Promise<any> {
+export async function getTradingPerformance(): Promise<Record<string, unknown>> {
     const { data } = await ordersHttp.get('orders/trades/performance/');
     return data;
 }

@@ -93,7 +93,7 @@ class ApiClient {
         return access;
       }
       return null;
-    } catch (error) {
+    } catch {
       return null;
     }
   }
