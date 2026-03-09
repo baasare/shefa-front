@@ -139,7 +139,7 @@ export async function deactivatePortfolio(id: string): Promise<Portfolio> {
 }
 
 /** GET /api/portfolios/{id}/analytics/ */
-export async function getPortfolioAnalytics(id: string): Promise<any> {
+export async function getPortfolioAnalytics(id: string): Promise<Record<string, unknown>> {
     const { data } = await portfolioHttp.get(`portfolios/${id}/analytics/`);
     return data;
 }

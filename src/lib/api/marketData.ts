@@ -38,7 +38,7 @@ export interface Indicator {
     id: string;
     symbol: string;
     indicator_type: 'rsi' | 'macd' | 'sma' | 'ema' | 'bollinger' | 'atr';
-    value: any;
+    value: number | Record<string, number>;
     period: number;
     timestamp: string;
 }

@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async (email, password) => {
     set({ isLoading: true });
     try {
-      const response = await authClient.login({ email, password });
+      await authClient.login({ email, password });
       // Fetch fresh user profile to get onboarding_completed status
       const user = await authClient.getCurrentUser();
       set({ user, isAuthenticated: true, isLoading: false });
@@ -72,7 +72,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const user = await authClient.getCurrentUser();
       set({ user, isAuthenticated: true, isLoading: false });
-    } catch (error) {
+    } catch {
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },

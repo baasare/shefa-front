@@ -30,8 +30,8 @@ export interface Strategy {
     strategy_type: 'momentum' | 'mean_reversion' | 'swing' | 'trend_following' | 'custom';
     description: string;
     symbols: string[];
-    entry_rules: any;
-    exit_rules: any;
+    entry_rules: Record<string, unknown>;
+    exit_rules: Record<string, unknown>;
     risk_per_trade: string;
     max_open_positions: number;
     status: 'active' | 'paused' | 'inactive';
@@ -67,10 +67,10 @@ export interface StrategyTemplate {
     difficulty: 'beginner' | 'intermediate' | 'advanced';
     description: string;
     strategy_type: string;
-    entry_rules: any;
-    exit_rules: any;
-    risk_parameters: any;
-    expected_performance: any;
+    entry_rules: Record<string, unknown>;
+    exit_rules: Record<string, unknown>;
+    risk_parameters: Record<string, unknown>;
+    expected_performance: Record<string, unknown>;
     tags: string[];
     is_featured: boolean;
     usage_count: number;
@@ -96,7 +96,7 @@ export interface PaginatedResponse<T> {
     results: T[];
 }
 
-export async function getStrategies(params?: Record<string, any>): Promise<PaginatedResponse<Strategy>> {
+export async function getStrategies(params?: Record<string, unknown>): Promise<PaginatedResponse<Strategy>> {
     const { data } = await strategyHttp.get('strategies/', { params });
     // If not using paginated DRF, mock the structure
     if (Array.isArray(data)) {
@@ -168,7 +168,7 @@ export async function getBacktest(id: string): Promise<Backtest> {
     return data;
 }
 
-export async function getEquityCurve(id: string): Promise<any[]> {
+export async function getEquityCurve(id: string): Promise<Record<string, unknown>[]> {
     const { data } = await strategyHttp.get(`strategies/backtests/${id}/equity_curve/`);
     return data;
 }
