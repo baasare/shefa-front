@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import * as authClient from '../api/authClient';
 
 interface User {
-  id: number;
+  id: string;
   email: string;
   first_name: string;
   last_name: string;
