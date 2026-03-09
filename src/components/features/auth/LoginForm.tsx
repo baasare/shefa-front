@@ -64,13 +64,24 @@ export function LoginForm() {
             const searchParams = new URLSearchParams(window.location.search);
             const redirect = searchParams.get('redirect');
 
-            // If user hasn't completed onboarding, redirect to welcome
+            // Determine destination path
+            let destinationPath: string;
             if (user && !user.onboarding_completed) {
-                router.push(routes.onboarding.welcome);
+                destinationPath = routes.onboarding.welcome;
             } else if (redirect && redirect.startsWith('/')) {
-                router.push(redirect);
+                destinationPath = redirect;
             } else {
-                router.push(routes.dashboard.home);
+                destinationPath = routes.dashboard.home;
+            }
+
+            // Check if we're on production and need to redirect to app subdomain
+            const hostname = window.location.hostname;
+            if (hostname === 'shefafx.com' || hostname === 'www.shefafx.com') {
+                // Redirect to app subdomain in production
+                window.location.href = `https://app.shefafx.com${destinationPath}`;
+            } else {
+                // Local development or already on app subdomain
+                router.push(destinationPath);
             }
         } catch (err: any) {
             setServerError(

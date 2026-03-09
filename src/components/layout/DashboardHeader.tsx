@@ -49,7 +49,13 @@ export function DashboardHeader() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.push(routes.auth.login);
+      // Redirect to login on main domain
+      const hostname = window.location.hostname;
+      if (hostname.startsWith('app.')) {
+        window.location.href = `https://shefafx.com${routes.auth.login}`;
+      } else {
+        router.push(routes.auth.login);
+      }
     } catch (error) {
       console.error('Logout failed:', error);
     }

@@ -60,6 +60,17 @@ const onboardingPaths = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const hostname = request.headers.get('host') || '';
+
+  // Skip subdomain logic for localhost
+  const isLocalhost = hostname.startsWith('localhost') || hostname.startsWith('127.0.0.1');
+  if (isLocalhost) {
+    return NextResponse.next();
+  }
+
+  // Check subdomain
+  const isAppSubdomain = hostname.startsWith('app.');
+  const isMainDomain = hostname === 'shefafx.com' || hostname === 'www.shefafx.com';
 
   // Check if path is public
   const isPublicPath = publicPaths.some((path) => pathname.startsWith(path));
@@ -67,20 +78,25 @@ export function middleware(request: NextRequest) {
   const isProtectedPath = protectedPaths.some((path) => pathname.startsWith(path));
   const isOnboardingPath = onboardingPaths.some((path) => pathname.startsWith(path));
 
-  // Allow public paths
-  if (isPublicPath && !isProtectedPath) {
+  // Main domain (shefafx.com) - only allow marketing pages
+  if (isMainDomain && !isAppSubdomain) {
+    // If accessing protected routes on main domain, redirect to app subdomain
+    if (isProtectedPath || isOnboardingPath || isAuthPath) {
+      const appUrl = new URL(request.url);
+      appUrl.hostname = 'app.shefafx.com';
+      return NextResponse.redirect(appUrl);
+    }
     return NextResponse.next();
   }
 
-  // Allow auth paths (protection handled client-side via AuthInitializer)
-  if (isAuthPath) {
-    return NextResponse.next();
-  }
-
-  // Allow protected paths (protection handled client-side via dashboard layout)
-  // This is necessary because we store tokens in localStorage, not cookies
-  // Server-side middleware can't access localStorage
-  if (isProtectedPath || isOnboardingPath) {
+  // App subdomain (app.shefafx.com) - only allow app pages
+  if (isAppSubdomain) {
+    // If accessing marketing pages on app subdomain, redirect to main domain
+    if (isPublicPath && !isProtectedPath && !isAuthPath && !isOnboardingPath) {
+      const mainUrl = new URL(request.url);
+      mainUrl.hostname = 'shefafx.com';
+      return NextResponse.redirect(mainUrl);
+    }
     return NextResponse.next();
   }
 
