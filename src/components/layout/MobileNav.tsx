@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils/cn';
 function getIcon(name: string | undefined): LucideIcon {
   if (!name) return LucideIcons.Circle;
   const candidate = LucideIcons[name as keyof typeof LucideIcons];
-  if (typeof candidate === 'function') {
+  if (candidate) {
     return candidate as LucideIcon;
   }
   return LucideIcons.Circle;

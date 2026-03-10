@@ -56,6 +56,57 @@ export const dashboardNav: NavItem[] = [
     description: 'Overview and insights',
   },
   {
+    label: 'Market',
+    href: routes.dashboard.market.index,
+    icon: 'TrendingUp',
+    description: 'Market data and analysis',
+    children: [
+      {
+        label: 'Overview',
+        href: routes.dashboard.market.index,
+      },
+      {
+        label: 'Watchlist',
+        href: routes.dashboard.market.watchlist,
+      },
+      {
+        label: 'Screener',
+        href: routes.dashboard.market.screener,
+      },
+    ],
+  },
+  {
+    label: 'AI Agents',
+    href: routes.dashboard.agents.index,
+    icon: 'Bot',
+    description: 'Monitor agent activity',
+    children: [
+      {
+        label: 'Activity Feed',
+        href: routes.dashboard.agents.index,
+      },
+      {
+        label: 'New Analysis',
+        href: routes.dashboard.agents.analysis,
+      },
+      {
+        label: 'Decisions',
+        href: routes.dashboard.agents.decisions,
+      },
+      {
+        label: 'Logs',
+        href: routes.dashboard.agents.logs,
+      },
+    ],
+  },
+  {
+    label: 'Approvals',
+    href: routes.dashboard.approvals.index,
+    icon: 'CheckCircle',
+    description: 'Review pending approvals',
+    badge: 'HITL',
+  },
+  {
     label: 'Portfolio',
     href: routes.dashboard.portfolio.index,
     icon: 'Briefcase',
@@ -104,30 +155,6 @@ export const dashboardNav: NavItem[] = [
     ],
   },
   {
-    label: 'AI Agents',
-    href: routes.dashboard.agents.index,
-    icon: 'Bot',
-    description: 'Monitor agent activity',
-    children: [
-      {
-        label: 'Activity Feed',
-        href: routes.dashboard.agents.index,
-      },
-      {
-        label: 'New Analysis',
-        href: routes.dashboard.agents.analysis,
-      },
-      {
-        label: 'Decisions',
-        href: routes.dashboard.agents.decisions,
-      },
-      {
-        label: 'Logs',
-        href: routes.dashboard.agents.logs,
-      },
-    ],
-  },
-  {
     label: 'Orders',
     href: routes.dashboard.orders.index,
     icon: 'ShoppingCart',
@@ -144,33 +171,6 @@ export const dashboardNav: NavItem[] = [
       {
         label: 'History',
         href: routes.dashboard.orders.history,
-      },
-    ],
-  },
-  {
-    label: 'Approvals',
-    href: routes.dashboard.approvals.index,
-    icon: 'CheckCircle',
-    description: 'Review pending approvals',
-    badge: 'HITL',
-  },
-  {
-    label: 'Market',
-    href: routes.dashboard.market.index,
-    icon: 'TrendingUp',
-    description: 'Market data and analysis',
-    children: [
-      {
-        label: 'Overview',
-        href: routes.dashboard.market.index,
-      },
-      {
-        label: 'Watchlist',
-        href: routes.dashboard.market.watchlist,
-      },
-      {
-        label: 'Screener',
-        href: routes.dashboard.market.screener,
       },
     ],
   },
