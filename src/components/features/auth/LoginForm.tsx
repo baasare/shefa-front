@@ -22,8 +22,6 @@ import {
 } from './AuthCard';
 import { useAuthStore } from '@/lib/store/authStore';
 import { routes } from '@/lib/config/routes';
-import { isAppPath } from '@/lib/config/domain-routing';
-import { getNavigationUrl } from '@/lib/utils/navigation';
 
 const loginSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Please enter a valid email address'),
@@ -71,19 +69,13 @@ export function LoginForm() {
             let destinationPath: string;
             if (user && !user.onboarding_completed) {
                 destinationPath = routes.onboarding.welcome;
-            } else if (redirect && redirect.startsWith('/') && isAppPath(redirect)) {
+            } else if (redirect && redirect.startsWith('/')) {
                 destinationPath = redirect;
             } else {
                 destinationPath = routes.dashboard.home;
             }
 
-            // Check if we're on production and need to redirect to app subdomain
-            const navigationUrl = getNavigationUrl(destinationPath);
-            if (navigationUrl.startsWith('http')) {
-                window.location.href = navigationUrl;
-            } else {
-                router.push(destinationPath);
-            }
+            router.push(destinationPath);
         } catch (err: unknown) {
             const error = err as { response?: { data?: { non_field_errors?: string[]; detail?: string } } };
             setServerError(

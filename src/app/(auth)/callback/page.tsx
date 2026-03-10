@@ -12,23 +12,11 @@ import * as authClient from '@/lib/api/authClient';
 import apiClient from '@/lib/api/client';
 import { tokenStorage } from '@/lib/api/authClient';
 import { routes } from '@/lib/config/routes';
-import { isAppPath } from '@/lib/config/domain-routing';
-import { getNavigationUrl } from '@/lib/utils/navigation';
 
 export default function CallbackPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
-
-  const redirectTo = (path: string) => {
-    const navigationUrl = getNavigationUrl(path);
-    if (navigationUrl.startsWith('http')) {
-      window.location.href = navigationUrl;
-      return;
-    }
-
-    router.push(path);
-  };
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
@@ -65,19 +53,18 @@ export default function CallbackPage() {
       // Handle redirect flow (not popup)
       if (errorParam) {
         setError('Authentication failed. Please try again.');
-        setTimeout(() => redirectTo(routes.auth.login), 3000);
+        setTimeout(() => router.push(routes.auth.login), 3000);
         return;
       }
 
       if (!code) {
         setError('No authorization code received.');
-        setTimeout(() => redirectTo(routes.auth.login), 3000);
+        setTimeout(() => router.push(routes.auth.login), 3000);
         return;
       }
 
       try {
         // Exchange code for tokens
-
         const response = await apiClient.post('auth/google/', {
           code: code,
         });
@@ -110,11 +97,11 @@ export default function CallbackPage() {
         let redirectPath: string = routes.dashboard.home;
         if (!freshUser.onboarding_completed) {
           redirectPath = routes.onboarding.welcome;
-        } else if (storedRedirect && storedRedirect.startsWith('/') && isAppPath(storedRedirect)) {
+        } else if (storedRedirect && storedRedirect.startsWith('/')) {
           redirectPath = storedRedirect;
         }
 
-        redirectTo(redirectPath);
+        router.push(redirectPath);
       } catch (err: unknown) {
         const error = err as { response?: { data?: { detail?: string; non_field_errors?: string[]; code?: string[]; error?: string } } };
         console.error('OAuth callback error:', error);
@@ -134,7 +121,7 @@ export default function CallbackPage() {
         }
 
         setError(errorMessage);
-        setTimeout(() => redirectTo(routes.auth.login), 3000);
+        setTimeout(() => router.push(routes.auth.login), 3000);
       }
     };
 

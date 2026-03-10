@@ -1,42 +1,21 @@
 /**
- * Navigation utilities for handling host-based routing
+ * Navigation utilities - simplified without subdomain routing
  */
 
-import {
-  getNavigationUrlForHost,
-  isAppPath,
-  isLocalDevelopmentHost,
-} from '@/lib/config/domain-routing';
-
-function getHostname(): string {
-  return typeof window !== 'undefined' ? window.location.hostname : '';
-}
-
 /**
- * Get the full URL for a path based on the current environment
- * @param path - The path to navigate to (e.g., '/dashboard', '/login')
- * @returns Full URL with appropriate subdomain
+ * Get the URL for a path - returns the path as-is since we're not using subdomains
  */
 export function getNavigationUrl(path: string): string {
-  const hostname = getHostname();
-  return getNavigationUrlForHost(path, hostname);
+  return path;
 }
 
 /**
- * Check if we need to do a full page redirect (cross-subdomain navigation)
- * @param path - The path to check
- * @returns true if cross-subdomain redirect is needed
+ * Check if we need a cross-subdomain redirect - always false now
  */
 export function needsCrossSubdomainRedirect(path: string): boolean {
-  const hostname = getHostname();
-  if (!hostname || isLocalDevelopmentHost(hostname) || process.env.NODE_ENV === 'development') {
-    return false;
-  }
-
-  const url = getNavigationUrl(path);
-  return url.startsWith('http');
+  return false;
 }
 
 export function navigateToAuthUrl(path: string): string {
-  return getNavigationUrl(path);
+  return path;
 }
