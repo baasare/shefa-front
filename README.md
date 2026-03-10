@@ -35,7 +35,7 @@ pnpm install
 cp .env.local.example .env.local
 ```
 
-3. Update `.env.local` with your backend API URL (default: http://localhost:8000)
+3. Update `.env.local` with your backend API URL via `NEXT_PUBLIC_API_URL`
 
 ### Development
 
@@ -101,6 +101,6 @@ src/
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:8000` |
+| `NEXT_PUBLIC_API_URL` | Backend API URL | Set in your environment, for example `http://api.localhost:8000` in local development |
 | `NEXT_PUBLIC_APP_NAME` | Application name | `ShefaFx` |
 | `NEXT_PUBLIC_APP_URL` | Frontend URL | `http://localhost:3000` |

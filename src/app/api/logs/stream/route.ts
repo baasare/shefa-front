@@ -1,4 +1,8 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_BASE) {
+    throw new Error('NEXT_PUBLIC_API_URL is not set');
+}
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -11,7 +15,7 @@ export async function GET(request: Request) {
     if (agentId) params.append('agent_id', agentId);
     if (level) params.append('level', level);
 
-    const backendUrl = `${API_BASE}/api/agent-logs/stream/?${params.toString()}`;
+    const backendUrl = `${API_BASE}/v1/agents/logs/stream/?${params.toString()}`;
 
     // Get auth token from query param or cookie
     const authHeader = token ? `Bearer ${token}` : request.headers.get('cookie')?.match(/authToken=([^;]+)/)?.[1] ? `Bearer ${request.headers.get('cookie')?.match(/authToken=([^;]+)/)?.[1]}` : null;
