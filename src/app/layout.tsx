@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Inter, Fira_Code } from 'next/font/google';
 import '../styles/globals.css';
 import { Providers } from './providers';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({
   subsets: ['latin'],
@@ -43,6 +45,8 @@ export default function RootLayout({
     >
       <body className={inter.className}>
         <Providers>{children}</Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
