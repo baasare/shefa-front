@@ -9,19 +9,9 @@ import axios from 'axios';
 import {API_BASE} from './config';
 
 // ─── Token Management ─────────────────────────────────────────────────────────
-
-export const tokenStorage = {
-    getAccess: () => (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null),
-    getRefresh: () => (typeof window !== 'undefined' ? localStorage.getItem('refresh_token') : null),
-    setTokens: (access: string, refresh: string) => {
-        localStorage.setItem('access_token', access);
-        localStorage.setItem('refresh_token', refresh);
-    },
-    clearTokens: () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-    },
-};
+// Import and re-export tokenStorage from cookies utility for cross-subdomain support
+import { tokenStorage } from '@/lib/utils/cookies';
+export { tokenStorage };
 
 // ─── Auth API Calls ───────────────────────────────────────────────────────────
 

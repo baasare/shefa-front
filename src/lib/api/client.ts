@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { API_BASE as API_URL } from './config';
+import { tokenStorage } from '@/lib/utils/cookies';
 
 class ApiClient {
   private client: AxiosInstance;
@@ -17,7 +18,7 @@ class ApiClient {
     // Request interceptor to add auth token
     this.client.interceptors.request.use(
       (config) => {
-        const token = this.getAccessToken();
+        const token = tokenStorage.getAccess();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -41,8 +42,8 @@ class ApiClient {
               return this.client(originalRequest);
             }
           } catch (refreshError) {
-            this.clearTokens();
-            window.location.href = '/auth/login';
+            tokenStorage.clearTokens();
+            window.location.href = '/login';
             return Promise.reject(refreshError);
           }
         }
@@ -51,36 +52,8 @@ class ApiClient {
     );
   }
 
-  private getAccessToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('access_token');
-    }
-    return null;
-  }
-
-  private getRefreshToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('refresh_token');
-    }
-    return null;
-  }
-
-  private setTokens(accessToken: string, refreshToken: string): void {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('access_token', accessToken);
-      localStorage.setItem('refresh_token', refreshToken);
-    }
-  }
-
-  private clearTokens(): void {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-    }
-  }
-
   private async refreshToken(): Promise<string | null> {
-    const refreshToken = this.getRefreshToken();
+    const refreshToken = tokenStorage.getRefresh();
     if (!refreshToken) return null;
 
     try {
@@ -89,7 +62,7 @@ class ApiClient {
       });
       const { access } = response.data;
       if (access) {
-        localStorage.setItem('access_token', access);
+        tokenStorage.setTokens(access, refreshToken);
         return access;
       }
       return null;
@@ -103,11 +76,11 @@ class ApiClient {
   }
 
   public login(accessToken: string, refreshToken: string): void {
-    this.setTokens(accessToken, refreshToken);
+    tokenStorage.setTokens(accessToken, refreshToken);
   }
 
   public logout(): void {
-    this.clearTokens();
+    tokenStorage.clearTokens();
   }
 }
 
