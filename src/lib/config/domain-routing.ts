@@ -27,6 +27,7 @@ export const authPaths = [
 
 export const appPaths = [
   '/dashboard',
+  '/onboarding',
   '/portfolio',
   '/strategies',
   '/agents',

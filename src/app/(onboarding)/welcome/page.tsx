@@ -42,7 +42,7 @@ export default function WelcomePage() {
   const [isSkipping, setIsSkipping] = useState(false);
 
   const handleGetStarted = () => {
-    router.push(routes.onboarding.riskProfile);
+    router.push(routes.onboarding.goals);
   };
 
   const handleSkipSetup = async () => {

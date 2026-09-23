@@ -162,7 +162,7 @@ export default function RiskProfilePage() {
             {/* Navigation */}
             <div className="flex items-center justify-between pt-2">
                 <button
-                    onClick={() => router.push(routes.onboarding.welcome)}
+                    onClick={() => router.push(routes.onboarding.goals)}
                     className="flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-[rgb(var(--muted-foreground))] hover:text-[rgb(var(--foreground))] hover:bg-[rgb(var(--muted))] transition-all"
                 >
                     <ArrowLeft className="h-4 w-4" strokeWidth={2} />

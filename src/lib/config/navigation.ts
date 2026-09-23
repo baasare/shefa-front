@@ -56,6 +56,13 @@ export const dashboardNav: NavItem[] = [
     description: 'Overview and insights',
   },
   {
+    label: 'Advisor',
+    href: routes.dashboard.advisor,
+    icon: 'MessageCircle',
+    description: 'Chat-first financial guidance',
+    badge: 'New',
+  },
+  {
     label: 'Market',
     href: routes.dashboard.market.index,
     icon: 'TrendingUp',
@@ -353,6 +360,10 @@ export const onboardingSteps: NavItem[] = [
   {
     label: 'Welcome',
     href: routes.onboarding.welcome,
+  },
+  {
+    label: 'Goals',
+    href: routes.onboarding.goals,
   },
   {
     label: 'Risk Profile',

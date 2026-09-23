@@ -36,6 +36,7 @@ export const routes = {
   // Onboarding routes
   onboarding: {
     welcome: '/welcome',
+    goals: '/onboarding/goals',
     riskProfile: '/risk-profile',
     connectBroker: '/connect-broker',
     createPortfolio: '/create-portfolio',
@@ -46,6 +47,7 @@ export const routes = {
   // Dashboard routes
   dashboard: {
     home: '/dashboard',
+    advisor: '/dashboard/advisor',
 
     portfolio: {
       index: '/portfolio',
@@ -164,6 +166,7 @@ export const publicRoutes = [
  */
 export const onboardingRoutes = [
   routes.onboarding.welcome,
+  routes.onboarding.goals,
   routes.onboarding.riskProfile,
   routes.onboarding.connectBroker,
   routes.onboarding.createPortfolio,
