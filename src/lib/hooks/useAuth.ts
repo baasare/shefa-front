@@ -9,7 +9,7 @@ export function useAuth() {
     if (!isAuthenticated && !isLoading) {
       checkAuth();
     }
-  }, [checkAuth, isAuthenticated, isLoading]);
+  }, [checkAuth]);
 
   return {
     user,

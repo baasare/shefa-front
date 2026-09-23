@@ -68,15 +68,11 @@ export function RegisterForm() {
                 last_name: data.last_name,
             });
             // After registration, go to verify email page
-            router.push(`${routes.auth.verifyEmail}?email=${encodeURIComponent(data.email)}`);
+            router.push(`${routes.auth.verifyEmail}?created=1&email=${encodeURIComponent(data.email)}`);
         } catch (err: unknown) {
-            const errData = (err as { response?: { data?: Record<string, string[]> } })?.response?.data;
-            const firstError =
-                errData?.email?.[0] ??
-                errData?.password1?.[0] ??
-                errData?.password2?.[0] ??
-                errData?.non_field_errors?.[0] ??
-                'Registration failed. Please try again.';
+            const errData = (err as { response?: { data?: Record<string, string[] | string> } })?.response?.data;
+            const value = errData?.detail ?? errData?.email ?? errData?.password1 ?? errData?.password2 ?? errData?.non_field_errors;
+            const firstError = (Array.isArray(value) ? value[0] : value) || 'Registration failed. Please try again.';
             setServerError(firstError);
         }
     };
@@ -87,7 +83,7 @@ export function RegisterForm() {
             <AuthDivider text="or sign up with email" />
 
             {serverError && (
-                <div className="rounded-lg border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 px-4 py-3 text-sm text-[rgb(var(--destructive))]">
+                <div role="alert" className="rounded-lg border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 px-4 py-3 text-sm text-[rgb(var(--destructive))]">
                     {serverError}
                 </div>
             )}

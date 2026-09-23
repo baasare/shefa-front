@@ -151,7 +151,7 @@ export function getNavigationUrlForHost(path: string, hostname: string): string 
   }
 
   if (section === 'app' && isMainHostname(normalizedHostname)) {
-    return buildAbsoluteUrl(getAppHostname(), path);
+    return path;
   }
 
   return path;

@@ -21,6 +21,7 @@ import {
     AuthButton,
 } from './AuthCard';
 import { useAuthStore } from '@/lib/store/authStore';
+import { isAppPath } from '@/lib/config/domain-routing';
 import { routes } from '@/lib/config/routes';
 
 const loginSchema = z.object({
@@ -69,7 +70,7 @@ export function LoginForm() {
             let destinationPath: string;
             if (user && !user.onboarding_completed) {
                 destinationPath = routes.onboarding.welcome;
-            } else if (redirect && redirect.startsWith('/')) {
+            } else if (redirect && redirect.startsWith('/') && !redirect.startsWith('//') && !redirect.includes('\\') && isAppPath(redirect)) {
                 destinationPath = redirect;
             } else {
                 destinationPath = routes.dashboard.home;
@@ -92,8 +93,9 @@ export function LoginForm() {
             <AuthDivider />
 
             {serverError && (
-                <div className="rounded-lg border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 px-4 py-3 text-sm text-[rgb(var(--destructive))]">
+                <div role="alert" className="rounded-lg border border-[rgb(var(--destructive))]/30 bg-[rgb(var(--destructive))]/10 px-4 py-3 text-sm text-[rgb(var(--destructive))]">
                     {serverError}
+                    {serverError.toLowerCase().includes('verified') && <Link href="/verify-email" className="mt-2 block underline">Resend verification email</Link>}
                 </div>
             )}
 

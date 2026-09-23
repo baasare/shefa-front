@@ -8,7 +8,7 @@
 
 import { cn } from '@/lib/utils/cn';
 import { redirectToGoogleAuth } from '@/lib/api/googleAuth';
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 
 interface AuthCardProps {
     title: string;
@@ -66,17 +66,22 @@ export function AuthCard({
 
 /** Google OAuth Button — shared across LoginForm and RegisterForm */
 export function GoogleOAuthButton({ label = 'Continue with Google' }: { label?: string }) {
-    const handleGoogleLogin = () => {
+    const [error, setError] = useState('');
+    const [busy, setBusy] = useState(false);
+    const handleGoogleLogin = async () => {
+        setBusy(true); setError('');
         try {
-            redirectToGoogleAuth();
+            await redirectToGoogleAuth();
         } catch (error) {
-            console.error('Google OAuth error:', error);
-            alert('Google Sign-In is not configured. Please contact support.');
+            setError((error as {response?: {data?: {detail?: string}}}).response?.data?.detail || 'Google sign-in is unavailable. Please try again or use email.');
+            setBusy(false);
         }
     };
 
     return (
+        <div>
         <button
+            disabled={busy}
             type="button"
             onClick={handleGoogleLogin}
             className="flex w-full items-center justify-center gap-3 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--background))] px-4 h-12 text-sm font-medium text-[rgb(var(--foreground))] hover:bg-[rgb(var(--muted))] focus:outline-none focus-visible:ring-2 focus-visible:ring-[rgb(var(--ring))] transition-all duration-[var(--transition-fast)]"
@@ -88,8 +93,10 @@ export function GoogleOAuthButton({ label = 'Continue with Google' }: { label?: 
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             </svg>
-            {label}
+            {busy ? 'Connecting to Google…' : label}
         </button>
+        {error && <p role="alert" className="mt-3 text-sm text-[rgb(var(--destructive))]">{error}</p>}
+        </div>
     );
 }
 

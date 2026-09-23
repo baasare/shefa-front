@@ -5,6 +5,7 @@ import { tokenStorage } from '@/lib/utils/cookies';
 
 class ApiClient {
   private client: AxiosInstance;
+  private refreshPromise: Promise<string | null> | null = null;
 
   constructor() {
     this.client = axios.create({
@@ -33,10 +34,13 @@ class ApiClient {
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
           originalRequest._retry = true;
           try {
-            const newToken = await this.refreshToken();
+            if (!this.refreshPromise) {
+              this.refreshPromise = this.refreshToken().finally(() => { this.refreshPromise = null; });
+            }
+            const newToken = await this.refreshPromise;
             if (newToken) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
               return this.client(originalRequest);
@@ -60,13 +64,15 @@ class ApiClient {
       const response = await axios.post(`${API_URL}auth/token/refresh/`, {
         refresh: refreshToken,
       });
-      const { access } = response.data;
+      const { access, refresh } = response.data;
       if (access) {
-        tokenStorage.setTokens(access, refreshToken);
+        tokenStorage.setTokens(access, refresh || refreshToken);
         return access;
       }
+      tokenStorage.clearTokens();
       return null;
     } catch {
+      tokenStorage.clearTokens();
       return null;
     }
   }

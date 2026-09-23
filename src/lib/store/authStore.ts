@@ -48,8 +48,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (data) => {
     set({ isLoading: true });
     try {
-      const response = await authClient.register(data);
-      set({ user: response.user, isAuthenticated: true, isLoading: false });
+      await authClient.register(data);
+      set({ isLoading: false });
     } catch (error) {
       set({ isLoading: false });
       throw error;
@@ -61,13 +61,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await authClient.logout();
       set({ user: null, isAuthenticated: false, isLoading: false });
-    } catch (error) {
-      set({ isLoading: false });
-      throw error;
+    } finally {
+      set({ user: null, isAuthenticated: false, isLoading: false });
     }
   },
 
   checkAuth: async () => {
+    if (!authClient.tokenStorage.getAccess() && !authClient.tokenStorage.getRefresh()) {
+      set({ user: null, isAuthenticated: false, isLoading: false });
+      return;
+    }
     set({ isLoading: true });
     try {
       const user = await authClient.getCurrentUser();

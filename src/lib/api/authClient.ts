@@ -71,9 +71,8 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 }
 
 /** POST /api/auth/registration/ */
-export async function register(userData: RegisterData): Promise<AuthResponse> {
-    const {data} = await apiClient.post<AuthResponse>('auth/registration/', userData);
-    tokenStorage.setTokens(data.access, data.refresh);
+export async function register(userData: RegisterData): Promise<{detail: string}> {
+    const {data} = await axios.post<{detail: string}>(`${API_BASE}auth/registration/`, userData);
     return data;
 }
 
@@ -88,7 +87,7 @@ export async function logout(): Promise<void> {
 
 /** POST /api/auth/password/reset/ */
 export async function requestPasswordReset(email: string): Promise<void> {
-    await apiClient.post('auth/password/reset/', {email});
+    await axios.post(`${API_BASE}auth/password/reset/`, {email});
 }
 
 /** POST /api/auth/password/reset/confirm/ */
@@ -167,7 +166,7 @@ export async function refreshToken(): Promise<string> {
     const refresh = tokenStorage.getRefresh();
     if (!refresh) throw new Error('No refresh token');
     const {data} = await apiClient.post('auth/token/refresh/', {refresh});
-    tokenStorage.setTokens(data.access, refresh);
+    tokenStorage.setTokens(data.access, data.refresh || refresh);
     return data.access;
 }
 
