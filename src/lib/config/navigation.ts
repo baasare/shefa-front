@@ -63,6 +63,12 @@ export const dashboardNav: NavItem[] = [
     badge: 'New',
   },
   {
+    label: 'Paper Trading',
+    href: routes.dashboard.paperTrading,
+    icon: 'Bot',
+    description: 'Build and monitor paper-only AI bots',
+  },
+  {
     label: 'Market',
     href: routes.dashboard.market.index,
     icon: 'TrendingUp',
