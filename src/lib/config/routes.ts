@@ -48,6 +48,7 @@ export const routes = {
   dashboard: {
     home: '/dashboard',
     advisor: '/dashboard/advisor',
+    paperTrading: '/paper-trading',
 
     portfolio: {
       index: '/portfolio',
